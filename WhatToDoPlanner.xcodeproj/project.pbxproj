@@ -53,9 +53,9 @@
 			path = WhatToDoPlannerTests;
 			sourceTree = "<group>";
 		};
-		11D1BB262D3811B100094717 /* WhatToDo PlannerUITests */ = {
+		11D1BB262D3811B100094717 /* WhatToDoPlannerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "WhatToDo PlannerUITests";
+			path = WhatToDoPlannerUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -90,7 +90,7 @@
 			children = (
 				11D1BB022D3811AF00094717 /* WhatToDoPlanner */,
 				11D1BB1C2D3811B100094717 /* WhatToDoPlannerTests */,
-				11D1BB262D3811B100094717 /* WhatToDo PlannerUITests */,
+				11D1BB262D3811B100094717 /* WhatToDoPlannerUITests */,
 				11D1BB012D3811AF00094717 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -167,7 +167,7 @@
 				11D1BB252D3811B100094717 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				11D1BB262D3811B100094717 /* WhatToDo PlannerUITests */,
+				11D1BB262D3811B100094717 /* WhatToDoPlannerUITests */,
 			);
 			name = WhatToDoPlannerUITests;
 			packageProductDependencies = (
