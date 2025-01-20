@@ -7,10 +7,11 @@
 
 import UIKit
 
-final class SignInViewController: UIViewController {
+final class SignUpViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        view.backgroundColor = .white
     }
 }

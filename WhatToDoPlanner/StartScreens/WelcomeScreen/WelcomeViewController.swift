@@ -57,8 +57,8 @@ final class WelcomeViewController: UIViewController  {
     }
     
     // MARK: - Variables
-    var interactor: WelcomeInteractor?
-    var router: WelcomeRouter?
+    var interactor: WelcomeBusinessLogic?
+    var router: WelcomeRouterProtocol?
     
     private let firstLabel: UILabel = UILabel()
     private let secondLabel: UILabel = UILabel()
@@ -69,22 +69,8 @@ final class WelcomeViewController: UIViewController  {
     private let emailTextField: UITextField = UITextField()
     private let passwordTextField: UITextField = UITextField()
     
-    private lazy var signUpButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = UIColor(hex: "#94CA85", alpha: 0.4)
-        button.tintColor = .black
-        
-        if let titleColor = UIColor(hex: "000000", alpha: 0.6) {
-            button.setTitleColor(titleColor, for: .normal)
-        }
-        
-        button.setTitle("Sign Up", for: .normal)
-        
-        button.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private lazy var signUpButton: UIButton = UIButton(type: .system)
+    private lazy var loginButton: UIButton = UIButton(type: .system)
     private var forgetPasswordButton: UIButton = UIButton(type: .system)
 
     // MARK: - Lifecycle
@@ -100,6 +86,7 @@ final class WelcomeViewController: UIViewController  {
         configurePasswordTextField()
         configureForgetPasswordButton()
         configureSignUpButton()
+        configureLoginButton()
     }
 
     // MARK: - Private functions
@@ -134,16 +121,6 @@ final class WelcomeViewController: UIViewController  {
         thirdLabel.attributedText = attributedThirdLabel
         thirdLabel.pinLeft(to: view, Constants.labelLeft)
         thirdLabel.pinTop(to: secondLabel, Constants.thirdLabelTop)
-    }
-    
-    private func configureSignUpButton() {
-        view.addSubview(signUpButton)
-        
-        signUpButton.pinCenterX(to: view)
-        signUpButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor, 20)
-        signUpButton.setHeight(38)
-        signUpButton.setWidth(124)
-        signUpButton.layer.cornerRadius = 4
     }
     
     private func configureEmailTextField() {
@@ -228,8 +205,56 @@ final class WelcomeViewController: UIViewController  {
         
     }
     
+    private func configureSignUpButton() {
+        view.addSubview(signUpButton)
+        
+        signUpButton.backgroundColor = UIColor(hex: "#94CA85", alpha: 0.4)
+        signUpButton.tintColor = .black
+        
+        if let titleColor = UIColor(hex: "000000", alpha: 0.6) {
+            signUpButton.setTitleColor(titleColor, for: .normal)
+        }
+        
+        signUpButton.setTitle("Sign Up", for: .normal)
+        signUpButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
+        
+        signUpButton.pinTop(to: forgetPasswordButton.bottomAnchor, 41)
+        signUpButton.pinRight(to: forgetPasswordButton.trailingAnchor)
+        
+        signUpButton.setHeight(38)
+        signUpButton.setWidth(124)
+        signUpButton.layer.cornerRadius = 4
+        
+        signUpButton.addTarget(self, action: #selector(signUpButtonPressed), for: .touchUpInside)
+    }
+    
+    private func configureLoginButton() {
+        view.addSubview(loginButton)
+        
+        loginButton.backgroundColor = UIColor(hex: "D6C69E", alpha: 0.35)
+        loginButton.tintColor = .black
+        
+        if let titleColor = UIColor(hex: "000000", alpha: 0.6) {
+            loginButton.setTitleColor(titleColor, for: .normal)
+        }
+        
+        loginButton.setTitle("Login", for: .normal)
+        loginButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
+        
+        loginButton.pinLeft(to: passwordTextField.leadingAnchor)
+        loginButton.pinTop(to: signUpButton.topAnchor)
+        
+        loginButton.setHeight(38)
+        loginButton.setWidth(124)
+        loginButton.layer.cornerRadius = 4
+    }
+    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    @objc private func signUpButtonPressed() {
+        interactor?.handleSignUpButtonTapped()
     }
 }
 

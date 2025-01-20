@@ -12,9 +12,11 @@ protocol WelcomeRouterProtocol {
 }
 
 final class WelcomeRouter: WelcomeRouterProtocol {
-    weak var welcomeVC: UIViewController?
+    var welcomeVC: UIViewController?
     
     func navigateToSignUpScreen() {
-        
+        print("Router works")
+        let signUpVC = SignUpViewController()
+        welcomeVC?.navigationController?.pushViewController(signUpVC, animated: true)
     }
 }
