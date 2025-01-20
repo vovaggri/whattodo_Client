@@ -6,7 +6,7 @@
 //
 
 protocol WelcomeBusinessLogic {
-    func handleSignInButtonTapped()
+    func handleSignUpButtonTapped()
 }
 
 protocol WelcomeInteractorOutput: AnyObject {
@@ -14,9 +14,11 @@ protocol WelcomeInteractorOutput: AnyObject {
 }
 
 final class WelcomeInteractor: WelcomeBusinessLogic {
-    weak var presenter: WelcomeInteractorOutput?
+    var presenter: WelcomeInteractorOutput?
     
-    func handleSignInButtonTapped() {
+    func handleSignUpButtonTapped() {
+        print("Interactor works")
         presenter?.navigateToSignUpScreen()
     }
 }
+ 

@@ -6,10 +6,11 @@
 //
 
 final class WelcomePresenter: WelcomeInteractorOutput {
-    weak var welcomeVC: WelcomeViewController?
+    var welcomeVC: WelcomeViewController?
     var router: WelcomeRouterProtocol?
     
     func navigateToSignUpScreen() {
+        print("Presenter works")
         router?.navigateToSignUpScreen()
     }
 }
