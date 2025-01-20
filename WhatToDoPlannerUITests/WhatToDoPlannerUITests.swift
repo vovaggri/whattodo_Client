@@ -1,13 +1,13 @@
 //
-//  WhatToDo_PlannerUITests.swift
-//  WhatToDo PlannerUITests
+//  WhatToDoPlannerUITests.swift
+//  WhatToDoPlannerUITests
 //
-//  Created by Vladimir Grigoryev on 15.01.2025.
+//  Created by Vladimir Grigoryev on 20.01.2025.
 //
 
 import XCTest
 
-final class WhatToDo_PlannerUITests: XCTestCase {
+final class WhatToDoPlannerUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

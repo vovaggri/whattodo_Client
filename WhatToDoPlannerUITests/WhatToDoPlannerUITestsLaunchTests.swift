@@ -1,13 +1,13 @@
 //
-//  WhatToDo_PlannerUITestsLaunchTests.swift
-//  WhatToDo PlannerUITests
+//  WhatToDoPlannerUITestsLaunchTests.swift
+//  WhatToDoPlannerUITests
 //
-//  Created by Vladimir Grigoryev on 15.01.2025.
+//  Created by Vladimir Grigoryev on 20.01.2025.
 //
 
 import XCTest
 
-final class WhatToDo_PlannerUITestsLaunchTests: XCTestCase {
+final class WhatToDoPlannerUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
