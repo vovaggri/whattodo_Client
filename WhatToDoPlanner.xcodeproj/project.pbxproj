@@ -7,53 +7,53 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		11D1BB1A2D3811B000094717 /* PBXContainerItemProxy */ = {
+		119BA15D2D3E900300397B4C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 11D1BAF82D3811AF00094717 /* Project object */;
+			containerPortal = 119BA13B2D3E900000397B4C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 11D1BAFF2D3811AF00094717;
-			remoteInfo = "WhatToDo Planner";
+			remoteGlobalIDString = 119BA1422D3E900000397B4C;
+			remoteInfo = WhatToDoPlanner;
 		};
-		11D1BB242D3811B100094717 /* PBXContainerItemProxy */ = {
+		119BA1672D3E900300397B4C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 11D1BAF82D3811AF00094717 /* Project object */;
+			containerPortal = 119BA13B2D3E900000397B4C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 11D1BAFF2D3811AF00094717;
-			remoteInfo = "WhatToDo Planner";
+			remoteGlobalIDString = 119BA1422D3E900000397B4C;
+			remoteInfo = WhatToDoPlanner;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		11D1BB002D3811AF00094717 /* WhatToDoPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatToDoPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		11D1BB192D3811B000094717 /* WhatToDoPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhatToDoPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		11D1BB232D3811B100094717 /* WhatToDoPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhatToDoPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		119BA1432D3E900000397B4C /* WhatToDoPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatToDoPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		119BA15C2D3E900300397B4C /* WhatToDoPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhatToDoPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		119BA1662D3E900300397B4C /* WhatToDoPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhatToDoPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		11D1BBF82D3AA91700094717 /* Exceptions for "WhatToDoPlanner" folder in "WhatToDoPlanner" target */ = {
+		119BA2062D3E942500397B4C /* Exceptions for "WhatToDoPlanner" folder in "WhatToDoPlanner" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 11D1BAFF2D3811AF00094717 /* WhatToDoPlanner */;
+			target = 119BA1422D3E900000397B4C /* WhatToDoPlanner */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		11D1BB022D3811AF00094717 /* WhatToDoPlanner */ = {
+		119BA1452D3E900000397B4C /* WhatToDoPlanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				11D1BBF82D3AA91700094717 /* Exceptions for "WhatToDoPlanner" folder in "WhatToDoPlanner" target */,
+				119BA2062D3E942500397B4C /* Exceptions for "WhatToDoPlanner" folder in "WhatToDoPlanner" target */,
 			);
 			path = WhatToDoPlanner;
 			sourceTree = "<group>";
 		};
-		11D1BB1C2D3811B100094717 /* WhatToDoPlannerTests */ = {
+		119BA15F2D3E900300397B4C /* WhatToDoPlannerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WhatToDoPlannerTests;
 			sourceTree = "<group>";
 		};
-		11D1BB262D3811B100094717 /* WhatToDoPlannerUITests */ = {
+		119BA1692D3E900300397B4C /* WhatToDoPlannerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WhatToDoPlannerUITests;
 			sourceTree = "<group>";
@@ -61,21 +61,21 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		11D1BAFD2D3811AF00094717 /* Frameworks */ = {
+		119BA1402D3E900000397B4C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		11D1BB162D3811B000094717 /* Frameworks */ = {
+		119BA1592D3E900300397B4C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		11D1BB202D3811B100094717 /* Frameworks */ = {
+		119BA1632D3E900300397B4C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -85,22 +85,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		11D1BAF72D3811AF00094717 = {
+		119BA13A2D3E900000397B4C = {
 			isa = PBXGroup;
 			children = (
-				11D1BB022D3811AF00094717 /* WhatToDoPlanner */,
-				11D1BB1C2D3811B100094717 /* WhatToDoPlannerTests */,
-				11D1BB262D3811B100094717 /* WhatToDoPlannerUITests */,
-				11D1BB012D3811AF00094717 /* Products */,
+				119BA1452D3E900000397B4C /* WhatToDoPlanner */,
+				119BA15F2D3E900300397B4C /* WhatToDoPlannerTests */,
+				119BA1692D3E900300397B4C /* WhatToDoPlannerUITests */,
+				119BA1442D3E900000397B4C /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		11D1BB012D3811AF00094717 /* Products */ = {
+		119BA1442D3E900000397B4C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				11D1BB002D3811AF00094717 /* WhatToDoPlanner.app */,
-				11D1BB192D3811B000094717 /* WhatToDoPlannerTests.xctest */,
-				11D1BB232D3811B100094717 /* WhatToDoPlannerUITests.xctest */,
+				119BA1432D3E900000397B4C /* WhatToDoPlanner.app */,
+				119BA15C2D3E900300397B4C /* WhatToDoPlannerTests.xctest */,
+				119BA1662D3E900300397B4C /* WhatToDoPlannerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,134 +108,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		11D1BAFF2D3811AF00094717 /* WhatToDoPlanner */ = {
+		119BA1422D3E900000397B4C /* WhatToDoPlanner */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 11D1BB2C2D3811B100094717 /* Build configuration list for PBXNativeTarget "WhatToDoPlanner" */;
+			buildConfigurationList = 119BA16F2D3E900300397B4C /* Build configuration list for PBXNativeTarget "WhatToDoPlanner" */;
 			buildPhases = (
-				11D1BAFC2D3811AF00094717 /* Sources */,
-				11D1BAFD2D3811AF00094717 /* Frameworks */,
-				11D1BAFE2D3811AF00094717 /* Resources */,
+				119BA13F2D3E900000397B4C /* Sources */,
+				119BA1402D3E900000397B4C /* Frameworks */,
+				119BA1412D3E900000397B4C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				11D1BB022D3811AF00094717 /* WhatToDoPlanner */,
+				119BA1452D3E900000397B4C /* WhatToDoPlanner */,
 			);
 			name = WhatToDoPlanner;
 			packageProductDependencies = (
 			);
-			productName = "WhatToDo Planner";
-			productReference = 11D1BB002D3811AF00094717 /* WhatToDoPlanner.app */;
+			productName = WhatToDoPlanner;
+			productReference = 119BA1432D3E900000397B4C /* WhatToDoPlanner.app */;
 			productType = "com.apple.product-type.application";
 		};
-		11D1BB182D3811B000094717 /* WhatToDoPlannerTests */ = {
+		119BA15B2D3E900300397B4C /* WhatToDoPlannerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 11D1BB312D3811B100094717 /* Build configuration list for PBXNativeTarget "WhatToDoPlannerTests" */;
+			buildConfigurationList = 119BA1742D3E900300397B4C /* Build configuration list for PBXNativeTarget "WhatToDoPlannerTests" */;
 			buildPhases = (
-				11D1BB152D3811B000094717 /* Sources */,
-				11D1BB162D3811B000094717 /* Frameworks */,
-				11D1BB172D3811B000094717 /* Resources */,
+				119BA1582D3E900300397B4C /* Sources */,
+				119BA1592D3E900300397B4C /* Frameworks */,
+				119BA15A2D3E900300397B4C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				11D1BB1B2D3811B000094717 /* PBXTargetDependency */,
+				119BA15E2D3E900300397B4C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				11D1BB1C2D3811B100094717 /* WhatToDoPlannerTests */,
+				119BA15F2D3E900300397B4C /* WhatToDoPlannerTests */,
 			);
 			name = WhatToDoPlannerTests;
 			packageProductDependencies = (
 			);
-			productName = "WhatToDo PlannerTests";
-			productReference = 11D1BB192D3811B000094717 /* WhatToDoPlannerTests.xctest */;
+			productName = WhatToDoPlannerTests;
+			productReference = 119BA15C2D3E900300397B4C /* WhatToDoPlannerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		11D1BB222D3811B100094717 /* WhatToDoPlannerUITests */ = {
+		119BA1652D3E900300397B4C /* WhatToDoPlannerUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 11D1BB342D3811B100094717 /* Build configuration list for PBXNativeTarget "WhatToDoPlannerUITests" */;
+			buildConfigurationList = 119BA1772D3E900300397B4C /* Build configuration list for PBXNativeTarget "WhatToDoPlannerUITests" */;
 			buildPhases = (
-				11D1BB1F2D3811B100094717 /* Sources */,
-				11D1BB202D3811B100094717 /* Frameworks */,
-				11D1BB212D3811B100094717 /* Resources */,
+				119BA1622D3E900300397B4C /* Sources */,
+				119BA1632D3E900300397B4C /* Frameworks */,
+				119BA1642D3E900300397B4C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				11D1BB252D3811B100094717 /* PBXTargetDependency */,
+				119BA1682D3E900300397B4C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				11D1BB262D3811B100094717 /* WhatToDoPlannerUITests */,
+				119BA1692D3E900300397B4C /* WhatToDoPlannerUITests */,
 			);
 			name = WhatToDoPlannerUITests;
 			packageProductDependencies = (
 			);
-			productName = "WhatToDo PlannerUITests";
-			productReference = 11D1BB232D3811B100094717 /* WhatToDoPlannerUITests.xctest */;
+			productName = WhatToDoPlannerUITests;
+			productReference = 119BA1662D3E900300397B4C /* WhatToDoPlannerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		11D1BAF82D3811AF00094717 /* Project object */ = {
+		119BA13B2D3E900000397B4C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					11D1BAFF2D3811AF00094717 = {
+					119BA1422D3E900000397B4C = {
 						CreatedOnToolsVersion = 16.0;
 					};
-					11D1BB182D3811B000094717 = {
+					119BA15B2D3E900300397B4C = {
 						CreatedOnToolsVersion = 16.0;
-						TestTargetID = 11D1BAFF2D3811AF00094717;
+						TestTargetID = 119BA1422D3E900000397B4C;
 					};
-					11D1BB222D3811B100094717 = {
+					119BA1652D3E900300397B4C = {
 						CreatedOnToolsVersion = 16.0;
-						TestTargetID = 11D1BAFF2D3811AF00094717;
+						TestTargetID = 119BA1422D3E900000397B4C;
 					};
 				};
 			};
-			buildConfigurationList = 11D1BAFB2D3811AF00094717 /* Build configuration list for PBXProject "WhatToDoPlanner" */;
+			buildConfigurationList = 119BA13E2D3E900000397B4C /* Build configuration list for PBXProject "WhatToDoPlanner" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 11D1BAF72D3811AF00094717;
+			mainGroup = 119BA13A2D3E900000397B4C;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 11D1BB012D3811AF00094717 /* Products */;
+			productRefGroup = 119BA1442D3E900000397B4C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				11D1BAFF2D3811AF00094717 /* WhatToDoPlanner */,
-				11D1BB182D3811B000094717 /* WhatToDoPlannerTests */,
-				11D1BB222D3811B100094717 /* WhatToDoPlannerUITests */,
+				119BA1422D3E900000397B4C /* WhatToDoPlanner */,
+				119BA15B2D3E900300397B4C /* WhatToDoPlannerTests */,
+				119BA1652D3E900300397B4C /* WhatToDoPlannerUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		11D1BAFE2D3811AF00094717 /* Resources */ = {
+		119BA1412D3E900000397B4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		11D1BB172D3811B000094717 /* Resources */ = {
+		119BA15A2D3E900300397B4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		11D1BB212D3811B100094717 /* Resources */ = {
+		119BA1642D3E900300397B4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -245,21 +245,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		11D1BAFC2D3811AF00094717 /* Sources */ = {
+		119BA13F2D3E900000397B4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		11D1BB152D3811B000094717 /* Sources */ = {
+		119BA1582D3E900300397B4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		11D1BB1F2D3811B100094717 /* Sources */ = {
+		119BA1622D3E900300397B4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -269,25 +269,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		11D1BB1B2D3811B000094717 /* PBXTargetDependency */ = {
+		119BA15E2D3E900300397B4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 11D1BAFF2D3811AF00094717 /* WhatToDoPlanner */;
-			targetProxy = 11D1BB1A2D3811B000094717 /* PBXContainerItemProxy */;
+			target = 119BA1422D3E900000397B4C /* WhatToDoPlanner */;
+			targetProxy = 119BA15D2D3E900300397B4C /* PBXContainerItemProxy */;
 		};
-		11D1BB252D3811B100094717 /* PBXTargetDependency */ = {
+		119BA1682D3E900300397B4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 11D1BAFF2D3811AF00094717 /* WhatToDoPlanner */;
-			targetProxy = 11D1BB242D3811B100094717 /* PBXContainerItemProxy */;
+			target = 119BA1422D3E900000397B4C /* WhatToDoPlanner */;
+			targetProxy = 119BA1672D3E900300397B4C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		11D1BB2D2D3811B100094717 /* Debug */ = {
+		119BA1702D3E900300397B4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = /Users/vladimirgrigoryev/whattodo_Client/WhatToDoPlanner/Info.plist;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 53QN3B43CT;
@@ -297,13 +296,12 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = hseproject.WhatToDoPlanner;
+				PRODUCT_BUNDLE_IDENTIFIER = vovaggri.WhatToDoPlanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -311,12 +309,11 @@
 			};
 			name = Debug;
 		};
-		11D1BB2E2D3811B100094717 /* Release */ = {
+		119BA1712D3E900300397B4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = /Users/vladimirgrigoryev/whattodo_Client/WhatToDoPlanner/Info.plist;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 53QN3B43CT;
@@ -326,13 +323,12 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = hseproject.WhatToDoPlanner;
+				PRODUCT_BUNDLE_IDENTIFIER = vovaggri.WhatToDoPlanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -340,7 +336,7 @@
 			};
 			name = Release;
 		};
-		11D1BB2F2D3811B100094717 /* Debug */ = {
+		119BA1722D3E900300397B4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -403,7 +399,7 @@
 			};
 			name = Debug;
 		};
-		11D1BB302D3811B100094717 /* Release */ = {
+		119BA1732D3E900300397B4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -459,7 +455,7 @@
 			};
 			name = Release;
 		};
-		11D1BB322D3811B100094717 /* Debug */ = {
+		119BA1752D3E900300397B4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -469,7 +465,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "hseproject.WhatToDo-PlannerTests";
+				PRODUCT_BUNDLE_IDENTIFIER = vovaggri.WhatToDoPlannerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -478,7 +474,7 @@
 			};
 			name = Debug;
 		};
-		11D1BB332D3811B100094717 /* Release */ = {
+		119BA1762D3E900300397B4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -488,7 +484,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "hseproject.WhatToDo-PlannerTests";
+				PRODUCT_BUNDLE_IDENTIFIER = vovaggri.WhatToDoPlannerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -497,7 +493,7 @@
 			};
 			name = Release;
 		};
-		11D1BB352D3811B100094717 /* Debug */ = {
+		119BA1782D3E900300397B4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -505,16 +501,16 @@
 				DEVELOPMENT_TEAM = 53QN3B43CT;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "hseproject.WhatToDo-PlannerUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = vovaggri.WhatToDoPlannerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "WhatToDo Planner";
+				TEST_TARGET_NAME = WhatToDoPlanner;
 			};
 			name = Debug;
 		};
-		11D1BB362D3811B100094717 /* Release */ = {
+		119BA1792D3E900300397B4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -522,55 +518,55 @@
 				DEVELOPMENT_TEAM = 53QN3B43CT;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "hseproject.WhatToDo-PlannerUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = vovaggri.WhatToDoPlannerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "WhatToDo Planner";
+				TEST_TARGET_NAME = WhatToDoPlanner;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		11D1BAFB2D3811AF00094717 /* Build configuration list for PBXProject "WhatToDoPlanner" */ = {
+		119BA13E2D3E900000397B4C /* Build configuration list for PBXProject "WhatToDoPlanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				11D1BB2F2D3811B100094717 /* Debug */,
-				11D1BB302D3811B100094717 /* Release */,
+				119BA1722D3E900300397B4C /* Debug */,
+				119BA1732D3E900300397B4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		11D1BB2C2D3811B100094717 /* Build configuration list for PBXNativeTarget "WhatToDoPlanner" */ = {
+		119BA16F2D3E900300397B4C /* Build configuration list for PBXNativeTarget "WhatToDoPlanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				11D1BB2D2D3811B100094717 /* Debug */,
-				11D1BB2E2D3811B100094717 /* Release */,
+				119BA1702D3E900300397B4C /* Debug */,
+				119BA1712D3E900300397B4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		11D1BB312D3811B100094717 /* Build configuration list for PBXNativeTarget "WhatToDoPlannerTests" */ = {
+		119BA1742D3E900300397B4C /* Build configuration list for PBXNativeTarget "WhatToDoPlannerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				11D1BB322D3811B100094717 /* Debug */,
-				11D1BB332D3811B100094717 /* Release */,
+				119BA1752D3E900300397B4C /* Debug */,
+				119BA1762D3E900300397B4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		11D1BB342D3811B100094717 /* Build configuration list for PBXNativeTarget "WhatToDoPlannerUITests" */ = {
+		119BA1772D3E900300397B4C /* Build configuration list for PBXNativeTarget "WhatToDoPlannerUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				11D1BB352D3811B100094717 /* Debug */,
-				11D1BB362D3811B100094717 /* Release */,
+				119BA1782D3E900300397B4C /* Debug */,
+				119BA1792D3E900300397B4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 11D1BAF82D3811AF00094717 /* Project object */;
+	rootObject = 119BA13B2D3E900000397B4C /* Project object */;
 }
