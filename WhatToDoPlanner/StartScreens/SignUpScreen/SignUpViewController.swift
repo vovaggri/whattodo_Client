@@ -4,22 +4,6 @@ protocol SignUpViewProtocol: AnyObject {
     func showError(message: String)
 }
 
-protocol SignUpPresenterProtocol: AnyObject {
-    var view: SignUpViewProtocol? { get set } 
-    func didTapSignUp(firstName: String?, lastName: String?, email: String?, password: String?)
-}
-
-protocol SignUpInteractorProtocol: AnyObject {
-    func validateAndSignUp(firstName: String, lastName: String, email: String, password: String)
-}
-
-protocol SignUpRouterProtocol: AnyObject {
-    func navigateToNextScreen()
-}
-
-
-import UIKit
-
 final class SignUpViewController: UIViewController {
     // MARK: - Constants
     enum Constants {

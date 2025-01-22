@@ -1,6 +1,10 @@
 import UIKit
 
-class SignUpInteractor: SignUpInteractorProtocol {
+protocol SignUpInteractorProtocol: AnyObject {
+    func validateAndSignUp(firstName: String, lastName: String, email: String, password: String)
+}
+
+final class SignUpInteractor: SignUpInteractorProtocol {
     var presenter: SignUpPresenterProtocol?
 
     func validateAndSignUp(firstName: String, lastName: String, email: String, password: String) {

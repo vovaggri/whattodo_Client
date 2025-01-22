@@ -1,6 +1,10 @@
 import UIKit
 
-class SignUpRouter: SignUpRouterProtocol {
+protocol SignUpRouterProtocol: AnyObject {
+    func navigateToNextScreen()
+}
+
+final class SignUpRouter: SignUpRouterProtocol {
     weak var viewController: UIViewController?
 
     func navigateToNextScreen() {
