@@ -10,22 +10,22 @@ final class SignUpViewController: UIViewController {
         static let fontName: String = "AoboshiOne-Regular"
         
         static let titleLabelText: String = "Register"
-        static let fontTitleSize: CGFloat = 50
+        static let fontTitleSize: CGFloat = 40
         static let fieldPlaceholderFontSize: CGFloat = 17
         
         // TextField and Button Dimensions
-        static let textFieldHeight: CGFloat = 70
+        static let textFieldHeight: CGFloat = 50
         static let textFieldCornerRadius: CGFloat = 14
-        static let buttonHeight: CGFloat = 70
+        static let buttonHeight: CGFloat = 42
         static let buttonWidth: CGFloat = 50
         static let buttonCornerRadius: CGFloat = 14
-        static let fieldSpacing: CGFloat = 100
+        static let fieldSpacing: CGFloat = 40
         static let sidePadding: CGFloat = 20
         static let textFieldColor: UIColor = .white
         
         // Button Colors
-        static let buttonBackgroundColor: UIColor = UIColor.systemGreen.withAlphaComponent(0.3)
-        static let buttonTitleColor: UIColor = .darkGray
+        static let buttonBackgroundColor: UIColor = UIColor(hex: "94CA85", alpha: 0.35) ?? .systemGreen.withAlphaComponent(0.35)
+        static let buttonTitleColor: UIColor = UIColor(hex: "000000", alpha: 0.6) ?? .darkGray
       
     }
 
@@ -37,29 +37,24 @@ final class SignUpViewController: UIViewController {
     private let lastNameTextField: UITextField = UITextField()
     private let emailTextField: UITextField = UITextField()
     private let passwordTextField: UITextField = UITextField()
-    private lazy var signUpButton: UIButton = UIButton(type: .system)
+    private var signUpButton: UIButton = UIButton(type: .system)
+    private var backButton = UIButton(type: .system)
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            tapGesture.cancelsTouchesInView = false
+            view.addGestureRecognizer(tapGesture)
+        
         setupUI()
-        let backButton = UIButton(type: .system)
-            backButton.setImage(UIImage(systemName: "arrow.left"), for: .normal) // Use custom image
-            backButton.setTitle("", for: .normal) // Remove text
-            backButton.tintColor = .black // Change the color if needed
-            backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-
-            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
-        }
-
-        @objc private func backButtonTapped() {
-            navigationController?.popViewController(animated: true)
-
     }
 
     // MARK: - Private Functions
     private func setupUI() {
+        configureBackButton()
         configureTitleLabel()
         configureSignUpButton()
         
@@ -76,8 +71,9 @@ final class SignUpViewController: UIViewController {
             textField.font = UIFont(name: Constants.fontName, size: 15)
             
             if index == 0 {
-                // Center the first text field vertically
-                textField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -(Constants.textFieldHeight + Constants.fieldSpacing) * CGFloat(textFields.count - 1) / 2).isActive = true
+                NSLayoutConstraint.activate([
+                    textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20)
+                ])
                 
             } else {
                 // Position subsequent text fields below the previous ones
@@ -86,6 +82,16 @@ final class SignUpViewController: UIViewController {
         }
 
         
+    }
+    
+    private func configureBackButton() {
+        view.addSubview(backButton)
+        backButton.setImage(UIImage(systemName: "arrow.left"), for: .normal) // Use custom image
+        backButton.setTitle("", for: .normal) // Remove text
+        backButton.tintColor = UIColor(hex: "000000", alpha: 0.4) // Change the color if needed
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
 
     private func configureTitleLabel() {
@@ -98,8 +104,8 @@ final class SignUpViewController: UIViewController {
         
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 70),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.sidePadding)
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 21)
         ])
     }
 
@@ -140,6 +146,9 @@ final class SignUpViewController: UIViewController {
         ])
     }
 
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
 
     @objc private func didTapSignUpButton() {
         presenter?.didTapSignUp(
@@ -148,6 +157,10 @@ final class SignUpViewController: UIViewController {
             email: emailTextField.text,
             password: passwordTextField.text
         )
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 
