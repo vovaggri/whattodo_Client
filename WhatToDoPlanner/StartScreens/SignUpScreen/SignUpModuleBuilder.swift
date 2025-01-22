@@ -8,7 +8,7 @@
 import UIKit
 
 
-class SignUpModuleBuilder {
+final class SignUpModuleBuilder {
     static func build() -> UIViewController {
         let view = SignUpViewController()
         let presenter = SignUpPresenter()

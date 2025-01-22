@@ -4,43 +4,29 @@ protocol SignUpViewProtocol: AnyObject {
     func showError(message: String)
 }
 
-protocol SignUpPresenterProtocol: AnyObject {
-    var view: SignUpViewProtocol? { get set } 
-    func didTapSignUp(firstName: String?, lastName: String?, email: String?, password: String?)
-}
-
-protocol SignUpInteractorProtocol: AnyObject {
-    func validateAndSignUp(firstName: String, lastName: String, email: String, password: String)
-}
-
-protocol SignUpRouterProtocol: AnyObject {
-    func navigateToNextScreen()
-}
-
-
-import UIKit
-
 final class SignUpViewController: UIViewController {
     // MARK: - Constants
     enum Constants {
         static let fontName: String = "AoboshiOne-Regular"
         
         static let titleLabelText: String = "Register"
-        static let fontTitleSize: CGFloat = 34
+        static let fontTitleSize: CGFloat = 40
         static let fieldPlaceholderFontSize: CGFloat = 17
         
         // TextField and Button Dimensions
         static let textFieldHeight: CGFloat = 50
-        static let textFieldCornerRadius: CGFloat = 8
-        static let buttonHeight: CGFloat = 50
+        static let textFieldCornerRadius: CGFloat = 14
+        static let buttonHeight: CGFloat = 42
         static let buttonWidth: CGFloat = 50
-        static let buttonCornerRadius: CGFloat = 8
-        static let fieldSpacing: CGFloat = 20
+        static let buttonCornerRadius: CGFloat = 14
+        static let fieldSpacing: CGFloat = 40
         static let sidePadding: CGFloat = 20
+        static let textFieldColor: UIColor = .white
         
         // Button Colors
-        static let buttonBackgroundColor: UIColor = UIColor.systemGreen.withAlphaComponent(0.3)
-        static let buttonTitleColor: UIColor = .darkGray
+        static let buttonBackgroundColor: UIColor = UIColor(hex: "94CA85", alpha: 0.35) ?? .systemGreen.withAlphaComponent(0.35)
+        static let buttonTitleColor: UIColor = UIColor(hex: "000000", alpha: 0.6) ?? .darkGray
+      
     }
 
     // MARK: - Variables
@@ -51,36 +37,75 @@ final class SignUpViewController: UIViewController {
     private let lastNameTextField: UITextField = UITextField()
     private let emailTextField: UITextField = UITextField()
     private let passwordTextField: UITextField = UITextField()
-    private lazy var signUpButton: UIButton = UIButton(type: .system)
+    private var signUpButton: UIButton = UIButton(type: .system)
+    private var backButton = UIButton(type: .system)
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            tapGesture.cancelsTouchesInView = false
+            view.addGestureRecognizer(tapGesture)
+        
         setupUI()
     }
 
     // MARK: - Private Functions
     private func setupUI() {
+        configureBackButton()
         configureTitleLabel()
-        configureTextField(firstNameTextField, placeholder: "First Name")
-        configureTextField(lastNameTextField, placeholder: "Last Name")
-        configureTextField(emailTextField, placeholder: "Email address")
-        configureTextField(passwordTextField, placeholder: "Password")
         configureSignUpButton()
+        
+        // Adjustments for centering the fields
+        view.addSubview(firstNameTextField)
+        view.addSubview(lastNameTextField)
+        view.addSubview(emailTextField)
+        view.addSubview(passwordTextField)
+
+        let textFields = [firstNameTextField, lastNameTextField, emailTextField, passwordTextField]
+
+        for (index, textField) in textFields.enumerated() {
+            configureTextField(textField, placeholder: ["First Name", "Last Name", "Email address", "Password"][index])
+            textField.font = UIFont(name: Constants.fontName, size: 15)
+            
+            if index == 0 {
+                NSLayoutConstraint.activate([
+                    textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20)
+                ])
+                
+            } else {
+                // Position subsequent text fields below the previous ones
+                textField.topAnchor.constraint(equalTo: textFields[index - 1].bottomAnchor, constant: Constants.fieldSpacing).isActive = true
+            }
+        }
+
+        
+    }
+    
+    private func configureBackButton() {
+        view.addSubview(backButton)
+        backButton.setImage(UIImage(systemName: "arrow.left"), for: .normal) // Use custom image
+        backButton.setTitle("", for: .normal) // Remove text
+        backButton.tintColor = UIColor(hex: "000000", alpha: 0.4) // Change the color if needed
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
     }
 
     private func configureTitleLabel() {
         view.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = UIFont.boldSystemFont(ofSize: Constants.fontTitleSize)
+        titleLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTitleSize)
         titleLabel.textAlignment = .left
         titleLabel.text = Constants.titleLabelText
         titleLabel.textColor = .black
+        
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.sidePadding)
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 21)
         ])
     }
 
@@ -91,22 +116,12 @@ final class SignUpViewController: UIViewController {
         textField.placeholder = placeholder
         textField.backgroundColor = UIColor.systemGray6
         textField.layer.cornerRadius = Constants.textFieldCornerRadius
-
-        let previousView: UIView = {
-            switch textField {
-            case firstNameTextField: return titleLabel
-            case lastNameTextField: return firstNameTextField
-            case emailTextField: return lastNameTextField
-            case passwordTextField: return emailTextField
-            default: return view
-            }
-        }()
+        textField.backgroundColor = Constants.textFieldColor
 
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: previousView.bottomAnchor, constant: Constants.fieldSpacing),
-            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.sidePadding),
-            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.sidePadding),
-            textField.heightAnchor.constraint(equalToConstant: Constants.textFieldHeight)
+            textField.centerXAnchor.constraint(equalTo: view.centerXAnchor), // Center horizontally
+            textField.widthAnchor.constraint(equalTo: signUpButton.widthAnchor), // Match button width
+            textField.heightAnchor.constraint(equalToConstant: Constants.textFieldHeight) // Set fixed height
         ])
     }
 
@@ -114,6 +129,7 @@ final class SignUpViewController: UIViewController {
         view.addSubview(signUpButton)
         signUpButton.translatesAutoresizingMaskIntoConstraints = false
         signUpButton.setTitle("Sign Up", for: .normal)
+        signUpButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
         signUpButton.backgroundColor = Constants.buttonBackgroundColor
         signUpButton.setTitleColor(Constants.buttonTitleColor, for: .normal)
         signUpButton.layer.cornerRadius = Constants.buttonCornerRadius
@@ -130,6 +146,9 @@ final class SignUpViewController: UIViewController {
         ])
     }
 
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
 
     @objc private func didTapSignUpButton() {
         presenter?.didTapSignUp(
@@ -138,6 +157,10 @@ final class SignUpViewController: UIViewController {
             email: emailTextField.text,
             password: passwordTextField.text
         )
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

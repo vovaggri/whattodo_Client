@@ -1,4 +1,9 @@
-class SignUpPresenter: SignUpPresenterProtocol {
+protocol SignUpPresenterProtocol: AnyObject {
+    var view: SignUpViewProtocol? { get set }
+    func didTapSignUp(firstName: String?, lastName: String?, email: String?, password: String?)
+}
+
+final class SignUpPresenter: SignUpPresenterProtocol {
     weak var view: SignUpViewProtocol?
     var interactor: SignUpInteractorProtocol?
     var router: SignUpRouterProtocol?
