@@ -36,19 +36,20 @@ final class WelcomeViewController: UIViewController  {
         static let heightField: Double = 50
         static let paddingViewWidth: CGFloat = 10
         static let padding: CGFloat = 49
+        static let textFieldHeight: CGFloat = 42
         
         static let fontTextFieldsLabelSize: CGFloat = 15
         static let fontTextFieldsSize: CGFloat = 19
         
         static let emailLabelText: String = "Email adress"
-        static let emailPlaceholder: String = "Enter your email adress"
+        static let emailPlaceholder: String = "Email adress"
         static let emailLabelLeft: Double = 49
-        static let emailLabelTop: Double = 30
+        static let emailTextFieldTop: Double = 80
         
         static let passwordLabelText: String = "Password"
         static let passwordPlaceholder: String = "Enter your password"
         static let passwordLabelLeft: Double = 49
-        static let passwordLabelTop: Double = 20
+        static let passwordTextFieldTop: Double = 20
         
         // Forget password button
         static let forgetPasswordButtonTitle: String = "Forget password?"
@@ -69,8 +70,8 @@ final class WelcomeViewController: UIViewController  {
     private let emailTextField: UITextField = UITextField()
     private let passwordTextField: UITextField = UITextField()
     
-    private lazy var signUpButton: UIButton = UIButton(type: .system)
-    private lazy var loginButton: UIButton = UIButton(type: .system)
+    private var signUpButton: UIButton = UIButton(type: .system)
+    private var loginButton: UIButton = UIButton(type: .system)
     private var forgetPasswordButton: UIButton = UIButton(type: .system)
 
     // MARK: - Lifecycle
@@ -124,19 +125,19 @@ final class WelcomeViewController: UIViewController  {
     }
     
     private func configureEmailTextField() {
-        view.addSubview(emailLabel)
+//        view.addSubview(emailLabel)
         view.addSubview(emailTextField)
         
-        emailLabel.translatesAutoresizingMaskIntoConstraints = false
+//        emailLabel.translatesAutoresizingMaskIntoConstraints = false
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        emailLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsLabelSize)
-        emailLabel.textColor = UIColor(hex: "000000", alpha: 0.4)
-        
-        emailLabel.text = Constants.emailLabelText
-        
-        emailLabel.pinLeft(to: view, Constants.emailLabelLeft)
-        emailLabel.pinTop(to: thirdLabel.bottomAnchor, Constants.emailLabelTop)
+//        emailLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsLabelSize)
+//        emailLabel.textColor = UIColor(hex: "000000", alpha: 0.4)
+//        
+//        emailLabel.text = Constants.emailLabelText
+//        
+//        emailLabel.pinLeft(to: view, Constants.emailLabelLeft)
+//        emailLabel.pinTop(to: thirdLabel.bottomAnchor, Constants.emailLabelTop)
         
         emailTextField.autocapitalizationType = .none
         emailTextField.placeholder = Constants.emailPlaceholder
@@ -150,27 +151,29 @@ final class WelcomeViewController: UIViewController  {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth, height: emailTextField.frame.height))
         emailTextField.leftView = paddingView
         
+        emailTextField.setHeight(Constants.textFieldHeight)
+        
         emailTextField.pinLeft(to: view, Constants.padding)
         emailTextField.pinRight(to: view, Constants.padding)
-        emailTextField.pinTop(to: emailLabel.bottomAnchor, 10)
+        emailTextField.pinTop(to: thirdLabel.bottomAnchor, Constants.emailTextFieldTop)
         
         emailTextField.leftViewMode = .always
     }
     
     private func configurePasswordTextField() {
-        view.addSubview(passwordLabel)
+//        view.addSubview(passwordLabel)
         view.addSubview(passwordTextField)
         
-        passwordLabel.translatesAutoresizingMaskIntoConstraints = false
+//        passwordLabel.translatesAutoresizingMaskIntoConstraints = false
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        passwordLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsLabelSize)
-        passwordLabel.textColor = UIColor(hex: "000000", alpha: 0.4)
-        
-        passwordLabel.text = Constants.passwordLabelText
-        
-        passwordLabel.pinLeft(to: view, Constants.passwordLabelLeft)
-        passwordLabel.pinTop(to: emailTextField.bottomAnchor, Constants.passwordLabelTop)
+//        passwordLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsLabelSize)
+//        passwordLabel.textColor = UIColor(hex: "000000", alpha: 0.4)
+//        
+//        passwordLabel.text = Constants.passwordLabelText
+//        
+//        passwordLabel.pinLeft(to: view, Constants.passwordLabelLeft)
+//        passwordLabel.pinTop(to: emailTextField.bottomAnchor, Constants.passwordLabelTop)
         
         passwordTextField.autocapitalizationType = .none
         passwordTextField.isSecureTextEntry = true
@@ -184,9 +187,12 @@ final class WelcomeViewController: UIViewController  {
         // Добавляем отступ через пустое представление
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth, height: emailTextField.frame.height))
         passwordTextField.leftView = paddingView
+        
+        passwordTextField.setHeight(Constants.textFieldHeight)
+        
         passwordTextField.pinLeft(to: view, Constants.padding)
         passwordTextField.pinRight(to: view, Constants.padding)
-        passwordTextField.pinTop(to: passwordLabel.bottomAnchor, 10)
+        passwordTextField.pinTop(to: emailTextField.bottomAnchor, Constants.passwordTextFieldTop)
         
         passwordTextField.leftViewMode = .always
     }
@@ -223,7 +229,7 @@ final class WelcomeViewController: UIViewController  {
         
         signUpButton.setHeight(38)
         signUpButton.setWidth(124)
-        signUpButton.layer.cornerRadius = 4
+        signUpButton.layer.cornerRadius = 14
         
         signUpButton.addTarget(self, action: #selector(signUpButtonPressed), for: .touchUpInside)
     }
@@ -246,7 +252,7 @@ final class WelcomeViewController: UIViewController  {
         
         loginButton.setHeight(38)
         loginButton.setWidth(124)
-        loginButton.layer.cornerRadius = 4
+        loginButton.layer.cornerRadius = 14
     }
     
     @objc private func dismissKeyboard() {
