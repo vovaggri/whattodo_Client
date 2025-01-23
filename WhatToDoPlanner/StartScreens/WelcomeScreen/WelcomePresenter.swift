@@ -10,7 +10,12 @@ final class WelcomePresenter: WelcomeInteractorOutput {
     var router: WelcomeRouterProtocol?
     
     func navigateToSignUpScreen() {
-        print("Presenter works")
+        print("Presenter sign up button works")
         router?.navigateToSignUpScreen()
+    }
+    
+    func showErrorAlert(_ message: String?) {
+        print("Presenter login button works")
+        welcomeVC?.showError(message: message ?? "Error")
     }
 }
