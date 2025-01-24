@@ -52,7 +52,7 @@ final class WelcomeViewController: UIViewController  {
         static let passwordTextFieldTop: Double = 20
         
         // Forget password button
-        static let forgetPasswordButtonTitle: String = "Forget password?"
+        static let forgetPasswordButtonTitle: String = "Forgot password?"
         static let forgetPasswordButtonSize: CGFloat = 12
         static let forgetPasswordButtonTop: Double = 18
     }

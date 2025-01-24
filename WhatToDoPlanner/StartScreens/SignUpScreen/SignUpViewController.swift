@@ -69,6 +69,7 @@ final class SignUpViewController: UIViewController {
         for (index, textField) in textFields.enumerated() {
             configureTextField(textField, placeholder: ["First Name", "Last Name", "Email address", "Password"][index])
             textField.font = UIFont(name: Constants.fontName, size: 15)
+            textField.tintColor = UIColor(hex: "000000", alpha: 0.2)
             
             if index == 0 {
                 NSLayoutConstraint.activate([
@@ -117,6 +118,15 @@ final class SignUpViewController: UIViewController {
         textField.backgroundColor = UIColor.systemGray6
         textField.layer.cornerRadius = Constants.textFieldCornerRadius
         textField.backgroundColor = Constants.textFieldColor
+        
+        if placeholder == "Email address" || placeholder == "Password" {
+            textField.autocapitalizationType = .none
+        }
+
+        // Enable secure text entry for password field
+        if placeholder == "Password" {
+            textField.isSecureTextEntry = true
+        }
 
         NSLayoutConstraint.activate([
             textField.centerXAnchor.constraint(equalTo: view.centerXAnchor), // Center horizontally
