@@ -89,6 +89,13 @@ final class WelcomeViewController: UIViewController  {
         configureSignUpButton()
         configureLoginButton()
     }
+    
+     
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
 
     // MARK: - Private functions
     private func configureWelcomeLabeles() {
@@ -253,14 +260,21 @@ final class WelcomeViewController: UIViewController  {
         loginButton.setHeight(38)
         loginButton.setWidth(124)
         loginButton.layer.cornerRadius = 14
+        
+        loginButton.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
     }
     
+    // MARK: - Objc private methods
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
     
     @objc private func signUpButtonPressed() {
         interactor?.handleSignUpButtonTapped()
+    }
+    
+    @objc private func loginButtonPressed() {
+        interactor?.handleLoginButtonTapped(email: emailTextField.text, password: passwordTextField.text)
     }
 }
 
