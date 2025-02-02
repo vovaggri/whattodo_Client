@@ -12,7 +12,8 @@ final class SignUpModuleBuilder {
     static func build() -> UIViewController {
         let view = SignUpViewController()
         let presenter = SignUpPresenter()
-        let interactor = SignUpInteractor()
+        let signUpService = SignUpService()
+        let interactor = SignUpInteractor(signUpService: signUpService)
         let router = SignUpRouter()
 
         view.presenter = presenter

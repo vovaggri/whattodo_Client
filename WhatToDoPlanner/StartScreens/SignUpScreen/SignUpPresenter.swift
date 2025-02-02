@@ -1,6 +1,7 @@
 protocol SignUpPresenterProtocol: AnyObject {
     var view: SignUpViewProtocol? { get set }
     func didTapSignUp(firstName: String?, lastName: String?, email: String?, password: String?)
+    func signUpSuccess()
 }
 
 final class SignUpPresenter: SignUpPresenterProtocol {
@@ -17,5 +18,9 @@ final class SignUpPresenter: SignUpPresenterProtocol {
             return
         }
         interactor?.validateAndSignUp(firstName: firstName, lastName: lastName, email: email, password: password)
+    }
+    
+    func signUpSuccess() {
+        router?.navigateToNextScreen()
     }
 }
