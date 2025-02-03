@@ -45,6 +45,18 @@ final class ConfirmViewController: UIViewController {
         view.backgroundColor = .white
     }
     
+    func displayVerificationResult(_ viewModel: ConfirmScreen.ScreenMessage.ViewModel) {
+        let alert = UIAlertController(title: "Success", message: viewModel.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true)
+    }
+
+    func displayError(_ message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true)
+    }
+    
     private func configureTitleLabels() {
         view.addSubview(firstTitleLabel)
         view.addSubview(secondTitleLabel)
