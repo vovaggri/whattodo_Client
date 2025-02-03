@@ -39,7 +39,7 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         button.layer.borderColor = UIColor.green.cgColor
 
          // **Drop Shadow**
-         button.layer.shadowColor = UIColor.black.cgColor
+         button.layer.shadowColor = UIColor.green.cgColor
          button.layer.shadowOpacity = 0.2
          button.layer.shadowOffset = CGSize(width: 0, height: 4)
          button.layer.shadowRadius = 5
@@ -62,8 +62,15 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         setupViews()
         configureWelcomeLabels()
         setupConstraints()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.animateFifthLabel()
+        }
+
         interactor.fetchSuccessMessage(request: SuccessScreen.SuccessMessage.Request())
     }
+
+
 
     private func setupViews() {
         view.addSubview(continueButton)
@@ -83,6 +90,11 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         thirdLabel.text = Constants.thirdLabelText
         fourthLabel.text = Constants.fourthLabelText
         fifthLabel.text = Constants.fifthLabelText
+        
+        // Hide fifth label initially
+            fifthLabel.alpha = 0
+            fifthLabel.text = ""
+        
 
         // Customize the fifth label with colors
         let attributedText = NSMutableAttributedString(string: Constants.fifthLabelText)
@@ -91,6 +103,61 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         attributedText.addAttribute(.foregroundColor, value: UIColor(hex: "#D6C69E") ?? .brown, range: NSRange(location: 6, length: 2)) // "Do"
         fifthLabel.attributedText = attributedText
     }
+    private func animateFifthLabel() {
+        let text = Constants.fifthLabelText
+        let attributedText = NSMutableAttributedString(string: "")
+
+        // Fade in the label before animation
+        UIView.animate(withDuration: 0.8) {
+            self.fifthLabel.alpha = 1
+        }
+
+        var index = 0
+        let colors: [NSRange: UIColor] = [
+            NSRange(location: 0, length: 4): UIColor(hex: "#85B7CA") ?? .blue, // "What"
+            NSRange(location: 4, length: 2): UIColor(hex: "#94CA85") ?? .green, // "To"
+            NSRange(location: 6, length: 2): UIColor(hex: "#D6C69E") ?? .brown  // "Do"
+        ]
+
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+            if index < text.count {
+                let char = String(text[text.index(text.startIndex, offsetBy: index)])
+                attributedText.append(NSAttributedString(string: char))
+                
+                // Apply correct color dynamically
+                for (range, color) in colors {
+                    if range.location <= index && index < range.location + range.length {
+                        attributedText.addAttribute(.foregroundColor, value: color, range: NSRange(location: index, length: 1))
+                    }
+                }
+
+                self.fifthLabel.attributedText = attributedText
+                index += 1
+            } else {
+                timer.invalidate() // Stop when done
+
+                // **Add the dot in black after a short delay**
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    let dot = NSAttributedString(string: ".", attributes: [
+                        .foregroundColor: UIColor.black
+                    ])
+                    attributedText.append(dot)
+                    self.fifthLabel.attributedText = attributedText
+
+                    // **Show the button 3 seconds after the animation is done**
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        UIView.animate(withDuration: 0.5) {
+                            self.continueButton.alpha = 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
 
     private func setupConstraints() {
         firstLabel.pinTop(to: view, 250)
@@ -109,10 +176,11 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         fifthLabel.pinLeft(to: view, 21)
 
         // **Fix: Add constraints for the button**
-        continueButton.pinTop(to: fifthLabel, 445-158)
+        continueButton.pinTop(to: fifthLabel, 445-218)
         continueButton.pinLeft(to: view, 40)
         continueButton.pinRight(to: view, 40)
         continueButton.setHeight(50)
+        continueButton.alpha = 0
     }
 
     func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel) {
