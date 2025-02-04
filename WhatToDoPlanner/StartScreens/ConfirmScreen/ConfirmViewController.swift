@@ -24,12 +24,14 @@ final class ConfirmViewController: UIViewController {
         static let codeFieldSize: CGFloat = 50
         static let codeFieldSpacing: CGFloat = 15
         static let codeFieldTop: CGFloat = 40
+        static let codeFieldRadius: CGFloat = 14
         
         static let confirmButtonTitle: String = "Confirm"
         static let confirmButtonHeight: CGFloat = 50
         static let confirmBottonWidth: CGFloat = 364
         static let confirmButtonTop: Double = 123
         static let confirmButtonRadius: CGFloat = 14
+        static let confirmButtonTitleSize: CGFloat = 20
     }
     
     private let interactor: ConfirmInteractorProtocol
@@ -98,6 +100,8 @@ final class ConfirmViewController: UIViewController {
             textField.borderStyle = .roundedRect
             textField.textAlignment = .center
             textField.font = UIFont(name: Constants.fontName, size: 24)
+            textField.layer.cornerRadius = Constants.codeFieldRadius
+            textField.backgroundColor = UIColor(hex: "D9D9D9")
             textField.keyboardType = .numberPad
             textField.delegate = self
             textField.translatesAutoresizingMaskIntoConstraints = false
@@ -117,6 +121,7 @@ final class ConfirmViewController: UIViewController {
         confirmButton.setTitle(Constants.confirmButtonTitle, for: .normal)
         confirmButton.setTitleColor(UIColor(hex: "000000", alpha: 0.6), for: .normal)
         confirmButton.backgroundColor = UIColor(hex: "94CA85", alpha: 0.35)
+        confirmButton.titleLabel?.font = UIFont(name: Constants.fontName, size: Constants.confirmButtonTitleSize)
         confirmButton.layer.cornerRadius = Constants.confirmButtonRadius
         confirmButton.addTarget(self, action: #selector(confirmButtonPressed), for: .touchUpInside)
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
