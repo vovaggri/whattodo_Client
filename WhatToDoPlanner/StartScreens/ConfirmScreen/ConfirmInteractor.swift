@@ -12,10 +12,10 @@ protocol ConfirmInteractorProtocol: AnyObject {
 }
 
 final class ConfirmInteractor: ConfirmInteractorProtocol {
-    weak var presenter: ConfirmPresenterProtocol?
+    var presenter: ConfirmPresenterProtocol?
     
     func verifyCode(_ code: String) {
-        // MARK: - Need to fix for real realisation
+        // MARK: - Need to fix for real realization
         // Imitation of code
         let isValid = code == "2323"
         let response = ConfirmScreen.ScreenMessage.Response(message: isValid ? "Verification successful!" : "Invalid code!")

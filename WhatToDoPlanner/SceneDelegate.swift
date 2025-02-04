@@ -25,9 +25,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        window.makeKeyAndVisible()
 
         let window = UIWindow(windowScene: windowScene)
-
-        let successVC = SuccessScreenConfigurator.configureModule()
-        let navigationController = UINavigationController(rootViewController: successVC)
+        let confirmVC = ConfirmModuleAssembly.assembly()
+        let navigationController = UINavigationController(rootViewController: confirmVC)
         window.rootViewController = navigationController
         self.window = window
         window.makeKeyAndVisible()

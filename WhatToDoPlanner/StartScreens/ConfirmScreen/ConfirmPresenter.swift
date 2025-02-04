@@ -12,7 +12,7 @@ protocol ConfirmPresenterProtocol: AnyObject{
 }
 
 final class ConfirmPresenter: ConfirmPresenterProtocol {
-    weak var viewController: ConfirmViewController?
+    var viewController: ConfirmViewController?
 
     func presentVerificationResult(_ response: ConfirmScreen.ScreenMessage.Response) {
         let viewModel = ConfirmScreen.ScreenMessage.ViewModel(message: response.message)
