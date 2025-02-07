@@ -31,7 +31,9 @@ final class SignUpInteractor: SignUpInteractorProtocol {
         signUpService.signUp(firstName: firstName, lastName: lastName, email: email, password: password) { [weak self] result in
             switch result {
             case.success:
+                print("Self in closure: \(String(describing: self))")
                 self?.presenter?.signUpSuccess()
+                print("Done")
             case.failure(let error):
                 self?.presenter?.view?.showError(message: error.localizedDescription)
             }
