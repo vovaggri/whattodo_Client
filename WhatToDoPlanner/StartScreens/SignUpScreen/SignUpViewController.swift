@@ -124,9 +124,9 @@ final class SignUpViewController: UIViewController {
         }
 
         // Enable secure text entry for password field
-        if placeholder == "Password" {
-            textField.isSecureTextEntry = true
-        }
+//        if placeholder == "Password" {
+//            textField.isSecureTextEntry = true
+//        }
 
         NSLayoutConstraint.activate([
             textField.centerXAnchor.constraint(equalTo: view.centerXAnchor), // Center horizontally

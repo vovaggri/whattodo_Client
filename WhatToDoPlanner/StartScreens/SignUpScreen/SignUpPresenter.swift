@@ -21,6 +21,7 @@ final class SignUpPresenter: SignUpPresenterProtocol {
     }
     
     func signUpSuccess() {
+        print("Succes")
         router?.navigateToNextScreen()
     }
 }
