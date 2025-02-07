@@ -20,8 +20,7 @@ final class SignUpPresenter: SignUpPresenterProtocol {
     }
     
     private func navigateToNextScreen() {
-        let nextVC = UIViewController() // Replace with actual screen
-        nextVC.view.backgroundColor = .white
+        let confirmVC = ConfirmModuleAssembly.assembly()
         
         // Ensure the viewController has a navigationController
         guard let navigationController = view?.navigationController else {
@@ -29,11 +28,6 @@ final class SignUpPresenter: SignUpPresenterProtocol {
             return
         }
         
-        // Proceed with navigation
-        navigationController.pushViewController(nextVC, animated: true)
-
-        // Create and push the SignUp view controller
-        let signUpVC = SignUpModuleBuilder.build()
-        navigationController.pushViewController(signUpVC, animated: true)
+        navigationController.pushViewController(confirmVC, animated: true)
     }
 }
