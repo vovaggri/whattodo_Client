@@ -1,27 +1,39 @@
+import UIKit
+
 protocol SignUpPresenterProtocol: AnyObject {
-    var view: SignUpViewProtocol? { get set }
-    func didTapSignUp(firstName: String?, lastName: String?, email: String?, password: String?)
+    func showError(message: String)
     func signUpSuccess()
 }
 
 final class SignUpPresenter: SignUpPresenterProtocol {
-    weak var view: SignUpViewProtocol?
-    var interactor: SignUpInteractorProtocol?
-    var router: SignUpRouterProtocol?
-
-    func didTapSignUp(firstName: String?, lastName: String?, email: String?, password: String?) {
-        guard let firstName = firstName, !firstName.isEmpty,
-              let lastName = lastName, !lastName.isEmpty,
-              let email = email, !email.isEmpty,
-              let password = password, !password.isEmpty else {
-            view?.showError(message: "All fields are required.")
-            return
-        }
-        interactor?.validateAndSignUp(firstName: firstName, lastName: lastName, email: email, password: password)
+    weak var view: SignUpViewController?
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        view?.present(alert, animated: true)
     }
     
     func signUpSuccess() {
         print("Succes")
-        router?.navigateToNextScreen()
+        navigateToNextScreen()
+    }
+    
+    private func navigateToNextScreen() {
+        let nextVC = UIViewController() // Replace with actual screen
+        nextVC.view.backgroundColor = .white
+        
+        // Ensure the viewController has a navigationController
+        guard let navigationController = view?.navigationController else {
+            print("Error: navigationController is nil. Ensure the viewController is embedded in a UINavigationController.")
+            return
+        }
+        
+        // Proceed with navigation
+        navigationController.pushViewController(nextVC, animated: true)
+
+        // Create and push the SignUp view controller
+        let signUpVC = SignUpModuleBuilder.build()
+        navigationController.pushViewController(signUpVC, animated: true)
     }
 }

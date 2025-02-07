@@ -8,13 +8,13 @@
 import Foundation
 
 protocol SignUpServiceProtocol {
-    func signUp(firstName: String, lastName:String, email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func signUp(user: SignUpModels.User, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 final class SignUpService: SignUpServiceProtocol {
     private let baseURL = "http://localhost:8000"
     
-    func signUp(firstName: String, lastName: String, email: String, password: String, completion: @escaping (Result<Void, any Error>) -> Void) {
+    func signUp(user: SignUpModels.User, completion: @escaping (Result<Void, any Error>) -> Void) {
         print("SignUp was called")
         guard let url = URL(string: "\(baseURL)/auth/sign-up") else {
             completion(.failure(NSError(domain: "SignUpError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -27,10 +27,10 @@ final class SignUpService: SignUpServiceProtocol {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let body: [String: Any] = [
-            "first_name": firstName,
-            "second_name": lastName,
-            "email": email,
-            "password": password
+            "first_name": user.firstName,
+            "second_name": user.lastName,
+            "email": user.email,
+            "password": user.password
         ]
         
         do {

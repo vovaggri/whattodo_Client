@@ -13,14 +13,10 @@ final class SignUpModuleBuilder {
         let view = SignUpViewController()
         let presenter = SignUpPresenter()
         let signUpService = SignUpService()
-        let interactor = SignUpInteractor(signUpService: signUpService)
-        let router = SignUpRouter()
+        let interactor = SignUpInteractor(signUpService: signUpService, presenter: presenter)
 
-        view.presenter = presenter
+        view.interactor = interactor
         presenter.view = view
-        presenter.interactor = interactor
-        presenter.router = router
-        router.viewController = view
 
         return view
     }

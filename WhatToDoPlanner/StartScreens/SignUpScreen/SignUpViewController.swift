@@ -30,7 +30,7 @@ final class SignUpViewController: UIViewController {
     }
 
     // MARK: - Variables
-    var presenter: SignUpPresenterProtocol?
+    var interactor: SignUpInteractorProtocol?
 
     private let titleLabel: UILabel = UILabel()
     private let firstNameTextField: UITextField = UITextField()
@@ -161,7 +161,7 @@ final class SignUpViewController: UIViewController {
     }
 
     @objc private func didTapSignUpButton() {
-        presenter?.didTapSignUp(
+        interactor?.didTapSignUp(
             firstName: firstNameTextField.text,
             lastName: lastNameTextField.text,
             email: emailTextField.text,
