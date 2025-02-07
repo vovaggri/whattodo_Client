@@ -1,9 +1,5 @@
 import UIKit
 
-protocol SignUpViewProtocol: AnyObject {
-    func showError(message: String)
-}
-
 final class SignUpViewController: UIViewController {
     // MARK: - Constants
     enum Constants {
@@ -30,7 +26,7 @@ final class SignUpViewController: UIViewController {
     }
 
     // MARK: - Variables
-    var presenter: SignUpPresenterProtocol?
+    var interactor: SignUpInteractorProtocol?
 
     private let titleLabel: UILabel = UILabel()
     private let firstNameTextField: UITextField = UITextField()
@@ -161,7 +157,7 @@ final class SignUpViewController: UIViewController {
     }
 
     @objc private func didTapSignUpButton() {
-        presenter?.didTapSignUp(
+        interactor?.didTapSignUp(
             firstName: firstNameTextField.text,
             lastName: lastNameTextField.text,
             email: emailTextField.text,
@@ -171,14 +167,5 @@ final class SignUpViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
-    }
-}
-
-// MARK: - SignUpViewProtocol
-extension SignUpViewController: SignUpViewProtocol {
-    func showError(message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
     }
 }
