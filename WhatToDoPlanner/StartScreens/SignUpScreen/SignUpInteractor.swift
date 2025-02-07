@@ -22,7 +22,7 @@ final class SignUpInteractor: SignUpInteractorProtocol {
             presenter?.showError(message: "All fields are required.")
             return
         }
-        var user: SignUpModels.User = SignUpModels.User(firstName: firstName, lastName: lastName, email: email, password: password)
+        let user: SignUpModels.User = SignUpModels.User(firstName: firstName, lastName: lastName, email: email, password: password)
         validateAndSignUp(user: user)
     }
 
