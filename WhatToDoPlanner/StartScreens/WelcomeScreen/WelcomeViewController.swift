@@ -274,7 +274,7 @@ final class WelcomeViewController: UIViewController  {
     }
     
     @objc private func loginButtonPressed() {
-        interactor?.handleLoginButtonTapped(email: emailTextField.text, password: passwordTextField.text)
+        interactor?.handleLoginButtonTapped(emailText: emailTextField.text, passwordText: passwordTextField.text)
     }
 }
 
