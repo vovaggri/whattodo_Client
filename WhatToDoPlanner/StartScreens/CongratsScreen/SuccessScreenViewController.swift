@@ -27,7 +27,8 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
     private let continueButton: UIButton = {
         let button = UIButton()
         button.setTitle("Tap to continue", for: .normal)
-        button.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.3)
+        button.backgroundColor = UIColor(hex: "#94CA85")?.withAlphaComponent(0.35) ?? UIColor.green.withAlphaComponent(0.35)
+
         button.setTitleColor(.darkGray, for: .normal)
         button.titleLabel?.font = UIFont(name: Constants.fontName, size: 20)
         button.layer.cornerRadius = 14

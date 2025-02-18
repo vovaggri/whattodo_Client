@@ -31,23 +31,24 @@ final class WelcomeViewController: UIViewController  {
         static let signUoButtonText: String = "Sign Up"
         
         // Text fields
-        static let fieldRaduis: CGFloat = 4
+        static let fieldRaduis: CGFloat = 14
         static let borderFieldWidth: CGFloat = 1
-        static let heightField: Double = 50
+        static let heightField: Double = 61
         static let paddingViewWidth: CGFloat = 10
         static let padding: CGFloat = 49
-        static let textFieldHeight: CGFloat = 42
+        static let textFieldHeight: CGFloat = 62
         
         static let fontTextFieldsLabelSize: CGFloat = 15
-        static let fontTextFieldsSize: CGFloat = 19
+        static let fontTextFieldsSize: CGFloat = 14
+        static let textFieldCornerRadius: CGFloat = 14
         
         static let emailLabelText: String = "Email adress"
         static let emailPlaceholder: String = "Email adress"
         static let emailLabelLeft: Double = 49
-        static let emailTextFieldTop: Double = 80
+        static let emailTextFieldTop: Double = 180
         
         static let passwordLabelText: String = "Password"
-        static let passwordPlaceholder: String = "Enter your password"
+        static let passwordPlaceholder: String = "Password"
         static let passwordLabelLeft: Double = 49
         static let passwordTextFieldTop: Double = 20
         
@@ -88,6 +89,8 @@ final class WelcomeViewController: UIViewController  {
         configureForgetPasswordButton()
         configureSignUpButton()
         configureLoginButton()
+        configureDescriptionLabel()
+
     }
     
      
@@ -130,42 +133,145 @@ final class WelcomeViewController: UIViewController  {
         thirdLabel.pinLeft(to: view, Constants.labelLeft)
         thirdLabel.pinTop(to: secondLabel, Constants.thirdLabelTop)
     }
-    
+    private let descriptionLabel: UILabel = UILabel()
+
+    private func configureDescriptionLabel() {
+        view.addSubview(descriptionLabel)
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        descriptionLabel.font = UIFont(name: Constants.fontName, size: 16)
+        descriptionLabel.textColor = UIColor(hex: "000000", alpha: 0.39)
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.text = Constants.descriptionText
+        
+        descriptionLabel.pinTop(to: thirdLabel.bottomAnchor, 117)
+//        descriptionLabel.pinLeft(to: view, 40)
+//        descriptionLabel.pinRight(to: view, 40)
+        descriptionLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.62).isActive = true
+        descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        
+        
+    }
+
+    private let emailHighlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.clear // We'll use a shape layer for the exact design
+        view.layer.masksToBounds = true
+        view.alpha = 0 // Initially hidden
+        return view
+    }()
+
+
     private func configureEmailTextField() {
-//        view.addSubview(emailLabel)
         view.addSubview(emailTextField)
-        
-//        emailLabel.translatesAutoresizingMaskIntoConstraints = false
+        emailTextField.addSubview(emailHighlightView)
+
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
-        
-//        emailLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsLabelSize)
-//        emailLabel.textColor = UIColor(hex: "000000", alpha: 0.4)
-//        
-//        emailLabel.text = Constants.emailLabelText
-//        
-//        emailLabel.pinLeft(to: view, Constants.emailLabelLeft)
-//        emailLabel.pinTop(to: thirdLabel.bottomAnchor, Constants.emailLabelTop)
-        
+        emailHighlightView.translatesAutoresizingMaskIntoConstraints = false
+
+        // Configure emailTextField properties
         emailTextField.autocapitalizationType = .none
         emailTextField.placeholder = Constants.emailPlaceholder
         emailTextField.layer.borderWidth = Constants.borderFieldWidth
-        emailTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.35)?.cgColor
-        emailTextField.layer.cornerRadius = Constants.fieldRaduis
-        emailTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
-        emailTextField.textColor = UIColor(hex: "000000", alpha: 0.6)
-        
-        // Добавляем отступ через пустое представление
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth, height: emailTextField.frame.height))
-        emailTextField.leftView = paddingView
-        
+        emailTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.15)?.cgColor
+        emailTextField.layer.cornerRadius = 14
+        //emailTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
+        emailTextField.textColor = UIColor(hex: "000000", alpha: 0.3)
+        emailTextField.leftViewMode = .always
+
         emailTextField.setHeight(Constants.textFieldHeight)
-        
         emailTextField.pinLeft(to: view, Constants.padding)
         emailTextField.pinRight(to: view, Constants.padding)
         emailTextField.pinTop(to: thirdLabel.bottomAnchor, Constants.emailTextFieldTop)
-        
-        emailTextField.leftViewMode = .always
+
+        NSLayoutConstraint.activate([
+            emailHighlightView.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor),
+            emailHighlightView.topAnchor.constraint(equalTo: emailTextField.topAnchor),
+            emailHighlightView.bottomAnchor.constraint(equalTo: emailTextField.bottomAnchor),
+            emailHighlightView.widthAnchor.constraint(equalTo: emailTextField.widthAnchor, multiplier: 0.15) // Adjust as needed
+        ])
+
+
+
+
+        // Add event listeners
+        emailTextField.addTarget(self, action: #selector(emailFieldDidBeginEditing), for: .editingDidBegin)
+        emailTextField.addTarget(self, action: #selector(emailFieldDidEndEditing), for: .editingDidEnd)
     }
+
+    private func updateHighlightShape() {
+        let height = emailHighlightView.bounds.height
+        let width = emailHighlightView.bounds.width
+        let cornerRadius = emailTextField.layer.cornerRadius
+
+        let path = UIBezierPath()
+
+        // Start at the bottom-left corner
+        path.move(to: CGPoint(x: 0, y: height - cornerRadius))
+        
+        // Bottom-left semicircle curve
+        path.addArc(
+            withCenter: CGPoint(x: cornerRadius, y: height - cornerRadius),
+            radius: cornerRadius,
+            startAngle: .pi,
+            endAngle: .pi / 2,
+            clockwise: false
+        )
+
+        // Move up to the top-left semicircle curve
+        path.addLine(to: CGPoint(x: cornerRadius, y: cornerRadius))
+
+        // Top-left semicircle curve
+        path.addArc(
+            withCenter: CGPoint(x: cornerRadius, y: cornerRadius),
+            radius: cornerRadius,
+            startAngle: .pi / 2,
+            endAngle: 0,
+            clockwise: false
+        )
+
+        // Draw a straight vertical line on the right (ensuring full fill-in)
+        path.addLine(to: CGPoint(x: width, y: 0))
+        path.addLine(to: CGPoint(x: width, y: height))
+
+        // Close the path
+        path.addLine(to: CGPoint(x: 0, y: height))
+        path.close()
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = path.cgPath
+        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.45)?.cgColor
+
+        emailHighlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        emailHighlightView.layer.addSublayer(shapeLayer)
+    }
+
+
+    @objc private func emailFieldDidBeginEditing() {
+        UIView.animate(withDuration: 0.2) {
+            self.emailHighlightView.alpha = 1
+            self.updateHighlightShape()
+        }
+    }
+
+    @objc private func emailFieldDidEndEditing() {
+        UIView.animate(withDuration: 0.2) {
+            self.emailHighlightView.alpha = 0
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
     
     private func configurePasswordTextField() {
 //        view.addSubview(passwordLabel)
@@ -186,10 +292,12 @@ final class WelcomeViewController: UIViewController  {
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = Constants.passwordPlaceholder
         passwordTextField.layer.borderWidth = Constants.borderFieldWidth
-        passwordTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.35)?.cgColor
+        passwordTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.4)?.cgColor
         passwordTextField.layer.cornerRadius = Constants.fieldRaduis
         passwordTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
-        passwordTextField.textColor = UIColor(hex: "000000", alpha: 0.6)
+        passwordTextField.textColor = UIColor(hex: "000000", alpha: 0.3)
+       // passwordTextField.layer.cornerRadius = Constants.textFieldCornerRadius
+        
         
         // Добавляем отступ через пустое представление
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth, height: emailTextField.frame.height))
@@ -221,7 +329,8 @@ final class WelcomeViewController: UIViewController  {
     private func configureSignUpButton() {
         view.addSubview(signUpButton)
         
-        signUpButton.backgroundColor = UIColor(hex: "#94CA85", alpha: 0.4)
+        let signUpColor = UIColor(hex: "#94CA85", alpha: 0.4)
+        signUpButton.backgroundColor = signUpColor
         signUpButton.tintColor = .black
         
         if let titleColor = UIColor(hex: "000000", alpha: 0.6) {
@@ -238,13 +347,24 @@ final class WelcomeViewController: UIViewController  {
         signUpButton.setWidth(124)
         signUpButton.layer.cornerRadius = 14
         
+        // Add border
+        signUpButton.layer.borderWidth = 1
+        signUpButton.layer.borderColor = signUpColor?.withAlphaComponent(0.1).cgColor
+        
+        // Add shadow
+        signUpButton.layer.shadowColor = signUpColor?.cgColor
+        signUpButton.layer.shadowOpacity = 0.8
+        signUpButton.layer.shadowOffset = CGSize(width: 0, height: 4)
+        signUpButton.layer.shadowRadius = 5
+        
         signUpButton.addTarget(self, action: #selector(signUpButtonPressed), for: .touchUpInside)
     }
-    
+
     private func configureLoginButton() {
         view.addSubview(loginButton)
         
-        loginButton.backgroundColor = UIColor(hex: "D6C69E", alpha: 0.35)
+        let loginColor = UIColor(hex: "D6C69E", alpha: 0.35)
+        loginButton.backgroundColor = loginColor
         loginButton.tintColor = .black
         
         if let titleColor = UIColor(hex: "000000", alpha: 0.6) {
@@ -261,8 +381,19 @@ final class WelcomeViewController: UIViewController  {
         loginButton.setWidth(124)
         loginButton.layer.cornerRadius = 14
         
+        // Add border
+        loginButton.layer.borderWidth = 1
+        loginButton.layer.borderColor = loginColor?.withAlphaComponent(0.1).cgColor
+        
+        // Add shadow
+        loginButton.layer.shadowColor = loginColor?.cgColor
+        loginButton.layer.shadowOpacity = 0.8
+        loginButton.layer.shadowOffset = CGSize(width: 0, height: 4)
+        loginButton.layer.shadowRadius = 5
+        
         loginButton.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
     }
+
     
     // MARK: - Objc private methods
     @objc private func dismissKeyboard() {

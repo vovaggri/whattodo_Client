@@ -14,7 +14,7 @@ final class SignUpViewController: UIViewController {
         static let fieldPlaceholderFontSize: CGFloat = 17
         
         // TextField and Button Dimensions
-        static let textFieldHeight: CGFloat = 50
+        static let textFieldHeight: CGFloat = 62
         static let textFieldCornerRadius: CGFloat = 14
         static let buttonHeight: CGFloat = 42
         static let buttonWidth: CGFloat = 50
@@ -68,12 +68,12 @@ final class SignUpViewController: UIViewController {
 
         for (index, textField) in textFields.enumerated() {
             configureTextField(textField, placeholder: ["First Name", "Last Name", "Email address", "Password"][index])
-            textField.font = UIFont(name: Constants.fontName, size: 15)
+            textField.font = UIFont(name: Constants.fontName, size: 12.5)
             textField.tintColor = UIColor(hex: "000000", alpha: 0.2)
             
             if index == 0 {
                 NSLayoutConstraint.activate([
-                    textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20)
+                    textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 120)
                 ])
                 
             } else {
@@ -152,7 +152,7 @@ final class SignUpViewController: UIViewController {
             signUpButton.centerXAnchor.constraint(equalTo: view.centerXAnchor), // Center horizontally
             signUpButton.widthAnchor.constraint(equalToConstant: adjustedWidth), // Set the button's width
             signUpButton.heightAnchor.constraint(equalToConstant: adjustedHeight), // Set the button's height
-            signUpButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20) // Keep the button at the bottom
+            signUpButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100) // Keep the button at the bottom
         ])
     }
 
