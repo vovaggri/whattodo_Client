@@ -9,7 +9,7 @@ import Foundation
 
 protocol WelcomeBusinessLogic {
     func handleSignUpButtonTapped()
-    func handleLoginButtonTapped(email emailText: String?, password passwordText: String?)
+    func handleLoginButtonTapped(emailText: String?, passwordText: String?)
 }
 
 protocol WelcomeInteractorOutput: AnyObject {
@@ -19,24 +19,54 @@ protocol WelcomeInteractorOutput: AnyObject {
 
 final class WelcomeInteractor: WelcomeBusinessLogic {
     var presenter: WelcomeInteractorOutput?
+    private let welcomeWorker: WelcomeWorkerProtocol
+    
+    init(presenter: WelcomeInteractorOutput? = WelcomePresenter(), welcomeWorker: WelcomeWorkerProtocol = WelcomeWorker()) {
+        self.presenter = presenter
+        self.welcomeWorker = welcomeWorker
+    }
     
     func handleSignUpButtonTapped() {
         print("Interactor Sign up button works")
         presenter?.navigateToSignUpScreen()
     }
     
-    func handleLoginButtonTapped(email emailText: String?, password passwordText: String?) {
-        if (emailText == "" || passwordText == "") {
-            presenter?.showErrorAlert("There's empty necessary fields! Please, try again.")
-        } else if (!isEmailCorrect(emailText)) {
-            presenter?.showErrorAlert("Email is incorrect! Please, try again.")
+    func handleLoginButtonTapped(emailText: String?, passwordText: String?) {
+        guard let email = emailText, !email.isEmpty,
+              let password = passwordText, !password.isEmpty else {
+            presenter?.showErrorAlert("All fields are required.")
+            return
         }
+        
+        let user: WelcomeModels.User = WelcomeModels.User(email: email, password: password)
+        validateAndSignIn(user: user)
     }
     
     private func isEmailCorrect(_ email: String?) -> Bool {
         let emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}$"
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         return emailPredicate.evaluate(with: email)
+    }
+    
+    private func validateAndSignIn(user: WelcomeModels.User) {
+        let emailRegex = #"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"#
+        let isEmailValid = NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: user.email)
+        
+        guard isEmailValid else {
+            presenter?.showErrorAlert("Invalid email or password.")
+            return
+        }
+        
+        welcomeWorker.signIn(user: user) { [weak self] result in
+            switch result {
+            case.success:
+                print("Self in closure: \(String(describing: self))")
+                print("Done")
+            case.failure(let error):
+                self?.presenter?.showErrorAlert(error.localizedDescription)
+            }
+            
+        }
     }
 }
  

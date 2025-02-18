@@ -15,7 +15,6 @@ final class WelcomePresenter: WelcomeInteractorOutput {
     }
     
     func showErrorAlert(_ message: String?) {
-        print("Presenter login button works")
         welcomeVC?.showError(message: message ?? "Error")
     }
 }
