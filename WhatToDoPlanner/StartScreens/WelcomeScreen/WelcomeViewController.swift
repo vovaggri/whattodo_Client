@@ -39,7 +39,7 @@ final class WelcomeViewController: UIViewController  {
         static let textFieldHeight: CGFloat = 62
         
         static let fontTextFieldsLabelSize: CGFloat = 15
-        static let fontTextFieldsSize: CGFloat = 14
+        static let fontTextFieldsSize: CGFloat = 13
         static let textFieldCornerRadius: CGFloat = 14
         
         static let emailLabelText: String = "Email adress"
@@ -157,12 +157,11 @@ final class WelcomeViewController: UIViewController  {
 
     private let emailHighlightView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.clear // We'll use a shape layer for the exact design
+        view.backgroundColor = UIColor.clear
         view.layer.masksToBounds = true
         view.alpha = 0 // Initially hidden
         return view
     }()
-
 
     private func configureEmailTextField() {
         view.addSubview(emailTextField)
@@ -171,88 +170,63 @@ final class WelcomeViewController: UIViewController  {
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
         emailHighlightView.translatesAutoresizingMaskIntoConstraints = false
 
-        // Configure emailTextField properties
         emailTextField.autocapitalizationType = .none
         emailTextField.placeholder = Constants.emailPlaceholder
         emailTextField.layer.borderWidth = Constants.borderFieldWidth
-        emailTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.15)?.cgColor
-        emailTextField.layer.cornerRadius = 14
-        //emailTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
+        emailTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.4)?.cgColor
+        emailTextField.layer.cornerRadius = Constants.textFieldCornerRadius
         emailTextField.textColor = UIColor(hex: "000000", alpha: 0.3)
-        emailTextField.leftViewMode = .always
+        emailTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
 
         emailTextField.setHeight(Constants.textFieldHeight)
         emailTextField.pinLeft(to: view, Constants.padding)
         emailTextField.pinRight(to: view, Constants.padding)
         emailTextField.pinTop(to: thirdLabel.bottomAnchor, Constants.emailTextFieldTop)
 
+        // 🔹 Fix: Adjust left padding to match password text field
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth + 20, height: emailTextField.frame.height))
+        emailTextField.leftView = leftPaddingView
+        emailTextField.leftViewMode = .always
+
         NSLayoutConstraint.activate([
             emailHighlightView.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor),
             emailHighlightView.topAnchor.constraint(equalTo: emailTextField.topAnchor),
             emailHighlightView.bottomAnchor.constraint(equalTo: emailTextField.bottomAnchor),
-            emailHighlightView.widthAnchor.constraint(equalTo: emailTextField.widthAnchor, multiplier: 0.15) // Adjust as needed
+            emailHighlightView.widthAnchor.constraint(equalTo: emailTextField.widthAnchor, multiplier: 0.065) // Adjust width if needed
         ])
 
-
-
-
-        // Add event listeners
         emailTextField.addTarget(self, action: #selector(emailFieldDidBeginEditing), for: .editingDidBegin)
         emailTextField.addTarget(self, action: #selector(emailFieldDidEndEditing), for: .editingDidEnd)
     }
 
+
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        emailHighlightView.frame = emailTextField.bounds // Ensure it's inside bounds
+        updateHighlightShape()
+    }
+
     private func updateHighlightShape() {
-        let height = emailHighlightView.bounds.height
-        let width = emailHighlightView.bounds.width
-        let cornerRadius = emailTextField.layer.cornerRadius
+        emailHighlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
 
-        let path = UIBezierPath()
-
-        // Start at the bottom-left corner
-        path.move(to: CGPoint(x: 0, y: height - cornerRadius))
-        
-        // Bottom-left semicircle curve
-        path.addArc(
-            withCenter: CGPoint(x: cornerRadius, y: height - cornerRadius),
-            radius: cornerRadius,
-            startAngle: .pi,
-            endAngle: .pi / 2,
-            clockwise: false
+        let path = UIBezierPath(
+            roundedRect: emailHighlightView.bounds,
+            byRoundingCorners: [.topLeft, .bottomLeft],
+            cornerRadii: CGSize(width: emailTextField.layer.cornerRadius, height: emailTextField.layer.cornerRadius)
         )
-
-        // Move up to the top-left semicircle curve
-        path.addLine(to: CGPoint(x: cornerRadius, y: cornerRadius))
-
-        // Top-left semicircle curve
-        path.addArc(
-            withCenter: CGPoint(x: cornerRadius, y: cornerRadius),
-            radius: cornerRadius,
-            startAngle: .pi / 2,
-            endAngle: 0,
-            clockwise: false
-        )
-
-        // Draw a straight vertical line on the right (ensuring full fill-in)
-        path.addLine(to: CGPoint(x: width, y: 0))
-        path.addLine(to: CGPoint(x: width, y: height))
-
-        // Close the path
-        path.addLine(to: CGPoint(x: 0, y: height))
-        path.close()
 
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = path.cgPath
         shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.45)?.cgColor
 
-        emailHighlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         emailHighlightView.layer.addSublayer(shapeLayer)
     }
 
-
     @objc private func emailFieldDidBeginEditing() {
+        updateHighlightShape() // Ensure shape is correct before animating
         UIView.animate(withDuration: 0.2) {
             self.emailHighlightView.alpha = 1
-            self.updateHighlightShape()
         }
     }
 
@@ -272,22 +246,24 @@ final class WelcomeViewController: UIViewController  {
 
 
 
+
     
+    // Blue highlight for password text field
+    private let passwordHighlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.clear
+        view.layer.masksToBounds = true
+        view.alpha = 0 // Initially hidden
+        return view
+    }()
+
     private func configurePasswordTextField() {
-//        view.addSubview(passwordLabel)
         view.addSubview(passwordTextField)
-        
-//        passwordLabel.translatesAutoresizingMaskIntoConstraints = false
+        passwordTextField.addSubview(passwordHighlightView) // Add highlight view
+
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-        
-//        passwordLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsLabelSize)
-//        passwordLabel.textColor = UIColor(hex: "000000", alpha: 0.4)
-//        
-//        passwordLabel.text = Constants.passwordLabelText
-//        
-//        passwordLabel.pinLeft(to: view, Constants.passwordLabelLeft)
-//        passwordLabel.pinTop(to: emailTextField.bottomAnchor, Constants.passwordLabelTop)
-        
+        passwordHighlightView.translatesAutoresizingMaskIntoConstraints = false
+
         passwordTextField.autocapitalizationType = .none
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = Constants.passwordPlaceholder
@@ -296,21 +272,61 @@ final class WelcomeViewController: UIViewController  {
         passwordTextField.layer.cornerRadius = Constants.fieldRaduis
         passwordTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
         passwordTextField.textColor = UIColor(hex: "000000", alpha: 0.3)
-       // passwordTextField.layer.cornerRadius = Constants.textFieldCornerRadius
-        
-        
-        // Добавляем отступ через пустое представление
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth, height: emailTextField.frame.height))
-        passwordTextField.leftView = paddingView
-        
+
+        // Add left padding (same logic as email field)
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: Constants.paddingViewWidth + 20, height: passwordTextField.frame.height))
+        passwordTextField.leftView = leftPaddingView
+        passwordTextField.leftViewMode = .always
+
         passwordTextField.setHeight(Constants.textFieldHeight)
-        
         passwordTextField.pinLeft(to: view, Constants.padding)
         passwordTextField.pinRight(to: view, Constants.padding)
         passwordTextField.pinTop(to: emailTextField.bottomAnchor, Constants.passwordTextFieldTop)
-        
-        passwordTextField.leftViewMode = .always
+
+        // 🔹 Constraints for blue highlight
+        NSLayoutConstraint.activate([
+            passwordHighlightView.leadingAnchor.constraint(equalTo: passwordTextField.leadingAnchor),
+            passwordHighlightView.topAnchor.constraint(equalTo: passwordTextField.topAnchor),
+            passwordHighlightView.bottomAnchor.constraint(equalTo: passwordTextField.bottomAnchor),
+            passwordHighlightView.widthAnchor.constraint(equalTo: passwordTextField.widthAnchor, multiplier: 0.065) // Adjust width if needed
+        ])
+
+        passwordTextField.addTarget(self, action: #selector(passwordFieldDidBeginEditing), for: .editingDidBegin)
+        passwordTextField.addTarget(self, action: #selector(passwordFieldDidEndEditing), for: .editingDidEnd)
     }
+
+    // Update the shape of the password highlight
+    private func updatePasswordHighlightShape() {
+        passwordHighlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+
+        let path = UIBezierPath(
+            roundedRect: passwordHighlightView.bounds,
+            byRoundingCorners: [.topLeft, .bottomLeft],
+            cornerRadii: CGSize(width: passwordTextField.layer.cornerRadius, height: passwordTextField.layer.cornerRadius)
+        )
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = path.cgPath
+        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.45)?.cgColor
+
+        passwordHighlightView.layer.addSublayer(shapeLayer)
+    }
+
+    // Show the blue highlight when password field is focused
+    @objc private func passwordFieldDidBeginEditing() {
+        updatePasswordHighlightShape() // Ensure shape is correct before animating
+        UIView.animate(withDuration: 0.2) {
+            self.passwordHighlightView.alpha = 1
+        }
+    }
+
+    // Hide the blue highlight when password field loses focus
+    @objc private func passwordFieldDidEndEditing() {
+        UIView.animate(withDuration: 0.2) {
+            self.passwordHighlightView.alpha = 0
+        }
+    }
+
     
     private func configureForgetPasswordButton() {
         view.addSubview(forgetPasswordButton)
@@ -338,13 +354,13 @@ final class WelcomeViewController: UIViewController  {
         }
         
         signUpButton.setTitle("Sign Up", for: .normal)
-        signUpButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
+        signUpButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 16.6)
         
         signUpButton.pinTop(to: forgetPasswordButton.bottomAnchor, 41)
         signUpButton.pinRight(to: forgetPasswordButton.trailingAnchor)
         
-        signUpButton.setHeight(38)
-        signUpButton.setWidth(124)
+        signUpButton.setHeight(42)
+        signUpButton.setWidth(139)
         signUpButton.layer.cornerRadius = 14
         
         // Add border
@@ -372,13 +388,13 @@ final class WelcomeViewController: UIViewController  {
         }
         
         loginButton.setTitle("Login", for: .normal)
-        loginButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
+        loginButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 16.6)
         
         loginButton.pinLeft(to: passwordTextField.leadingAnchor)
         loginButton.pinTop(to: signUpButton.topAnchor)
         
-        loginButton.setHeight(38)
-        loginButton.setWidth(124)
+        loginButton.setHeight(42)
+        loginButton.setWidth(139)
         loginButton.layer.cornerRadius = 14
         
         // Add border
