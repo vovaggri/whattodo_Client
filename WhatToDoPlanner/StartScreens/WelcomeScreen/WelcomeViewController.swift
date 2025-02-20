@@ -192,7 +192,7 @@ final class WelcomeViewController: UIViewController  {
             emailHighlightView.leadingAnchor.constraint(equalTo: emailTextField.leadingAnchor),
             emailHighlightView.topAnchor.constraint(equalTo: emailTextField.topAnchor),
             emailHighlightView.bottomAnchor.constraint(equalTo: emailTextField.bottomAnchor),
-            emailHighlightView.widthAnchor.constraint(equalTo: emailTextField.widthAnchor, multiplier: 0.065) // Adjust width if needed
+            emailHighlightView.widthAnchor.constraint(equalTo: emailTextField.widthAnchor, multiplier: 0.070) // Adjust width if needed
         ])
 
         emailTextField.addTarget(self, action: #selector(emailFieldDidBeginEditing), for: .editingDidBegin)
@@ -209,11 +209,17 @@ final class WelcomeViewController: UIViewController  {
 
     private func updateHighlightShape() {
         emailHighlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        let shapeBounds = CGRect(
+            x: emailHighlightView.bounds.origin.x,
+            y: emailHighlightView.bounds.origin.y,
+            width: emailHighlightView.bounds.width,
+            height: emailHighlightView.bounds.height
+        )
 
         let path = UIBezierPath(
-            roundedRect: emailHighlightView.bounds,
+            roundedRect: shapeBounds,
             byRoundingCorners: [.topLeft, .bottomLeft],
-            cornerRadii: CGSize(width: emailTextField.layer.cornerRadius, height: emailTextField.layer.cornerRadius)
+            cornerRadii: CGSize(width: 100, height: 100)
         )
 
         let shapeLayer = CAShapeLayer()
@@ -288,7 +294,7 @@ final class WelcomeViewController: UIViewController  {
             passwordHighlightView.leadingAnchor.constraint(equalTo: passwordTextField.leadingAnchor),
             passwordHighlightView.topAnchor.constraint(equalTo: passwordTextField.topAnchor),
             passwordHighlightView.bottomAnchor.constraint(equalTo: passwordTextField.bottomAnchor),
-            passwordHighlightView.widthAnchor.constraint(equalTo: passwordTextField.widthAnchor, multiplier: 0.065) // Adjust width if needed
+            passwordHighlightView.widthAnchor.constraint(equalTo: passwordTextField.widthAnchor, multiplier: 0.075) // Adjust width if needed
         ])
 
         passwordTextField.addTarget(self, action: #selector(passwordFieldDidBeginEditing), for: .editingDidBegin)
@@ -425,3 +431,10 @@ final class WelcomeViewController: UIViewController  {
     }
 }
 
+
+
+#Preview {
+    return UINavigationController(
+        rootViewController: WelcomeViewController()
+    )
+}
