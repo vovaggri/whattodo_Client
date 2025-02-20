@@ -10,8 +10,9 @@ import UIKit
 final class WelcomeModuleAssembly {
     static func assembly() -> UIViewController {
         let viewController = WelcomeViewController()
-        let interactor = WelcomeInteractor()
         let presenter = WelcomePresenter()
+        let worker = WelcomeWorker()
+        let interactor = WelcomeInteractor(presenter: presenter, worker: worker)
         
         viewController.interactor = interactor
         

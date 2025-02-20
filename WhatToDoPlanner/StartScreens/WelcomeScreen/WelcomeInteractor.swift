@@ -19,11 +19,11 @@ protocol WelcomeInteractorOutput: AnyObject {
 
 final class WelcomeInteractor: WelcomeBusinessLogic {
     var presenter: WelcomeInteractorOutput?
-    private let welcomeWorker: WelcomeWorkerProtocol
+    private let worker: WelcomeWorkerProtocol
     
-    init(presenter: WelcomeInteractorOutput? = WelcomePresenter(), welcomeWorker: WelcomeWorkerProtocol = WelcomeWorker()) {
+    init(presenter: WelcomeInteractorOutput?, worker: WelcomeWorkerProtocol) {
         self.presenter = presenter
-        self.welcomeWorker = welcomeWorker
+        self.worker = worker
     }
     
     func handleSignUpButtonTapped() {
@@ -57,7 +57,7 @@ final class WelcomeInteractor: WelcomeBusinessLogic {
             return
         }
         
-        welcomeWorker.signIn(user: user) { [weak self] result in
+        worker.signIn(user: user) { [weak self] result in
             switch result {
             case.success:
                 print("Self in closure: \(String(describing: self))")
