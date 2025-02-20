@@ -60,11 +60,12 @@ final class WelcomeViewController: UIViewController  {
     
     // MARK: - Variables
     var interactor: WelcomeBusinessLogic?
-    var router: WelcomeRouterProtocol?
     
     private let firstLabel: UILabel = UILabel()
     private let secondLabel: UILabel = UILabel()
     private let thirdLabel: UILabel = UILabel()
+    
+    private let descriptionLabel: UILabel = UILabel()
     
     private let emailLabel: UILabel = UILabel()
     private let passwordLabel: UILabel = UILabel()
@@ -93,7 +94,13 @@ final class WelcomeViewController: UIViewController  {
 
     }
     
-     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        emailHighlightView.frame = emailTextField.bounds // Ensure it's inside bounds
+        updateHighlightShape()
+    }
+    
+    // MARK: - Functions
     func showError(message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -133,7 +140,6 @@ final class WelcomeViewController: UIViewController  {
         thirdLabel.pinLeft(to: view, Constants.labelLeft)
         thirdLabel.pinTop(to: secondLabel, Constants.thirdLabelTop)
     }
-    private let descriptionLabel: UILabel = UILabel()
 
     private func configureDescriptionLabel() {
         view.addSubview(descriptionLabel)
@@ -199,14 +205,6 @@ final class WelcomeViewController: UIViewController  {
         emailTextField.addTarget(self, action: #selector(emailFieldDidEndEditing), for: .editingDidEnd)
     }
 
-
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        emailHighlightView.frame = emailTextField.bounds // Ensure it's inside bounds
-        updateHighlightShape()
-    }
-
     private func updateHighlightShape() {
         emailHighlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         let shapeBounds = CGRect(
@@ -228,31 +226,6 @@ final class WelcomeViewController: UIViewController  {
 
         emailHighlightView.layer.addSublayer(shapeLayer)
     }
-
-    @objc private func emailFieldDidBeginEditing() {
-        updateHighlightShape() // Ensure shape is correct before animating
-        UIView.animate(withDuration: 0.2) {
-            self.emailHighlightView.alpha = 1
-        }
-    }
-
-    @objc private func emailFieldDidEndEditing() {
-        UIView.animate(withDuration: 0.2) {
-            self.emailHighlightView.alpha = 0
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
     
     // Blue highlight for password text field
     private let passwordHighlightView: UIView = {
@@ -317,22 +290,6 @@ final class WelcomeViewController: UIViewController  {
 
         passwordHighlightView.layer.addSublayer(shapeLayer)
     }
-
-    // Show the blue highlight when password field is focused
-    @objc private func passwordFieldDidBeginEditing() {
-        updatePasswordHighlightShape() // Ensure shape is correct before animating
-        UIView.animate(withDuration: 0.2) {
-            self.passwordHighlightView.alpha = 1
-        }
-    }
-
-    // Hide the blue highlight when password field loses focus
-    @objc private func passwordFieldDidEndEditing() {
-        UIView.animate(withDuration: 0.2) {
-            self.passwordHighlightView.alpha = 0
-        }
-    }
-
     
     private func configureForgetPasswordButton() {
         view.addSubview(forgetPasswordButton)
@@ -416,8 +373,35 @@ final class WelcomeViewController: UIViewController  {
         loginButton.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
     }
 
+    // MARK: - Objc functions
+    @objc private func emailFieldDidBeginEditing() {
+        updateHighlightShape() // Ensure shape is correct before animating
+        UIView.animate(withDuration: 0.2) {
+            self.emailHighlightView.alpha = 1
+        }
+    }
+
+    @objc private func emailFieldDidEndEditing() {
+        UIView.animate(withDuration: 0.2) {
+            self.emailHighlightView.alpha = 0
+        }
+    }
+
+    // Show the blue highlight when password field is focused
+    @objc private func passwordFieldDidBeginEditing() {
+        updatePasswordHighlightShape() // Ensure shape is correct before animating
+        UIView.animate(withDuration: 0.2) {
+            self.passwordHighlightView.alpha = 1
+        }
+    }
+
+    // Hide the blue highlight when password field loses focus
+    @objc private func passwordFieldDidEndEditing() {
+        UIView.animate(withDuration: 0.2) {
+            self.passwordHighlightView.alpha = 0
+        }
+    }
     
-    // MARK: - Objc private methods
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -432,9 +416,9 @@ final class WelcomeViewController: UIViewController  {
 }
 
 
-
-#Preview {
-    return UINavigationController(
-        rootViewController: WelcomeViewController()
-    )
-}
+//
+//#Preview {
+//    return UINavigationController(
+//        rootViewController: WelcomeViewController()
+//    )
+//}

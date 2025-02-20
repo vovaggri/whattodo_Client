@@ -59,7 +59,7 @@ final class SignUpService: SignUpServiceProtocol {
                     (200...299).contains(httpResponse.statusCode) else {
                     if let data = data, let responseString = String(data: data, encoding: .utf8) {
                         if(responseString == "{\"message\":\"pq: duplicate key value violates unique constraint \\\"users_email_key\\\"\"}") {
-                            completion(.failure(NSError(domain: "SignUpError", code: 1, userInfo: [NSLocalizedDescriptionKey: "This email was registered"])))
+                            completion(.failure(NSError(domain: "SignUpError", code: 1, userInfo: [NSLocalizedDescriptionKey: "This email was already registered"])))
                         } else {
                             completion(.failure(NSError(domain: "SignUpError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Registration failed"])))
                         }

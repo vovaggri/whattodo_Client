@@ -48,7 +48,15 @@ final class WelcomeWorker: WelcomeWorkerProtocol {
                 }
                 guard let httpResponse = response as? HTTPURLResponse,
                     (200...299).contains(httpResponse.statusCode) else {
-                    completion(.failure(NSError(domain: "SignInError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Sign In failed"])))
+                    if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                        if(responseString == "{\"message\":\"sql: no rows in result set\"}") {
+                            completion(.failure(NSError(domain: "SignInError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Incorrect email or password"])))
+                        } else {
+                            completion(.failure(NSError(domain: "SignInError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Sign In failed"])))
+                        }
+                    } else {
+                        completion(.failure(NSError(domain: "SignInError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Sign In failed"])))
+                    }
                     return
                 }
                 
