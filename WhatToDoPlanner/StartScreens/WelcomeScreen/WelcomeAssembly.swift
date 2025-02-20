@@ -12,16 +12,11 @@ final class WelcomeModuleAssembly {
         let viewController = WelcomeViewController()
         let interactor = WelcomeInteractor()
         let presenter = WelcomePresenter()
-        let router = WelcomeRouter()
         
         viewController.interactor = interactor
-        viewController.router = router
         
         interactor.presenter = presenter
-        presenter.router = router
         presenter.welcomeVC = viewController
-        
-        router.welcomeVC = viewController
         
         return viewController
     }

@@ -60,7 +60,6 @@ final class WelcomeViewController: UIViewController  {
     
     // MARK: - Variables
     var interactor: WelcomeBusinessLogic?
-    var router: WelcomeRouterProtocol?
     
     private let firstLabel: UILabel = UILabel()
     private let secondLabel: UILabel = UILabel()
