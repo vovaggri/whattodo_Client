@@ -5,9 +5,6 @@
 //  Created by Vladimir Grigoryev on 15.01.2025.
 //
 
-import UIKit
-
-import UIKit
 
 import UIKit
 
@@ -73,7 +70,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Save changes in the application's managed object context when the application transitions to the background.
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
-
-
-
-
