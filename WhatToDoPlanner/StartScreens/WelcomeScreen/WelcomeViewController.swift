@@ -198,7 +198,7 @@ final class WelcomeViewController: UIViewController  {
         emailTextField.autocapitalizationType = .none
         emailTextField.placeholder = Constants.emailPlaceholder
         emailTextField.layer.borderWidth = Constants.borderFieldWidth
-        emailTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.4)?.cgColor
+        emailTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.2)?.cgColor
         emailTextField.layer.cornerRadius = Constants.textFieldCornerRadius
         emailTextField.textColor = UIColor(hex: "000000", alpha: 0.62)
         emailTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
@@ -241,7 +241,7 @@ final class WelcomeViewController: UIViewController  {
 
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = path.cgPath
-        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.45)?.cgColor
+        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.23)?.cgColor
 
         emailHighlightView.layer.addSublayer(shapeLayer)
     }
@@ -281,7 +281,7 @@ final class WelcomeViewController: UIViewController  {
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = Constants.passwordPlaceholder
         passwordTextField.layer.borderWidth = Constants.borderFieldWidth
-        passwordTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.4)?.cgColor
+        passwordTextField.layer.borderColor = UIColor(hex: "000000", alpha: 0.2)?.cgColor
         passwordTextField.layer.cornerRadius = Constants.fieldRaduis
         passwordTextField.font = UIFont(name: Constants.fontName, size: Constants.fontTextFieldsSize)
         passwordTextField.textColor = UIColor(hex: "000000", alpha: 0.62)
@@ -321,7 +321,7 @@ final class WelcomeViewController: UIViewController  {
 
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = path.cgPath
-        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.45)?.cgColor
+        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.23)?.cgColor
 
         passwordHighlightView.layer.addSublayer(shapeLayer)
     }
