@@ -172,6 +172,11 @@ final class SignUpViewController: UIViewController {
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
+        // Hiding title lable
+        UIView.animate(withDuration: 0.3) {
+            self.titleLabel.alpha = 0
+        }
+        
         guard let userInfo = notification.userInfo,
                 let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
             return
@@ -191,6 +196,11 @@ final class SignUpViewController: UIViewController {
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
+        // Returning title lable
+        UIView.animate(withDuration: 0.3) {
+            self.titleLabel.alpha = 1
+        }
+        
         if self.view.frame.origin.y != 0 {
             self.view.frame.origin.y = 0
         }
