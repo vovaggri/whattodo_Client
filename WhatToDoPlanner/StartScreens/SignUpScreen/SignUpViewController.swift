@@ -64,8 +64,8 @@ final class SignUpViewController: UIViewController {
 
         for (index, textField) in textFields.enumerated() {
             configureTextField(textField, placeholder: ["First Name", "Last Name", "Email address", "Password"][index])
-            textField.font = UIFont(name: Constants.fontName, size: 12.5)
-            textField.tintColor = UIColor(hex: "000000", alpha: 0.2)
+//            textField.font = UIFont(name: Constants.fontName, size: 12.5)
+//            textField.tintColor = UIColor(hex: "000000", alpha: 0.9)
             
             if index == 0 {
                 NSLayoutConstraint.activate([
@@ -105,50 +105,171 @@ final class SignUpViewController: UIViewController {
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 21)
         ])
     }
+    private let firstNameHighlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.masksToBounds = true
+        view.alpha = 0
+        return view
+    }()
+
+    private let lastNameHighlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.masksToBounds = true
+        view.alpha = 0
+        return view
+    }()
+
+    private let emailHighlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.masksToBounds = true
+        view.alpha = 0
+        return view
+    }()
+
+    private let passwordHighlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.masksToBounds = true
+        view.alpha = 0
+        return view
+    }()
+
 
     private func configureTextField(_ textField: UITextField, placeholder: String) {
+        // Existing text field styling
         view.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.borderStyle = .roundedRect
         textField.placeholder = placeholder
-        textField.backgroundColor = UIColor.systemGray6
-        textField.layer.cornerRadius = Constants.textFieldCornerRadius
         textField.backgroundColor = Constants.textFieldColor
-        
+        textField.layer.cornerRadius = Constants.textFieldCornerRadius
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor(hex: "000000", alpha: 0.2)?.cgColor
+        textField.textColor = UIColor(hex: "000000", alpha: 0.62)
+        textField.font = UIFont(name: Constants.fontName, size: 13)
+        textField.borderStyle = .none
+
+        // Secure entry or autocapitalization
         if placeholder == "Email address" || placeholder == "Password" {
             textField.autocapitalizationType = .none
         }
-
-        // Enable secure text entry for password field
         if placeholder == "Password" {
             textField.isSecureTextEntry = true
         }
 
+        // Position text field
         NSLayoutConstraint.activate([
-            textField.centerXAnchor.constraint(equalTo: view.centerXAnchor), // Center horizontally
-            textField.widthAnchor.constraint(equalTo: signUpButton.widthAnchor), // Match button width
-            textField.heightAnchor.constraint(equalToConstant: Constants.textFieldHeight) // Set fixed height
+            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 49),
+            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -49),
+            textField.heightAnchor.constraint(equalToConstant: Constants.textFieldHeight)
         ])
+
+        // 1) Determine which highlight view belongs to this text field
+        let highlightView: UIView
+        switch placeholder {
+        case "First Name":
+            highlightView = firstNameHighlightView
+        case "Last Name":
+            highlightView = lastNameHighlightView
+        case "Email address":
+            highlightView = emailHighlightView
+        case "Password":
+            highlightView = passwordHighlightView
+        default:
+            // If you have more placeholders in the future, handle them or return
+            return
+        }
+
+        // 2) Add highlight view as a subview
+        textField.addSubview(highlightView)
+        highlightView.translatesAutoresizingMaskIntoConstraints = false
+
+        // 3) Constrain the highlight to the left portion of the text field
+        NSLayoutConstraint.activate([
+            highlightView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
+            highlightView.topAnchor.constraint(equalTo: textField.topAnchor),
+            highlightView.bottomAnchor.constraint(equalTo: textField.bottomAnchor),
+            highlightView.widthAnchor.constraint(equalTo: textField.widthAnchor, multiplier: 0.075)
+        ])
+
+        // 4) Add editing targets for highlight animation
+        textField.addTarget(self, action: #selector(textFieldDidBeginEditing(_:)), for: .editingDidBegin)
+        textField.addTarget(self, action: #selector(textFieldDidEndEditing(_:)), for: .editingDidEnd)
+        
+        let leftPadding: CGFloat = 30 // Adjust if needed
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: leftPadding, height: Constants.textFieldHeight))
+        textField.leftView = leftPaddingView
+        textField.leftViewMode = .always
     }
+    @objc private func textFieldDidBeginEditing(_ sender: UITextField) {
+        // Identify which highlight to show
+        let highlightView = highlightViewFor(sender)
+        updateHighlightShape(for: sender, highlightView: highlightView)
+
+        UIView.animate(withDuration: 0.2) {
+            highlightView.alpha = 1
+        }
+    }
+
+    @objc private func textFieldDidEndEditing(_ sender: UITextField) {
+        let highlightView = highlightViewFor(sender)
+
+        UIView.animate(withDuration: 0.2) {
+            highlightView.alpha = 0
+        }
+    }
+    private func highlightViewFor(_ textField: UITextField) -> UIView {
+        switch textField.placeholder {
+        case "First Name":
+            return firstNameHighlightView
+        case "Last Name":
+            return lastNameHighlightView
+        case "Email address":
+            return emailHighlightView
+        case "Password":
+            return passwordHighlightView
+        default:
+            return UIView() // Or handle error case
+        }
+    }
+    private func updateHighlightShape(for textField: UITextField, highlightView: UIView) {
+        // Remove old shape
+        highlightView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+
+        // Build new path
+        let path = UIBezierPath(
+            roundedRect: highlightView.bounds,
+            byRoundingCorners: [.topLeft, .bottomLeft],
+            cornerRadii: CGSize(width: textField.layer.cornerRadius, height: textField.layer.cornerRadius)
+        )
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = path.cgPath
+        shapeLayer.fillColor = UIColor(hex: "#85B7CA", alpha: 0.23)?.cgColor
+
+        highlightView.layer.addSublayer(shapeLayer)
+    }
+
+
+
 
     private func configureSignUpButton() {
         view.addSubview(signUpButton)
         signUpButton.translatesAutoresizingMaskIntoConstraints = false
         signUpButton.setTitle("Sign Up", for: .normal)
-        signUpButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 14)
+        signUpButton.titleLabel?.font = UIFont(name: Constants.fontName, size: 16.6)
         signUpButton.backgroundColor = Constants.buttonBackgroundColor
         signUpButton.setTitleColor(Constants.buttonTitleColor, for: .normal)
         signUpButton.layer.cornerRadius = Constants.buttonCornerRadius
         signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
-
-        let adjustedWidth = UIScreen.main.bounds.width * 0.8 // Reduce width to 80% of the screen width
-        let adjustedHeight = Constants.buttonHeight
-
+        
         NSLayoutConstraint.activate([
-            signUpButton.centerXAnchor.constraint(equalTo: view.centerXAnchor), // Center horizontally
-            signUpButton.widthAnchor.constraint(equalToConstant: adjustedWidth), // Set the button's width
-            signUpButton.heightAnchor.constraint(equalToConstant: adjustedHeight), // Set the button's height
-            signUpButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100) // Keep the button at the bottom
+            signUpButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 49),
+            signUpButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -49),
+            signUpButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
+            signUpButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
     }
 
