@@ -56,6 +56,7 @@ final class WelcomeViewController: UIViewController  {
         static let forgetPasswordButtonTitle: String = "Forgot password?"
         static let forgetPasswordButtonSize: CGFloat = 12
         static let forgetPasswordButtonTop: Double = 18
+        static let extraKeyboardIndent: CGFloat = 16
     }
     
     // MARK: - Variables
@@ -98,6 +99,24 @@ final class WelcomeViewController: UIViewController  {
         super.viewDidLayoutSubviews()
         emailHighlightView.frame = emailTextField.bounds // Ensure it's inside bounds
         updateEmailHighlightShape()
+    }
+    
+    // MARK: - ViewWillAppear Overriding
+    // Subscribing to Keyboard Notifications
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    // MARK: - ViewWillDisappear Overriding
+    // Unubscribing to Keyboard Notifications
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK: - Functions
@@ -388,8 +407,45 @@ final class WelcomeViewController: UIViewController  {
         
         loginButton.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
     }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        // Hiding title lable
+        UIView.animate(withDuration: 0.3) {
+            self.firstLabel.alpha = 0
+            self.secondLabel.alpha = 0
+            self.thirdLabel.alpha = 0
+        }
+        
+        guard let userInfo = notification.userInfo,
+                let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        let keyboardHeight = keyboardFrame.height
 
-  
+        // Raise view's elements if the keyboard overlaps the create account button.
+        if let passwordFrame = passwordTextField.superview?.convert(passwordTextField.frame, to: nil) {
+            let bottomY = passwordFrame.maxY
+            let screenHeight = UIScreen.main.bounds.height
+        
+            if bottomY > screenHeight - keyboardHeight {
+                let overlap = bottomY - (screenHeight - keyboardHeight)
+                self.view.frame.origin.y -= overlap + Constants.extraKeyboardIndent
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        // Returning title lable
+        UIView.animate(withDuration: 0.3) {
+            self.firstLabel.alpha = 1
+            self.secondLabel.alpha = 1
+            self.thirdLabel.alpha = 1
+        }
+        
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
+    }
 
     // Show the blue highlight when password field is focused
     @objc private func passwordFieldDidBeginEditing() {
