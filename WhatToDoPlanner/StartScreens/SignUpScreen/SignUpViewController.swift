@@ -23,6 +23,7 @@ final class SignUpViewController: UIViewController {
         static let buttonBackgroundColor: UIColor = UIColor(hex: "94CA85", alpha: 0.35) ?? .systemGreen.withAlphaComponent(0.35)
         static let buttonTitleColor: UIColor = UIColor(hex: "000000", alpha: 0.6) ?? .darkGray
       
+        static let extraKeyboardIndent: CGFloat = 16
     }
 
     // MARK: - Variables
@@ -46,6 +47,24 @@ final class SignUpViewController: UIViewController {
             view.addGestureRecognizer(tapGesture)
         
         setupUI()
+    }
+    
+    // MARK: - ViewWillAppear Overriding
+    // Subscribing to Keyboard Notifications
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    // MARK: - ViewWillDisappear Overriding
+    // Unubscribing to Keyboard Notifications
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     // MARK: - Private Functions
@@ -152,6 +171,31 @@ final class SignUpViewController: UIViewController {
         ])
     }
 
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+                let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        let keyboardHeight = keyboardFrame.height
+
+        // Raise view's elements if the keyboard overlaps the create account button.
+        if let passwordFrame = passwordTextField.superview?.convert(passwordTextField.frame, to: nil) {
+            let bottomY = passwordFrame.maxY
+            let screenHeight = UIScreen.main.bounds.height
+        
+            if bottomY > screenHeight - keyboardHeight {
+                let overlap = bottomY - (screenHeight - keyboardHeight)
+                self.view.frame.origin.y -= overlap + Constants.extraKeyboardIndent
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
+    }
+    
     @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
