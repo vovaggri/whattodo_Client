@@ -1,6 +1,6 @@
 import UIKit
 
-class HeaderView: UIView {
+final class HeaderView: UIView {
     
     private let avatarImageView = UIImageView()
     private let greetingLabel = UILabel()
@@ -18,7 +18,7 @@ class HeaderView: UIView {
     }
     
     private func setupUI() {
-        backgroundColor = .white
+        backgroundColor = UIColor(hex: "F0F1F1")
         
         // Avatar
         avatarImageView.contentMode = .scaleAspectFit

@@ -1,38 +1,60 @@
 import UIKit
 
-protocol MainScreenDisplayLogic: AnyObject {
-    func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel)
-}
-
-class MainScreenViewController: UIViewController, MainScreenDisplayLogic {
+final class MainScreenViewController: UIViewController {
     
-    // VIP references
+    // SVIP references
     var interactor: MainScreenBusinessLogic?
-    var presenter: MainScreenPresentationLogic?
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
+    private let bottomSheetVC = BottomSheetViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        
-        setupVIP()
+        view.backgroundColor = UIColor(hex: "F0F1F1")
+
         setupHeader()
         
         // Fetch only header data
         let request = MainScreen.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
-    }
-    
-    // MARK: - Setup VIP
-    private func setupVIP() {
-        let interactor = MainScreenInteractor()
-        let presenter = MainScreenPresenter()
-        self.interactor = interactor
-        self.presenter = presenter
-        interactor.presenter = presenter
-        presenter.viewController = self
+        
+        
+        if #available(iOS 16, *) {
+            let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init("small")) { context in
+                return 300
+            }
+            
+            if let sheet = bottomSheetVC.sheetPresentationController {
+                sheet.detents = [
+                    smallDetent,
+                    .large()
+                ]
+                
+                sheet.largestUndimmedDetentIdentifier = smallDetent.identifier
+                
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+                sheet.prefersGrabberVisible = false
+                bottomSheetVC.isModalInPresentation = true
+            }
+        } else {
+            if let sheet = bottomSheetVC.sheetPresentationController {
+                sheet.detents = [
+                    .medium(),
+                    .large()
+                ]
+                
+                sheet.largestUndimmedDetentIdentifier = .medium
+                
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+                
+                sheet.prefersGrabberVisible = false
+                
+                bottomSheetVC.isModalInPresentation = true
+            }
+        }
+        
+        present(bottomSheetVC, animated: false)
     }
     
     // MARK: - Setup Header
@@ -52,5 +74,11 @@ class MainScreenViewController: UIViewController, MainScreenDisplayLogic {
     func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel) {
         // Update header with greeting & avatar
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
+    }
+}
+
+extension MainScreenViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        return false
     }
 }
