@@ -2,9 +2,8 @@ import UIKit
 
 final class MainScreenViewController: UIViewController {
     
-    // VIP references
+    // SVIP references
     var interactor: MainScreenBusinessLogic?
-    var presenter: MainScreenPresentationLogic?
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
@@ -12,23 +11,12 @@ final class MainScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        setupVIP()
+
         setupHeader()
         
         // Fetch only header data
         let request = MainScreen.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
-    }
-    
-    // MARK: - Setup VIP
-    private func setupVIP() {
-        let interactor = MainScreenInteractor()
-        let presenter = MainScreenPresenter()
-        self.interactor = interactor
-        self.presenter = presenter
-        interactor.presenter = presenter
-        presenter.viewController = self
     }
     
     // MARK: - Setup Header

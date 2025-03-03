@@ -10,6 +10,10 @@ final class MainScreenInteractor: MainScreenBusinessLogic {
     
     var presenter: MainScreenPresentationLogic?
     
+    init(presenter: MainScreenPresentationLogic) {
+        self.presenter = presenter
+    }
+    
     func fetchMainScreenData(request: MainScreen.Fetch.Request) {
         // Simulate fetching only header data
         let avatar = UIImage(named: "avatar")
