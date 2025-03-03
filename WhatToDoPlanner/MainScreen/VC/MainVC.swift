@@ -1,10 +1,6 @@
 import UIKit
 
-protocol MainScreenDisplayLogic: AnyObject {
-    func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel)
-}
-
-class MainScreenViewController: UIViewController, MainScreenDisplayLogic {
+final class MainScreenViewController: UIViewController {
     
     // VIP references
     var interactor: MainScreenBusinessLogic?

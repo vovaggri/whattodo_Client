@@ -6,7 +6,7 @@ protocol MainScreenBusinessLogic {
     func fetchMainScreenData(request: MainScreen.Fetch.Request)
 }
 
-class MainScreenInteractor: MainScreenBusinessLogic {
+final class MainScreenInteractor: MainScreenBusinessLogic {
     
     var presenter: MainScreenPresentationLogic?
     

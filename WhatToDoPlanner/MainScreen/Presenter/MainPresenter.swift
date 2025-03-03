@@ -6,9 +6,9 @@ protocol MainScreenPresentationLogic {
     func presentMainScreenData(response: MainScreen.Fetch.Response)
 }
 
-class MainScreenPresenter: MainScreenPresentationLogic {
+final class MainScreenPresenter: MainScreenPresentationLogic {
     
-    weak var viewController: MainScreenDisplayLogic?
+    weak var viewController: MainScreenViewController?
     
     func presentMainScreenData(response: MainScreen.Fetch.Response) {
         let viewModel = MainScreen.Fetch.ViewModel(
