@@ -1,6 +1,6 @@
 import UIKit
 
-class HeaderView: UIView {
+final class HeaderView: UIView {
     
     private let avatarImageView = UIImageView()
     private let greetingLabel = UILabel()

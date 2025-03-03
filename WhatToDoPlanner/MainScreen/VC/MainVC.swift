@@ -7,6 +7,7 @@ final class MainScreenViewController: UIViewController {
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
+    private let bottomSheetVC = BottomSheetViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,6 +18,43 @@ final class MainScreenViewController: UIViewController {
         // Fetch only header data
         let request = MainScreen.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
+        
+        
+        if #available(iOS 16, *) {
+            let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init("small")) { context in
+                return 350
+            }
+            
+            if let sheet = bottomSheetVC.sheetPresentationController {
+                sheet.detents = [
+                    smallDetent,
+                    .large()
+                ]
+                
+                sheet.largestUndimmedDetentIdentifier = smallDetent.identifier
+                
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+                sheet.prefersGrabberVisible = false
+                bottomSheetVC.isModalInPresentation = true
+            }
+        } else {
+            if let sheet = bottomSheetVC.sheetPresentationController {
+                sheet.detents = [
+                    .medium(),
+                    .large()
+                ]
+                
+                sheet.largestUndimmedDetentIdentifier = .medium
+                
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+                
+                sheet.prefersGrabberVisible = false
+                
+                bottomSheetVC.isModalInPresentation = true
+            }
+        }
+        
+        present(bottomSheetVC, animated: true)
     }
     
     // MARK: - Setup Header
@@ -36,5 +74,11 @@ final class MainScreenViewController: UIViewController {
     func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel) {
         // Update header with greeting & avatar
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
+    }
+}
+
+extension MainScreenViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        return false
     }
 }
