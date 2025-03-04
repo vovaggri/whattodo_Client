@@ -36,6 +36,7 @@ final class MainScreenViewController: UIViewController {
                 sheet.prefersScrollingExpandsWhenScrolledToEdge = true
                 sheet.prefersGrabberVisible = false
                 bottomSheetVC.isModalInPresentation = true
+                bottomSheetVC.sheetPresentationController?.preferredCornerRadius = 40.0
             }
         } else {
             if let sheet = bottomSheetVC.sheetPresentationController {
