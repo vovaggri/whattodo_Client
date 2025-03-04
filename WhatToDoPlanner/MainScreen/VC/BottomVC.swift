@@ -7,7 +7,7 @@ final class BottomSheetViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(hex: "F0F1F1")
         
         
     }
