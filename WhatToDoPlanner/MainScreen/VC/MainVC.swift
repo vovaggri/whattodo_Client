@@ -22,7 +22,8 @@ final class MainScreenViewController: UIViewController {
         
         if #available(iOS 16, *) {
             let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init("small")) { context in
-                return 350
+                let screenHeight = UIScreen.main.bounds.height
+                return screenHeight * 0.4
             }
             
             if let sheet = bottomSheetVC.sheetPresentationController {
