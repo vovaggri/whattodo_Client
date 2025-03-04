@@ -11,7 +11,7 @@ final class MainScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(hex: "F0F1F1")
+        view.backgroundColor = .white
 
         setupHeader()
         
@@ -22,7 +22,7 @@ final class MainScreenViewController: UIViewController {
         
         if #available(iOS 16, *) {
             let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init("small")) { context in
-                return 300
+                return 350
             }
             
             if let sheet = bottomSheetVC.sheetPresentationController {
