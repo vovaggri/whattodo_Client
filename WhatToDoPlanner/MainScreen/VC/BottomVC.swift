@@ -3,6 +3,10 @@
 
 import UIKit
 
+protocol BottomSheetDelegate: AnyObject {
+    func changeDetent(to detent: UISheetPresentationController.Detent.Identifier)
+}
+
 final class BottomSheetViewController: UIViewController {
     enum Constants {
         static let fontName: String = "AoboshiOne-Regular"
@@ -19,6 +23,9 @@ final class BottomSheetViewController: UIViewController {
         static let switcherAlpha: CGFloat = 0.34
     }
     
+    var interactor: BottomBusinessLogic?
+    weak var delegate: BottomSheetDelegate?
+    
     private let todayLabel: UILabel = UILabel()
     private let presentSwictherButton: UIButton = UIButton(type: .system)
     
@@ -27,6 +34,10 @@ final class BottomSheetViewController: UIViewController {
         view.backgroundColor = UIColor(hex: "F0F1F1")
         
         configureUI()
+    }
+    
+    func updateSwitcherButton(title: String) {
+        presentSwictherButton.setTitle(title, for: .normal)
     }
     
     private func configureUI() {
@@ -55,6 +66,13 @@ final class BottomSheetViewController: UIViewController {
         presentSwictherButton.translatesAutoresizingMaskIntoConstraints = false
         presentSwictherButton.pinTop(to: view, Constants.textConstraints)
         presentSwictherButton.pinRight(to: view, Constants.textConstraints)
+        
+        presentSwictherButton.addTarget(self, action: #selector(switcherPressed), for: .touchUpInside)
+    }
+    
+    @objc private func switcherPressed() {
+        interactor?.switcherPressed()
     }
 }
+
 

@@ -1,17 +1,21 @@
 import UIKit
 
 final class MainScreenViewController: UIViewController {
+    enum Constants {
+        static let smallIdentifier: String = "small"
+    }
     
     // SVIP references
     var interactor: MainScreenBusinessLogic?
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
-    private let bottomSheetVC = BottomSheetViewController()
+    private let bottomSheetVC = BottomAssembly.assembly()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        bottomSheetVC.delegate = self
 
         setupHeader()
         
@@ -21,7 +25,7 @@ final class MainScreenViewController: UIViewController {
         
         
         if #available(iOS 16, *) {
-            let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init("small")) { context in
+            let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init(Constants.smallIdentifier)) { context in
                 let screenHeight = UIScreen.main.bounds.height
                 return screenHeight * 0.4
             }
@@ -82,5 +86,14 @@ final class MainScreenViewController: UIViewController {
 extension MainScreenViewController: UIAdaptivePresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return false
+    }
+}
+
+extension MainScreenViewController: BottomSheetDelegate {
+    func changeDetent(to detent: UISheetPresentationController.Detent.Identifier) {
+        guard let sheet = bottomSheetVC.sheetPresentationController else { return }
+        sheet.animateChanges {
+            sheet.selectedDetentIdentifier = detent
+        }
     }
 }
