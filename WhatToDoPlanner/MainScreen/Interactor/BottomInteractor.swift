@@ -2,8 +2,11 @@
 //  BottomInteractor.swift
 //  WhatToDoPlanner
 
+import UIKit
+
 protocol BottomBusinessLogic {
     func switcherPressed()
+    func detentChanged(newDetent: UISheetPresentationController.Detent.Identifier?)
 }
 
 final class BottomInteractor: BottomBusinessLogic {
@@ -15,5 +18,10 @@ final class BottomInteractor: BottomBusinessLogic {
     
     func switcherPressed() {
         presenter?.switchMode()
+    }
+    
+    func detentChanged(newDetent: UISheetPresentationController.Detent.Identifier?) {
+        let isLarge = newDetent == .large
+        presenter?.updateMode(isLarge: isLarge)
     }
 }

@@ -6,6 +6,7 @@ import UIKit
 
 protocol BottomPresentationLogic {
     func switchMode()
+    func updateMode(isLarge: Bool)
 }
 
 final class BottomPresenter: BottomPresentationLogic {
@@ -22,5 +23,11 @@ final class BottomPresenter: BottomPresentationLogic {
         
         bottomVC?.updateSwitcherButton(title: buttonTitle)
         bottomVC?.delegate?.changeDetent(to: detent ?? detentStandart)
+    }
+    
+    func updateMode(isLarge: Bool) {
+        isLargeMode = isLarge
+        let buttonTitle = isLarge ? BottomSheetViewController.Constants.switcherLargreText : BottomSheetViewController.Constants.switcherSmallText
+        bottomVC?.updateSwitcherButton(title: buttonTitle)
     }
 }

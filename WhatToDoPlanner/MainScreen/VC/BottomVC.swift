@@ -33,6 +33,10 @@ final class BottomSheetViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(hex: "F0F1F1")
         
+        if let sheet = self.sheetPresentationController {
+            sheet.delegate = self
+        }
+        
         configureUI()
     }
     
@@ -75,4 +79,8 @@ final class BottomSheetViewController: UIViewController {
     }
 }
 
-
+extension BottomSheetViewController: UISheetPresentationControllerDelegate {
+    func sheetPresentationControllerDidChangeSelectedDetentIdentifier(_ sheetPresentationController: UISheetPresentationController) {
+        interactor?.detentChanged(newDetent: sheetPresentationController.selectedDetentIdentifier)
+    }
+}
