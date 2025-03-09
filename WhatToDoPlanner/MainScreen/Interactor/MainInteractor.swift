@@ -8,7 +8,7 @@ protocol MainScreenBusinessLogic {
 
 final class MainScreenInteractor: MainScreenBusinessLogic {
     
-    var presenter: MainScreenPresentationLogic?
+    private var presenter: MainScreenPresentationLogic?
     
     init(presenter: MainScreenPresentationLogic) {
         self.presenter = presenter

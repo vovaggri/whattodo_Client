@@ -1,0 +1,33 @@
+//
+//  BottomPresenter.swift
+//  WhatToDoPlanner
+
+import UIKit
+
+protocol BottomPresentationLogic {
+    func switchMode()
+    func updateMode(isLarge: Bool)
+}
+
+final class BottomPresenter: BottomPresentationLogic {
+    weak var bottomVC: BottomSheetViewController?
+    private var isLargeMode = false
+    
+    func switchMode() {
+        isLargeMode.toggle()
+        let buttonTitle: String = isLargeMode ? BottomSheetViewController.Constants.switcherLargreText : BottomSheetViewController.Constants.switcherSmallText
+        let detent: UISheetPresentationController.Detent.Identifier? = isLargeMode ? .large : .init(MainScreenViewController.Constants.smallIdentifier)
+        
+        // If bottomVC doesn't have custom identifier.
+        let detentStandart: UISheetPresentationController.Detent.Identifier = isLargeMode ? .large : .medium
+        
+        bottomVC?.updateSwitcherButton(title: buttonTitle)
+        bottomVC?.delegate?.changeDetent(to: detent ?? detentStandart)
+    }
+    
+    func updateMode(isLarge: Bool) {
+        isLargeMode = isLarge
+        let buttonTitle = isLarge ? BottomSheetViewController.Constants.switcherLargreText : BottomSheetViewController.Constants.switcherSmallText
+        bottomVC?.updateSwitcherButton(title: buttonTitle)
+    }
+}
