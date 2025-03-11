@@ -4,6 +4,7 @@ import UIKit
 
 protocol MainScreenPresentationLogic {
     func presentMainScreenData(response: MainScreen.Fetch.Response)
+    func navigateToCreateGoal()
 }
 
 final class MainScreenPresenter: MainScreenPresentationLogic {
@@ -13,8 +14,14 @@ final class MainScreenPresenter: MainScreenPresentationLogic {
     func presentMainScreenData(response: MainScreen.Fetch.Response) {
         let viewModel = MainScreen.Fetch.ViewModel(
             greetingText: response.greeting,
-            avatarImage: response.avatar
+            avatarImage: response.avatar,
+            categories: [] // Pass an empty array for now
         )
         viewController?.displayMainScreenData(viewModel: viewModel)
+    }
+
+    func navigateToCreateGoal() {
+        let createGoalVC = CreateGoalAssembly.assembly()
+        viewController?.navigationController?.pushViewController(createGoalVC, animated: true)
     }
 }
