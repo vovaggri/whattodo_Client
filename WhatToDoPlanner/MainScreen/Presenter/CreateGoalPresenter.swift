@@ -6,6 +6,6 @@ protocol CreateGoalPresenterProtocol {
 
 }
 
-final class CreateGoalPresenter {
-    
+final class CreateGoalPresenter: CreateGoalPresenterProtocol {
+    weak var creatGoalVC: CreateGoalViewController?
 }

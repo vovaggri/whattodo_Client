@@ -108,7 +108,7 @@ final class MainScreenViewController: UIViewController {
     }
     
     private func presentCreateGoalScreen() {
-        
+        interactor?.navigateToCreateGoal()
     }
 }
 

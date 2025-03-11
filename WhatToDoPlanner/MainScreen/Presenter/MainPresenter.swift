@@ -21,6 +21,7 @@ final class MainScreenPresenter: MainScreenPresentationLogic {
     }
 
     func navigateToCreateGoal() {
-        
+        let createGoalVC = CreateGoalAssembly.assembly()
+        viewController?.navigationController?.pushViewController(createGoalVC, animated: true)
     }
 }

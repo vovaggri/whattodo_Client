@@ -1,8 +1,10 @@
 import UIKit
 
-class CreateGoalViewController: UIViewController {
+final class CreateGoalViewController: UIViewController {
     
     // MARK: - UI Elements
+    
+    var interactor: CreateGoalInteractorProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
