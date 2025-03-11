@@ -20,17 +20,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = navigationController
         self.window = window
         window.makeKeyAndVisible()
-//        let window = UIWindow(windowScene: windowScene)
-//        let mainVC = MainScreenViewController()
-//              // If you want navigation, embed it in a UINavigationController.
-//              let navigationController = UINavigationController(rootViewController: mainVC)
-//              
-//              // Set the rootViewController of the window to your navigation controller
-//              window.rootViewController = navigationController
-//              
-//              // Assign the window to the SceneDelegate and make it visible
-//              self.window = window
-//              window.makeKeyAndVisible()
 
 //        let window = UIWindow(windowScene: windowScene)
 //
