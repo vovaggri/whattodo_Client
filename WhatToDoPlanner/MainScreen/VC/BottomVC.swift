@@ -29,6 +29,20 @@ final class BottomSheetViewController: UIViewController {
     private let todayLabel: UILabel = UILabel()
     private let presentSwictherButton: UIButton = UIButton(type: .system)
     
+    private var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 8    // Отступ между строками
+        layout.minimumInteritemSpacing = 8 // Отступ между ячейками в ряду
+        
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+
+        // Регистрируем нашу кастомную ячейку
+        collection.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+        collection.backgroundColor = .clear
+        return collection
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(hex: "F0F1F1")
@@ -38,6 +52,7 @@ final class BottomSheetViewController: UIViewController {
         }
         
         configureUI()
+        configureTaskCollection()
     }
     
     func updateSwitcherButton(title: String) {
@@ -74,6 +89,19 @@ final class BottomSheetViewController: UIViewController {
         presentSwictherButton.addTarget(self, action: #selector(switcherPressed), for: .touchUpInside)
     }
     
+    private func configureTaskCollection() {
+        view.addSubview(collectionView)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        collectionView.pinTop(to: todayLabel.bottomAnchor, 30)
+        collectionView.pinLeft(to: view.leadingAnchor)
+        collectionView.pinRight(to: view.trailingAnchor)
+        collectionView.pinBottom(to: view.bottomAnchor)
+    }
+    
     @objc private func switcherPressed() {
         interactor?.switcherPressed()
     }
@@ -84,3 +112,36 @@ extension BottomSheetViewController: UISheetPresentationControllerDelegate {
         interactor?.detentChanged(newDetent: sheetPresentationController.selectedDetentIdentifier)
     }
 }
+
+extension BottomSheetViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return TasksTest.tasks.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
+            return UICollectionViewCell()
+        }
+        
+        let task = TasksTest.tasks[indexPath.row]
+        cell.configure(with: task)
+        return cell
+    }
+}
+
+extension BottomSheetViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedTask = TasksTest.tasks[indexPath.row]
+        print("Selected: \(selectedTask.title)")
+    }
+}
+
+extension BottomSheetViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        // Пример: ширина = вся ширина экрана с отступами 16, высота = 50
+        let width = collectionView.bounds.width - 16
+        let height: CGFloat = 158
+        return CGSize(width: width, height: height)
+    }
+}
+

@@ -1,44 +1,75 @@
-//import UIKit
-//
-//class TaskCell: UITableViewCell {
-//    
-//    private let titleLabel = UILabel()
-//    private let priorityLabel = UILabel()
-//    private let timeLabel = UILabel()
-//    
-//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        setupUI()
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        super.init(coder: coder)
-//        setupUI()
-//    }
-//    
-//    private func setupUI() {
-//        titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
-//        priorityLabel.font = .systemFont(ofSize: 14, weight: .regular)
-//        timeLabel.font = .systemFont(ofSize: 14, weight: .regular)
-//        
-//        let stack = UIStackView(arrangedSubviews: [priorityLabel, titleLabel, timeLabel])
-//        stack.axis = .vertical
-//        stack.spacing = 4
-//        
-//        contentView.addSubview(stack)
-//        stack.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-//            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-//            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-//            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
-//        ])
-//    }
-//    
-//    func configure(with viewModel: MainScreen.TaskViewModel) {
-//        titleLabel.text = viewModel.title
-//        priorityLabel.text = viewModel.priority
-//        timeLabel.text = viewModel.timeRange
-//    }
-//}
+import UIKit
+
+final class TaskCell: UICollectionViewCell {
+    enum Constants {
+        static let identifier = "TaskCell"
+        static let fontName: String = "AoboshiOne-Regular"
+    }
+    
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: Constants.fontName, size: 20)
+        label.textColor = .black
+        return label
+    }()
+    
+    private var timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: Constants.fontName, size: 14)
+        label.textColor = UIColor(hex: "000000", alpha: 0.5)
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        // Устанавливаем скруглённые углы на contentView
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 30
+        contentView.layer.masksToBounds = true
+            
+        // Для тени добавляем настройки на саму ячейку (layer ячейки, а не contentView)
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.1
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 4
+        layer.masksToBounds = false
+        
+        configureTitleLabel()
+        configureTimeLabel()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(with task: Task) {
+        titleLabel.text = task.title
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        
+        if let startTime = task.startTime, let endTime = task.endTime {
+            timeLabel.text = "\(formatter.string(from: startTime)) - \(formatter.string(from: endTime))"
+        } else {
+            timeLabel.text = "Any time today"
+        }
+    }
+    
+    private func configureTitleLabel() {
+        contentView.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        titleLabel.pinTop(to: contentView.topAnchor, 40)
+        titleLabel.pinLeft(to: contentView.leadingAnchor, 30)
+        titleLabel.pinRight(to: contentView.trailingAnchor)
+    }
+    
+    private func configureTimeLabel() {
+        contentView.addSubview(timeLabel)
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        timeLabel.pinTop(to: titleLabel.bottomAnchor, 20)
+        timeLabel.pinLeft(to: contentView.leadingAnchor, 30)
+        timeLabel.pinRight(to: contentView.trailingAnchor)
+    }
+}
