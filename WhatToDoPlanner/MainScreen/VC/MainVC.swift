@@ -13,7 +13,7 @@ final class MainScreenViewController: UIViewController {
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
-    private let bottomSheetVC = BottomAssembly.assembly()
+    private var bottomSheetVC: BottomSheetViewController?
     
     private var categories: [MainScreen.Fetch.CategoryViewModel] = []
     
@@ -45,38 +45,19 @@ final class MainScreenViewController: UIViewController {
         categoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
 
         setupCollectionViewConstraints()
-
-        
-        bottomSheetVC.delegate = self
         
         let request = MainScreen.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
         
-        if #available(iOS 16, *) {
-            let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init(Constants.smallIdentifier)) { context in
-                let screenHeight = UIScreen.main.bounds.height
-                return screenHeight * 0.3
-            }
-            
-            if let sheet = bottomSheetVC.sheetPresentationController {
-                sheet.detents = [smallDetent, .large()]
-                sheet.largestUndimmedDetentIdentifier = smallDetent.identifier
-                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
-                sheet.prefersGrabberVisible = false
-                bottomSheetVC.isModalInPresentation = true
-                bottomSheetVC.sheetPresentationController?.preferredCornerRadius = 40.0
-            }
-        } else {
-            if let sheet = bottomSheetVC.sheetPresentationController {
-                sheet.detents = [.medium(), .large()]
-                sheet.largestUndimmedDetentIdentifier = .medium
-                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
-                sheet.prefersGrabberVisible = false
-                bottomSheetVC.isModalInPresentation = true
-            }
+        presentBottomSheet()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Если bottomVC не представлен (был dismissed), создаем и презентуем его заново
+        if bottomSheetVC?.presentingViewController == nil {
+            presentBottomSheet()
         }
-        
-        present(bottomSheetVC, animated: false)
     }
     
     override func viewDidLayoutSubviews() {
@@ -107,8 +88,43 @@ final class MainScreenViewController: UIViewController {
         headerView.pinRight(to: view)
     }
     
+    private func presentBottomSheet() {
+        // Создаем новый экземпляр bottomVC
+        let bottomVC = BottomAssembly.assembly()
+        bottomVC.delegate = self
+                
+        if #available(iOS 16, *) {
+            let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init(Constants.smallIdentifier)) { context in
+                let screenHeight = UIScreen.main.bounds.height
+                return screenHeight * 0.3
+            }
+                    
+            if let sheet = bottomVC.sheetPresentationController {
+                sheet.detents = [smallDetent, .large()]
+                sheet.largestUndimmedDetentIdentifier = smallDetent.identifier
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+                sheet.prefersGrabberVisible = false
+                bottomVC.isModalInPresentation = true
+                sheet.preferredCornerRadius = 40.0
+            }
+        } else {
+            if let sheet = bottomVC.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.largestUndimmedDetentIdentifier = .medium
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = true
+                sheet.prefersGrabberVisible = false
+                bottomVC.isModalInPresentation = true
+            }
+        }
+        
+        bottomSheetVC = bottomVC
+        present(bottomVC, animated: true, completion: nil)
+    }
+    
     private func presentCreateGoalScreen() {
-        interactor?.navigateToCreateGoal()
+        bottomSheetVC?.dismiss(animated: false) { [weak self] in
+            self?.interactor?.navigateToCreateGoal()
+        }
     }
 }
 
@@ -120,7 +136,7 @@ extension MainScreenViewController: UIAdaptivePresentationControllerDelegate {
 
 extension MainScreenViewController: BottomSheetDelegate {
     func changeDetent(to detent: UISheetPresentationController.Detent.Identifier) {
-        guard let sheet = bottomSheetVC.sheetPresentationController else { return }
+        guard let sheet = bottomSheetVC?.sheetPresentationController else { return }
         sheet.animateChanges {
             sheet.selectedDetentIdentifier = detent
         }
