@@ -26,6 +26,11 @@ final class WelcomePresenter: WelcomeInteractorOutput {
         navigationController.pushViewController(welcomeVC, animated: true)
     }
     
+    func navigateToMainScreen() {
+        let mainVC = MainAssembly.assembly()
+        welcomeVC?.navigationController?.setViewControllers([mainVC], animated: true)
+    }
+    
     func showErrorAlert(_ message: String?) {
         welcomeVC?.showError(message: message ?? "Error")
     }
