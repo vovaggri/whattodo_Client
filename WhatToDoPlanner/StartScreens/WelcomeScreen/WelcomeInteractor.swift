@@ -14,6 +14,7 @@ protocol WelcomeBusinessLogic {
 
 protocol WelcomeInteractorOutput: AnyObject {
     func navigateToSignUpScreen()
+    func navigateToMainScreen()
     func showErrorAlert(_ message: String?)
 }
 
@@ -62,6 +63,7 @@ final class WelcomeInteractor: WelcomeBusinessLogic {
             case.success:
                 print("Self in closure: \(String(describing: self))")
                 print("Done")
+                self?.presenter?.navigateToMainScreen()
             case.failure(let error):
                 self?.presenter?.showErrorAlert(error.localizedDescription)
             }
@@ -69,4 +71,3 @@ final class WelcomeInteractor: WelcomeBusinessLogic {
         }
     }
 }
- 

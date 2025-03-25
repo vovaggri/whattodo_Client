@@ -8,5 +8,9 @@ enum WelcomeModels {
             self.password = password
         }
     }
+    
+    struct TokenResponse: Codable {
+        let token: String
+    }
 }
 
