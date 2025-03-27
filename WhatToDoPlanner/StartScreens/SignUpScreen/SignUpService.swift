@@ -61,10 +61,10 @@ final class SignUpService: SignUpServiceProtocol {
                         if(responseString == "{\"message\":\"pq: duplicate key value violates unique constraint \\\"users_email_key\\\"\"}") {
                             completion(.failure(NSError(domain: "SignUpError", code: 1, userInfo: [NSLocalizedDescriptionKey: "This email was already registered"])))
                         } else {
-                            completion(.failure(NSError(domain: "SignUpError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Registration failed"])))
+                            completion(.failure(NSError(domain: "SignUpError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Registration failed"])))
                         }
                     } else {
-                        completion(.failure(NSError(domain: "SignUpError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Registration failed"])))
+                        completion(.failure(NSError(domain: "SignUpError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Registration failed"])))
                     }
                     return
                 }
