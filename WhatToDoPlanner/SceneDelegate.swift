@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let window = UIWindow(windowScene: windowScene)
         let welcomeVC = WelcomeModuleAssembly.assembly() // Build WelcomeViewController
-       let navigationController = UINavigationController(rootViewController: welcomeVC) // Embed in navigation controller
+        let navigationController = UINavigationController(rootViewController: welcomeVC) // Embed in navigation controller
         window.rootViewController = navigationController
         self.window = window
         window.makeKeyAndVisible()

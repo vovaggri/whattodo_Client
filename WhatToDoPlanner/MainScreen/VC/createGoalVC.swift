@@ -37,7 +37,7 @@ final class CreateGoalViewController: UIViewController {
         button.backgroundColor = UIColor.systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
+        button.addTarget(CreateGoalViewController.self, action: #selector(saveButtonTapped), for: .touchUpInside)
         return button
     }()
     
