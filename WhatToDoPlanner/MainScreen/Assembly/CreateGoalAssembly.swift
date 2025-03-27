@@ -2,16 +2,20 @@
 //  CreateGoalAssembly.swift
 //  WhatToDoPlanner
 
-final class CreateGoalAssembly {
-    static func assembly() -> CreateGoalViewController {
-        let viewController = CreateGoalViewController()
+enum CreateGoalAssembly {
+    static func assembly(delegate: CreateGoalViewControllerDelegate?) -> CreateGoalViewController {
+        let vc = CreateGoalViewController()
+        // Let’s assume you have a presenter & interactor, etc.
         let presenter = CreateGoalPresenter()
         let interactor = CreateGoalInteractor(presenter: presenter)
+        presenter.creatGoalVC = vc
+        vc.interactor = interactor
         
-        viewController.interactor = interactor
-        presenter.creatGoalVC = viewController
+        // IMPORTANT: set the delegate
+        vc.delegate = delegate
         
-        return viewController
+        return vc
     }
 }
+
 
