@@ -15,6 +15,8 @@ final class MainScreenViewController: UIViewController {
     private let headerView = HeaderView(frame: .zero)
     private var bottomSheetVC: BottomSheetViewController?
     
+    //private let keychainService = KeychainService()
+    
     private var categories: [MainScreen.Fetch.CategoryViewModel] = []
     
     private let categoriesCollectionView: UICollectionView = {
@@ -50,6 +52,15 @@ final class MainScreenViewController: UIViewController {
         interactor?.fetchMainScreenData(request: request)
         
         presentBottomSheet()
+        
+//        if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
+//            print("Полученный токен: \(token)")
+//            // Здесь можно использовать токен, например, добавить его в заголовок запроса или передать в нужный модуль
+//        } else {
+//            print("Токен не найден или произошла ошибка преобразования")
+//        }
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
