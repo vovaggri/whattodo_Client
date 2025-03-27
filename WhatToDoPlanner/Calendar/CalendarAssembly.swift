@@ -1,7 +1,7 @@
 import Foundation
 
 final class CalendarAssembly {
-    func assembly() -> CalendarViewController {
+    static func assembly() -> CalendarViewController {
         let vc = CalendarViewController()
         let presenter = CalendarPresenter()
         let worker = CalendarWorker()
