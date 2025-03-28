@@ -1,21 +1,21 @@
 import Foundation
 
 protocol BottomWorkerProtocol {
-    func getTasks() -> [Task]
+    func getTasks(completion: @escaping ([Task]) -> Void)
 }
 
 final class BottomWorker: BottomWorkerProtocol {
     private let keychainService = KeychainService()
-    private let urlText: String = "http://localhost:8000/api/item/"
-    private var tasks: [Task] = []
+    private let urlText: String = "http://localhost:8000/api/goal/0/items/"
     
-    func getTasks() -> [Task] {
+    func getTasks(completion: @escaping ([Task]) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
             print("token: \(token)")
             
             guard let url = URL(string: urlText) else {
                 print("Incorrect URL")
-                return tasks
+                completion([])
+                return
             }
             
             var request = URLRequest(url: url)
@@ -25,18 +25,39 @@ final class BottomWorker: BottomWorkerProtocol {
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("Error of getting data: \(error.localizedDescription)")
+                    completion([])
                     return
                 }
                 
                 guard let data = data else {
                     print("No data on answer")
+                    completion([])
                     return
                 }
-            }
+                
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("JSON Response: \(jsonString)")
+                    if jsonString == "null" {
+                        print("Empty tasks")
+                        completion([])
+                    }
+                }
+                
+                let decoder = JSONDecoder()
+                
+                do {
+                    let tasksResponse = try decoder.decode(BottomModels.TaskResponse.self, from: data)
+                    print("Got tasks: \(tasksResponse.results)")
+                    completion(tasksResponse.results)
+                } catch {
+                    print("Error while decoding data: \(error)")
+                    completion([])
+                }
+            }.resume()
             
         } else {
             print("Cannot take keychain")
+            completion([])
         }
-        return tasks
     }
 }

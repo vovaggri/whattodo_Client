@@ -7,6 +7,7 @@ import UIKit
 protocol BottomPresentationLogic {
     func switchMode()
     func updateMode(isLarge: Bool)
+    func showTasks(with tasks: [Task])
 }
 
 final class BottomPresenter: BottomPresentationLogic {
@@ -29,5 +30,9 @@ final class BottomPresenter: BottomPresentationLogic {
         isLargeMode = isLarge
         let buttonTitle = isLarge ? BottomSheetViewController.Constants.switcherLargreText : BottomSheetViewController.Constants.switcherSmallText
         bottomVC?.updateSwitcherButton(title: buttonTitle)
+    }
+    
+    func showTasks(with tasks: [Task]) {
+        bottomVC?.showTasks(with: tasks)
     }
 }

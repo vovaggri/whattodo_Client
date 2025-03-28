@@ -8,7 +8,8 @@ final class BottomAssembly {
     static func assembly() -> BottomSheetViewController {
         let viewController = BottomSheetViewController()
         let presenter = BottomPresenter()
-        let interactor = BottomInteractor(presenter: presenter)
+        let worker = BottomWorker()
+        let interactor = BottomInteractor(presenter: presenter, worker: worker)
         
         viewController.interactor = interactor
         presenter.bottomVC = viewController
