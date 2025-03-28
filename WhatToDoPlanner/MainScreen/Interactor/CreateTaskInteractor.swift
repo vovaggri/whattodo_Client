@@ -2,11 +2,11 @@
 //  Create.swift
 //  WhatToDoPlanner
 
-protocol CreateGoalInteractorProtocol {
+protocol CreateTaskInteractorProtocol {
     
 }
 
-final class CreateGoalInteractor: CreateGoalInteractorProtocol {
+final class CreateTaskInteractor: CreateTaskInteractorProtocol {
     private var presenter: CreateGoalPresenterProtocol?
     
     init(presenter: CreateGoalPresenterProtocol?) {
