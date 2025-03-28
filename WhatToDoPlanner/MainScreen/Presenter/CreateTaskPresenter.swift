@@ -7,5 +7,5 @@ protocol CreateTaskPresenterProtocol {
 }
 
 final class CreateTaskPresenter: CreateTaskPresenterProtocol {
-    weak var creatGoalVC: CreateTaskViewController?
+    weak var createTaskVC: CreateTaskViewController?
 }

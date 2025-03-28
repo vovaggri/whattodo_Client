@@ -7,9 +7,9 @@ protocol CreateTaskInteractorProtocol {
 }
 
 final class CreateTaskInteractor: CreateTaskInteractorProtocol {
-    private var presenter: CreateGoalPresenterProtocol?
+    private var presenter: CreateTaskPresenterProtocol?
     
-    init(presenter: CreateGoalPresenterProtocol?) {
+    init(presenter: CreateTaskPresenterProtocol?) {
         self.presenter = presenter
     }
 }

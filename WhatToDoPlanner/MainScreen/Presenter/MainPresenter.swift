@@ -27,8 +27,8 @@ final class MainScreenPresenter: MainScreenPresentationLogic {
     func navigateToCreateGoal() {
         // pass `viewController` (which is MainScreenViewController) as the delegate
         guard let mainVC = viewController else { return }
-        let createGoalVC = CreateGoalAssembly.assembly(delegate: mainVC as? CreateGoalViewControllerDelegate)
-        mainVC.navigationController?.pushViewController(createGoalVC, animated: true)
+        let createTaskVC = CreateTaskAssembly.assembly(delegate: mainVC as? CreateTaskViewControllerDelegate)
+        mainVC.navigationController?.pushViewController(createTaskVC, animated: true)
     }
 
 

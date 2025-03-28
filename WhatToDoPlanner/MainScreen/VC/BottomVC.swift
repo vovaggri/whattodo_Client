@@ -147,7 +147,8 @@ extension BottomSheetViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             
-            let task = TasksTest.tasks[indexPath.row]
+//            let task = TasksTest.tasks[indexPath.row]
+            let task = self.tasks[indexPath.row]
             cell.configure(with: task)
             return cell
         }
