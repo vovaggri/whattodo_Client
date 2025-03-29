@@ -6,6 +6,7 @@ struct Task: Codable {
     var description: String?
     let date: Date
     let done: Bool
+    let priority: Bool
     
     // Optional
     var startTime: Date?

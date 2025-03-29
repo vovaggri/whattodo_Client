@@ -5,6 +5,7 @@ import UIKit
 
 protocol BottomSheetDelegate: AnyObject {
     func changeDetent(to detent: UISheetPresentationController.Detent.Identifier)
+    func didTapAddTaskButton()
 }
 
 final class BottomSheetViewController: UIViewController {
@@ -21,6 +22,8 @@ final class BottomSheetViewController: UIViewController {
         static let switcherSmallText: String = "See all"
         static let switcherLargreText: String = "Less"
         static let switcherAlpha: CGFloat = 0.34
+        
+        static let addButtonName: String = "plus"
     }
     
     var interactor: BottomBusinessLogic?
@@ -28,6 +31,8 @@ final class BottomSheetViewController: UIViewController {
     
     private let todayLabel: UILabel = UILabel()
     private let presentSwictherButton: UIButton = UIButton(type: .system)
+    private let addTaskButton: UIButton = UIButton(type: .system)
+    private var tasks: [Task] = []
     
     private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -37,8 +42,6 @@ final class BottomSheetViewController: UIViewController {
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
-        // Регистрируем нашу кастомную ячейку
-        collection.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
         collection.backgroundColor = .clear
         return collection
     }()
@@ -51,12 +54,18 @@ final class BottomSheetViewController: UIViewController {
             sheet.delegate = self
         }
         
+        interactor?.loadTasks()
         configureUI()
         configureTaskCollection()
+        configureAddTaskButton()
     }
     
     func updateSwitcherButton(title: String) {
         presentSwictherButton.setTitle(title, for: .normal)
+    }
+    
+    func showTasks(with tasks: [Task]) {
+        self.tasks = tasks
     }
     
     private func configureUI() {
@@ -90,6 +99,13 @@ final class BottomSheetViewController: UIViewController {
     }
     
     private func configureTaskCollection() {
+        // Регистрируем нашу кастомную ячейку
+        if tasks.isEmpty {
+            collectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
+        } else {
+            collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+        }
+        
         view.addSubview(collectionView)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -102,8 +118,31 @@ final class BottomSheetViewController: UIViewController {
         collectionView.pinBottom(to: view.bottomAnchor)
     }
     
+    private func configureAddTaskButton() {
+        view.addSubview(addTaskButton)
+        
+        addTaskButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        addTaskButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor)
+        addTaskButton.pinCenterX(to: view.centerXAnchor)
+        
+        addTaskButton.backgroundColor = .black
+        addTaskButton.setImage(UIImage(systemName: Constants.addButtonName), for: .normal)
+        addTaskButton.tintColor = .white
+        
+        addTaskButton.setHeight(50)
+        addTaskButton.setWidth(50)
+        addTaskButton.layer.cornerRadius = 25
+        
+        addTaskButton.addTarget(self, action: #selector(addTaskPressed), for: .touchUpInside)
+    }
+    
     @objc private func switcherPressed() {
         interactor?.switcherPressed()
+    }
+    
+    @objc private func addTaskPressed() {
+        delegate?.didTapAddTaskButton()
     }
 }
 
@@ -115,24 +154,41 @@ extension BottomSheetViewController: UISheetPresentationControllerDelegate {
 
 extension BottomSheetViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return TasksTest.tasks.count
+//        return TasksTest.tasks.count
+        if tasks.isEmpty {
+            return 1
+        } else {
+            return tasks.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
-            return UICollectionViewCell()
+        if tasks.isEmpty {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
+                return UICollectionViewCell()
+            }
+            
+            cell.configure()
+            return cell
+        } else {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
+                return UICollectionViewCell()
+            }
+            
+//            let task = TasksTest.tasks[indexPath.row]
+            let task = self.tasks[indexPath.row]
+            cell.configure(with: task)
+            return cell
         }
-        
-        let task = TasksTest.tasks[indexPath.row]
-        cell.configure(with: task)
-        return cell
     }
 }
 
 extension BottomSheetViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedTask = TasksTest.tasks[indexPath.row]
-        print("Selected: \(selectedTask.title)")
+        if !tasks.isEmpty {
+            let selectedTask = TasksTest.tasks[indexPath.row]
+            print("Selected: \(selectedTask.title)")
+        }
     }
 }
 

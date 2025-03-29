@@ -1,17 +1,17 @@
 import UIKit
 
-protocol CreateGoalViewControllerDelegate: AnyObject {
-    func createGoalViewController(_ viewController: CreateGoalViewController, didCreateGoal goal: Goal)
+protocol CreateTaskViewControllerDelegate: AnyObject {
+    func createGoalViewController(_ viewController: CreateTaskViewController, didCreateGoal goal: Goal)
 }
 
-final class CreateGoalViewController: UIViewController {
+final class CreateTaskViewController: UIViewController {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
     
     // MARK: - Properties
-    weak var delegate: CreateGoalViewControllerDelegate?
-    var interactor: CreateGoalInteractorProtocol?
+    weak var delegate: CreateTaskViewControllerDelegate?
+    var interactor: CreateTaskInteractorProtocol?
     
     // For color picker
     private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
@@ -111,7 +111,7 @@ final class CreateGoalViewController: UIViewController {
     private let screenTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Create New Task"
-        label.font = UIFont(name: CreateGoalViewController.fontName, size: 24)
+        label.font = UIFont(name: CreateTaskViewController.fontName, size: 24)
             ?? UIFont.boldSystemFont(ofSize: 18)
         label.textColor = .black
         label.textAlignment = .center
@@ -485,8 +485,8 @@ final class CreateGoalViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = CreateGoalViewController.lightGrayColor
-        grayContainerView.backgroundColor = CreateGoalViewController.lightGrayColor
+        view.backgroundColor = CreateTaskViewController.lightGrayColor
+        grayContainerView.backgroundColor = CreateTaskViewController.lightGrayColor
         
         navigationItem.hidesBackButton = true
         
@@ -822,7 +822,7 @@ final class CreateGoalViewController: UIViewController {
 }
 
 // MARK: - UIPickerViewDataSource & Delegate
-extension CreateGoalViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+extension CreateTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -840,7 +840,7 @@ extension CreateGoalViewController: UIPickerViewDataSource, UIPickerViewDelegate
                     reusing view: UIView?) -> UIView {
         let label = (view as? UILabel) ?? UILabel()
         label.textAlignment = .center
-        label.font = UIFont(name: CreateGoalViewController.fontName, size: 14)
+        label.font = UIFont(name: CreateTaskViewController.fontName, size: 14)
         if pickerView == colorPicker {
             label.text = colorOptions[row]
         } else if pickerView == linkPicker {

@@ -44,6 +44,7 @@ enum TasksTest {
              description: "Send the project to form",
              date: Date(),
              done: false,
+             priority: true,
              startTime: firstStartTime,
              endTime: firstEndTime),
         
@@ -51,25 +52,29 @@ enum TasksTest {
              title: "Buy groceries",
              description: "Milk, eggs, bread",
              date: Date(),
-             done: false),
+             done: false,
+             priority: false),
         
         Task(id: 3,
              title: "Walk the dog",
              description: nil,
              date: Date(),
-             done: false),
+             done: false,
+             priority: true),
         
         Task(id: 4,
              title: "Read Swift documentation",
              description: nil,
              date: Date(),
-             done: false),
+             done: false,
+             priority: true),
         
         Task(id: 5,
              title: "Reading",
              description: nil,
              date: Date(),
              done: false,
+             priority: false,
              startTime: secondStartTime,
              endTime: secondEndTime)
     ]

@@ -7,6 +7,8 @@ import UIKit
 protocol BottomPresentationLogic {
     func switchMode()
     func updateMode(isLarge: Bool)
+    func showTasks(with tasks: [Task])
+    func navigateToCreateTaskVC()
 }
 
 final class BottomPresenter: BottomPresentationLogic {
@@ -29,5 +31,16 @@ final class BottomPresenter: BottomPresentationLogic {
         isLargeMode = isLarge
         let buttonTitle = isLarge ? BottomSheetViewController.Constants.switcherLargreText : BottomSheetViewController.Constants.switcherSmallText
         bottomVC?.updateSwitcherButton(title: buttonTitle)
+    }
+    
+    func showTasks(with tasks: [Task]) {
+        bottomVC?.showTasks(with: tasks)
+    }
+    
+    func navigateToCreateTaskVC() {
+        print("presenter works")
+        guard let bottomVC = bottomVC else { return }
+        let createTaskVC = CreateTaskAssembly.assembly(delegate: bottomVC as? CreateTaskViewControllerDelegate)
+        bottomVC.navigationController?.pushViewController(createTaskVC, animated: true)
     }
 }
