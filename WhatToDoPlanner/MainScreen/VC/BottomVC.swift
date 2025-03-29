@@ -5,6 +5,7 @@ import UIKit
 
 protocol BottomSheetDelegate: AnyObject {
     func changeDetent(to detent: UISheetPresentationController.Detent.Identifier)
+    func didTapAddTaskButton()
 }
 
 final class BottomSheetViewController: UIViewController {
@@ -21,6 +22,8 @@ final class BottomSheetViewController: UIViewController {
         static let switcherSmallText: String = "See all"
         static let switcherLargreText: String = "Less"
         static let switcherAlpha: CGFloat = 0.34
+        
+        static let addButtonName: String = "plus"
     }
     
     var interactor: BottomBusinessLogic?
@@ -28,6 +31,7 @@ final class BottomSheetViewController: UIViewController {
     
     private let todayLabel: UILabel = UILabel()
     private let presentSwictherButton: UIButton = UIButton(type: .system)
+    private let addTaskButton: UIButton = UIButton(type: .system)
     private var tasks: [Task] = []
     
     private var collectionView: UICollectionView = {
@@ -53,6 +57,7 @@ final class BottomSheetViewController: UIViewController {
         interactor?.loadTasks()
         configureUI()
         configureTaskCollection()
+        configureAddTaskButton()
     }
     
     func updateSwitcherButton(title: String) {
@@ -113,8 +118,31 @@ final class BottomSheetViewController: UIViewController {
         collectionView.pinBottom(to: view.bottomAnchor)
     }
     
+    private func configureAddTaskButton() {
+        view.addSubview(addTaskButton)
+        
+        addTaskButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        addTaskButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor)
+        addTaskButton.pinCenterX(to: view.centerXAnchor)
+        
+        addTaskButton.backgroundColor = .black
+        addTaskButton.setImage(UIImage(systemName: Constants.addButtonName), for: .normal)
+        addTaskButton.tintColor = .white
+        
+        addTaskButton.setHeight(50)
+        addTaskButton.setWidth(50)
+        addTaskButton.layer.cornerRadius = 25
+        
+        addTaskButton.addTarget(self, action: #selector(addTaskPressed), for: .touchUpInside)
+    }
+    
     @objc private func switcherPressed() {
         interactor?.switcherPressed()
+    }
+    
+    @objc private func addTaskPressed() {
+        delegate?.didTapAddTaskButton()
     }
 }
 

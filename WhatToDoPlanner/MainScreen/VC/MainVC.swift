@@ -91,6 +91,13 @@ final class MainScreenViewController: UIViewController {
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
     }
     
+    private func pushCreateTaskVC() {
+        let createTaskVC = CreateTaskAssembly.assembly(delegate: self as? CreateTaskViewControllerDelegate)
+        bottomSheetVC?.dismiss(animated: false) { [weak self] in
+            self?.navigationController?.pushViewController(createTaskVC, animated: true)
+        }
+    }
+    
     // MARK: - Setup Header
     private func setupHeader() {
         view.addSubview(headerView)
@@ -133,9 +140,9 @@ final class MainScreenViewController: UIViewController {
     }
     
     private func presentCreateGoalScreen() {
-        bottomSheetVC?.dismiss(animated: false) { [weak self] in
-            self?.interactor?.navigateToCreateGoal()
-        }
+//        bottomSheetVC?.dismiss(animated: false) { [weak self] in
+//            self?.interactor?.navigateToCreateGoal()
+//        }
     }
 }
 
@@ -151,6 +158,10 @@ extension MainScreenViewController: BottomSheetDelegate {
         sheet.animateChanges {
             sheet.selectedDetentIdentifier = detent
         }
+    }
+    
+    func didTapAddTaskButton() {
+        pushCreateTaskVC()
     }
 }
 
