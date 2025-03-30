@@ -84,6 +84,7 @@ final class GoalDetailViewController: UIViewController {
         }
 
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
+        addTaskButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
     }
 
     // MARK: - Actions
