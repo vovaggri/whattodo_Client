@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        let welcomeVC = WelcomeModuleAssembly.assembly() // Build WelcomeViewController
+        let welcomeVC = MainAssembly.assembly() // Build WelcomeViewController
         let navigationController = UINavigationController(rootViewController: welcomeVC) // Embed in navigation controller
         window.rootViewController = navigationController
         self.window = window
@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        window.rootViewController = navigationController
 //        self.window = window
 //        window.makeKeyAndVisible()
-        
+//        
 //        let window = UIWindow(windowScene: windowScene)
 //        let confirmVC = ConfirmModuleAssembly.assembly()
 //        let navigationController = UINavigationController(rootViewController: confirmVC)
