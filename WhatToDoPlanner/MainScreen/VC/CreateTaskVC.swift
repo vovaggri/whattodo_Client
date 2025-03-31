@@ -4,7 +4,7 @@ protocol CreateTaskViewControllerDelegate: AnyObject {
     func createGoalViewController(_ viewController: CreateTaskViewController, didCreateGoal goal: Goal)
 }
 
-final class CreateTaskViewController: UIViewController {
+final class CreateTaskViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
@@ -36,19 +36,6 @@ final class CreateTaskViewController: UIViewController {
         blue: 249.0/255.0,
         alpha: 1.0
     )
-    
-    // MARK: - Helper: create tinted icon in a smaller container
-    private func createIconView(image: UIImage) -> UIView {
-        // narrower container than before, so icon is more centered
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        let imageView = UIImageView(image: image)
-        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
-        imageView.contentMode = .scaleAspectFit
-        // a bit more insetting
-        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
-        container.addSubview(imageView)
-        return container
-    }
     
     // MARK: - Color Dot
     private let colorDot: UIView = {
@@ -490,6 +477,12 @@ final class CreateTaskViewController: UIViewController {
         
         navigationItem.hidesBackButton = true
         
+        // Создаем tap gesture для скрытия клавиатуры
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        tapGesture.delegate = self  // Устанавливаем делегата
+        view.addGestureRecognizer(tapGesture)
+        
         // Set right views
         taskDateTextField.rightView = calendarIconView
         taskDateTextField.rightViewMode = .always
@@ -572,9 +565,35 @@ final class CreateTaskViewController: UIViewController {
         linkPicker.delegate = self
         linkPicker.dataSource = self
         
+        // Если требуется второй жест (например, для закрытия pickers)
         let outsideTap = UITapGestureRecognizer(target: self, action: #selector(handleOutsideTap(_:)))
         outsideTap.cancelsTouchesInView = false
+        outsideTap.delegate = self  // Устанавливаем делегата и для второго жеста
         view.addGestureRecognizer(outsideTap)
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    // Метод делегата для разрешения одновременного распознавания
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    // MARK: - Helper: create tinted icon in a smaller container
+    private func createIconView(image: UIImage) -> UIView {
+        // narrower container than before, so icon is more centered
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
+        imageView.contentMode = .scaleAspectFit
+        // a bit more insetting
+        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
+        container.addSubview(imageView)
+        return container
     }
     
     // MARK: - Constraints
@@ -818,6 +837,10 @@ final class CreateTaskViewController: UIViewController {
             colorPickerContainer.isHidden = true
             linkPickerContainer.isHidden = true
         }
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 
