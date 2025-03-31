@@ -98,6 +98,13 @@ final class MainScreenViewController: UIViewController {
         }
     }
     
+    private func pushCalendar() {
+        let calendarVC = CalendarAssembly.assembly()
+        bottomSheetVC?.dismiss(animated: false) { [weak self] in
+            self?.navigationController?.pushViewController(calendarVC, animated: true)
+        }
+    }
+    
     // MARK: - Setup Header
     private func setupHeader() {
         view.addSubview(headerView)
@@ -162,6 +169,10 @@ extension MainScreenViewController: BottomSheetDelegate {
     
     func didTapAddTaskButton() {
         pushCreateTaskVC()
+    }
+    
+    func didTapCalendarButton() {
+        pushCalendar()
     }
 }
 
