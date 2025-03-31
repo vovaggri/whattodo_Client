@@ -34,7 +34,7 @@ final class BottomSheetViewController: UIViewController {
     private let todayLabel: UILabel = UILabel()
     private let presentSwictherButton: UIButton = UIButton(type: .system)
     private let addTaskButton: UIButton = UIButton(type: .system)
-    private let calendarButton: UIButton = UIButton(type: .system)
+//    private let calendarButton: UIButton = UIButton(type: .system)
     private var tasks: [Task] = []
     
     private var collectionView: UICollectionView = {
@@ -61,7 +61,7 @@ final class BottomSheetViewController: UIViewController {
         configureUI()
         configureTaskCollection()
         configureAddTaskButton()
-        configureCalendarButton()
+//        configureCalendarButton()
     }
     
     func updateSwitcherButton(title: String) {
@@ -141,24 +141,24 @@ final class BottomSheetViewController: UIViewController {
         addTaskButton.addTarget(self, action: #selector(addTaskPressed), for: .touchUpInside)
     }
     
-    private func configureCalendarButton() {
-        view.addSubview(calendarButton)
-        
-        calendarButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        calendarButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor)
-        calendarButton.pinRight(to: view.trailingAnchor, 50)
-        
-        calendarButton.backgroundColor = .black
-        calendarButton.setImage(UIImage(systemName: Constants.calendarButtonName), for: .normal)
-        calendarButton.tintColor = .white
-        
-        calendarButton.setHeight(50)
-        calendarButton.setWidth(50)
-        calendarButton.layer.cornerRadius = 25
-        
-        calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
-    }
+//    private func configureCalendarButton() {
+//        view.addSubview(calendarButton)
+//        
+//        calendarButton.translatesAutoresizingMaskIntoConstraints = false
+//        
+//        calendarButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor)
+//        calendarButton.pinRight(to: view.trailingAnchor, 50)
+//        
+//        calendarButton.backgroundColor = .black
+//        calendarButton.setImage(UIImage(systemName: Constants.calendarButtonName), for: .normal)
+//        calendarButton.tintColor = .white
+//        
+//        calendarButton.setHeight(50)
+//        calendarButton.setWidth(50)
+//        calendarButton.layer.cornerRadius = 25
+//        
+//        calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
+//    }
     
     @objc private func switcherPressed() {
         interactor?.switcherPressed()
@@ -167,11 +167,11 @@ final class BottomSheetViewController: UIViewController {
     @objc private func addTaskPressed() {
         delegate?.didTapAddTaskButton()
     }
-    
-    @objc private func calendarPressed() {
-        print("Calendar was pressed")
-        delegate?.didTapCalendarButton()
-    }
+//    
+//    @objc private func calendarPressed() {
+//        print("Calendar was pressed")
+//        delegate?.didTapCalendarButton()
+//    }
 }
 
 extension BottomSheetViewController: UISheetPresentationControllerDelegate {

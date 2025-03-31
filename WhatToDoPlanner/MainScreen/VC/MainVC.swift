@@ -5,6 +5,7 @@ final class MainScreenViewController: UIViewController {
         static let fontName: String = "AoboshiOne-Regular"
         
         static let smallIdentifier: String = "small"
+        static let calendarButtonName: String = "calendar"
     }
     
     // SVIP references
@@ -13,6 +14,7 @@ final class MainScreenViewController: UIViewController {
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
+    private let calendarButton: UIButton = UIButton(type: .system)
     private var bottomSheetVC: BottomSheetViewController?
   
     //private let keychainService = KeychainService()
@@ -26,15 +28,6 @@ final class MainScreenViewController: UIViewController {
         collectionView.backgroundColor = .clear
         return collectionView
     }()
-    private func setupCollectionViewConstraints() {
-        categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            categoriesCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-            categoriesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            categoriesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            categoriesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +45,7 @@ final class MainScreenViewController: UIViewController {
         interactor?.fetchMainScreenData(request: request)
         
         presentBottomSheet()
+        configureCalendarButton()
        
 //        if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
 //            print("Полученный токен: \(token)")
@@ -89,6 +83,16 @@ final class MainScreenViewController: UIViewController {
     // MARK: - MainScreenDisplayLogic
     func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel) {
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
+    }
+    
+    private func setupCollectionViewConstraints() {
+        categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            categoriesCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+            categoriesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            categoriesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            categoriesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
     
     private func pushCreateTaskVC() {
@@ -150,6 +154,30 @@ final class MainScreenViewController: UIViewController {
 //        bottomSheetVC?.dismiss(animated: false) { [weak self] in
 //            self?.interactor?.navigateToCreateGoal()
 //        }
+    }
+    
+    private func configureCalendarButton() {
+        view.addSubview(calendarButton)
+        
+        calendarButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        calendarButton.pinTop(to: headerView.topAnchor)
+        calendarButton.pinRight(to: view.trailingAnchor, 20)
+        
+        calendarButton.backgroundColor = .black
+        calendarButton.setImage(UIImage(systemName: Constants.calendarButtonName), for: .normal)
+        calendarButton.tintColor = .white
+        
+        calendarButton.setHeight(50)
+        calendarButton.setWidth(50)
+        calendarButton.layer.cornerRadius = 25
+        
+        calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
+    }
+    
+    @objc private func calendarPressed() {
+        print("Calendar was pressed")
+        pushCalendar()
     }
 }
 
