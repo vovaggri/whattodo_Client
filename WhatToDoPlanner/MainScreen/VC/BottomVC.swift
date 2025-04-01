@@ -57,10 +57,10 @@ final class BottomSheetViewController: UIViewController {
             sheet.delegate = self
         }
         
-        interactor?.loadTasks()
         configureUI()
         configureTaskCollection()
         configureAddTaskButton()
+        interactor?.loadTasks()
 //        configureCalendarButton()
     }
     
@@ -70,6 +70,7 @@ final class BottomSheetViewController: UIViewController {
     
     func showTasks(with tasks: [Task]) {
         self.tasks = tasks
+        collectionView.reloadData()
     }
     
     private func configureUI() {
@@ -104,11 +105,9 @@ final class BottomSheetViewController: UIViewController {
     
     private func configureTaskCollection() {
         // Регистрируем нашу кастомную ячейку
-        if tasks.isEmpty {
-            collectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
-        } else {
-            collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
-        }
+        collectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
+        collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+
         
         view.addSubview(collectionView)
         collectionView.dataSource = self
@@ -195,15 +194,12 @@ extension BottomSheetViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
                 return UICollectionViewCell()
             }
-            
             cell.configure()
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
                 return UICollectionViewCell()
             }
-            
-//            let task = TasksTest.tasks[indexPath.row]
             let task = self.tasks[indexPath.row]
             cell.configure(with: task)
             return cell

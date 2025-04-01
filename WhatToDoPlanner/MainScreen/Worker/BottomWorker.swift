@@ -9,7 +9,8 @@ final class BottomWorker: BottomWorkerProtocol {
     private let urlText: String = "http://localhost:8000/api/goal/0/items/"
     
     func getTasks(completion: @escaping ([Task]) -> Void) {
-        if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
+        if let tokenData = keychainService.getData(forKey: "userToken"),
+           let token = String(data: tokenData, encoding: .utf8) {
             print("token: \(token)")
             
             guard let url = URL(string: urlText) else {
@@ -40,15 +41,18 @@ final class BottomWorker: BottomWorkerProtocol {
                     if jsonString == "null" {
                         print("Empty tasks")
                         completion([])
+                        return
                     }
                 }
                 
                 let decoder = JSONDecoder()
+                // Если сервер возвращает даты в ISO8601 формате:
+                decoder.dateDecodingStrategy = .iso8601
                 
                 do {
-                    let tasksResponse = try decoder.decode(BottomModels.TaskResponse.self, from: data)
-                    print("Got tasks: \(tasksResponse.results)")
-                    completion(tasksResponse.results)
+                    let tasks = try decoder.decode([Task].self, from: data)
+                    print("Got tasks: \(tasks)")
+                    completion(tasks)
                 } catch {
                     print("Error while decoding data: \(error)")
                     completion([])
