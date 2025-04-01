@@ -1,13 +1,14 @@
 import UIKit
 
 protocol CreateTaskViewControllerDelegate: AnyObject {
-    func createGoalViewController(_ viewController: CreateTaskViewController, didCreateGoal goal: Goal)
+    func createTaskViewController(_ viewController: CreateTaskViewController, didCreateGoal goal: Goal)
 }
 
 final class CreateTaskViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
+    static let fieldsError: String = "Not all necessary fields was filled!"
     
     // MARK: - Properties
     weak var delegate: CreateTaskViewControllerDelegate?
@@ -754,16 +755,84 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
     @objc private func createButtonTapped() {
         guard let taskName = taskNameTextField.text, !taskName.isEmpty else {
             print("Task name is required.")
+            showError(message: CreateTaskViewController.fieldsError)
             return
         }
-        let newGoal = Goal(
-            id: Int.random(in: 1000...9999),
-            title: taskName,
-            description: descriptionTextView.text,
-            tasks: []
-        )
-        delegate?.createGoalViewController(self, didCreateGoal: newGoal)
-        navigationController?.popViewController(animated: true)
+        
+        guard let dateText = taskDateTextField.text, !dateText.isEmpty else {
+            print("Date is required.")
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE, MMM d, yy"
+        
+        guard let date = dateFormatter.date(from: dateText) else {
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        var startTime: Date?
+        if let startTimeText = startTimeTextField.text, !startTimeText.isEmpty {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "hh:mm a"
+                
+            guard let parsedStartTime = timeFormatter.date(from: startTimeText) else {
+                showError(message: "Incorrect format")
+                return
+            }
+            startTime = parsedStartTime
+        }
+        
+        var endTime: Date?
+        if let endTimeText = endTimeTextField.text, !endTimeText.isEmpty {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "hh:mm a"
+            
+            guard let parsedEndTime = timeFormatter.date(from: endTimeText) else {
+                showError(message: "Incorrect format")
+                return
+            }
+            endTime = parsedEndTime
+        }
+        
+        guard let colorText = taskColorTextField.text, !colorText.isEmpty else {
+            print("Color is required")
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        var color: Int
+        
+        if colorText == "Aqua Blue" {
+            color = ColorIDs.aquaBlue
+        } else if colorText == "MossGreen" {
+            color = ColorIDs.mossGreen
+        } else if colorText == "Marigold" {
+            color = ColorIDs.marigold
+        } else if colorText == "Lilac" {
+            color = ColorIDs.lilac
+        } else if colorText == "Ultra Pink" {
+            color = ColorIDs.ultraPink
+        } else if colorText == "Default White" {
+            color = ColorIDs.defaultWhite
+        } else {
+            print("Unknown color")
+            return
+        }
+        
+        let description = descriptionTextView.text
+        // TODO: - Correct linkGoals
+        let goalId: Int = 0
+//        let newGoal = Goal(
+//            id: Int.random(in: 1000...9999),
+//            title: taskName,
+//            description: descriptionTextView.text,
+//            tasks: []
+//        )
+//        delegate?.createTaskViewController(self, didCreateGoal: newGoal)
+        interactor?.uploadTask(title: taskName, date: date, color: color, description: description, startTime: startTime, endTime: endTime, goalId: goalId)
     }
     
     @objc private func dateTapped() {

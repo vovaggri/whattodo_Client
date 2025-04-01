@@ -1,14 +1,14 @@
 import Foundation
 
 protocol CreateTaskWorkerProtocol {
-    func createTask(with requestData: CreateTaskModels.CreateTaskRequest, completion: @escaping (Result<Void, Error>) -> Void)
+    func createTask(with requestData: Task, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 final class CreateTaskWorker: CreateTaskWorkerProtocol {
     private let keychainServer = KeychainService()
     private let urlText: String = "http://localhost:8000/api/goal/0/items/"
     
-    func createTask(with requestData: CreateTaskModels.CreateTaskRequest, completion: @escaping (Result<Void, Error>) -> Void) {
+    func createTask(with requestData: Task, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let url = URL(string: urlText) else {
             completion(.failure(CreateTaskModels.CreateTaskError.incorrectURL))
             return
@@ -27,6 +27,9 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             let jsonData = try encoder.encode(requestData)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("JSON: \(jsonString)")
+            }
             request.httpBody = jsonData
         } catch {
             completion(.failure(error))
