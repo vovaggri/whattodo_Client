@@ -51,7 +51,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
     }()
     
     private lazy var colorRightView: UIView = {
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
         colorDot.center = CGPoint(x: 10, y: 15)
         container.addSubview(colorDot)
         let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
@@ -72,7 +72,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("X", for: .normal)
-        button.titleLabel?.font = UIFont(name: CreateGoalViewController.fontName, size: 24)
+        button.titleLabel?.font = UIFont(name: CreateGoalViewController.fontName, size: 18)
         button.setTitleColor(.black, for: .normal)
         return button
     }()
@@ -106,7 +106,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
         tf.placeholder = "Enter goal title"
         tf.font = UIFont(name: CreateGoalViewController.fontName, size: 20)
         tf.borderStyle = .roundedRect
-        tf.layer.cornerRadius = 14
+        tf.layer.cornerRadius = 23
         tf.layer.masksToBounds = true
         tf.backgroundColor = .white
         return tf
@@ -153,7 +153,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
     private lazy var descriptionStack: UIStackView = {
         let st = UIStackView(arrangedSubviews: [descriptionLabel, descriptionTextView])
         st.axis = .vertical
-        st.spacing = 4
+        st.spacing = 1
         return st
     }()
     
@@ -170,9 +170,11 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
         tf.placeholder = "Pick a color"
         tf.font = UIFont(name: CreateGoalViewController.fontName, size: 20)
         tf.borderStyle = .roundedRect
-        tf.layer.cornerRadius = 14
+        tf.layer.cornerRadius = 23
         tf.layer.masksToBounds = true
-        tf.layer.borderWidth = 0.3
+        tf.borderStyle = .none
+        tf.layer.borderWidth = 0
+        tf.layer.borderColor = UIColor.clear.cgColor
         tf.backgroundColor = CreateGoalViewController.lightGrayColor
         tf.inputView = UIView()
         return tf
@@ -199,7 +201,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
     private let colorPickerContainer: UIView = {
         let v = UIView()
         v.backgroundColor = CreateGoalViewController.lightGrayColor
-        v.layer.cornerRadius = 14
+        v.layer.cornerRadius = 23
         v.layer.borderWidth = 0.4
         v.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.33).cgColor
         v.isHidden = true
@@ -304,6 +306,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
             taskNameStack.centerXAnchor.constraint(equalTo: grayContainerView.centerXAnchor),
             taskNameTextField.heightAnchor.constraint(equalToConstant: 52),
             taskNameTextField.widthAnchor.constraint(equalToConstant: 352),
+            titleLabel.heightAnchor.constraint(equalToConstant: 50),
             
             // White Container
             whiteContainerView.topAnchor.constraint(equalTo: grayContainerView.bottomAnchor, constant: 16),
@@ -312,16 +315,21 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
             whiteContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             // Description Stack in White Container
-            descriptionStack.topAnchor.constraint(equalTo: whiteContainerView.topAnchor, constant: 12),
+            descriptionStack.topAnchor.constraint(equalTo: whiteContainerView.topAnchor, constant: 8),
             descriptionStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
-            descriptionTextView.heightAnchor.constraint(equalToConstant: 70),
+            descriptionTextView.heightAnchor.constraint(equalToConstant: 119),
             descriptionTextView.widthAnchor.constraint(equalToConstant: 352),
+            descriptionLabel.heightAnchor.constraint(equalToConstant: 52),
+            descriptionLabel.widthAnchor.constraint(equalToConstant: 352),
+            
             
             // Color Stack in White Container
             colorStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: margin),
             colorStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
             taskColorTextField.heightAnchor.constraint(equalToConstant: 52),
             taskColorTextField.widthAnchor.constraint(equalToConstant: 352),
+            taskColorLabel.heightAnchor.constraint(equalToConstant: 52),
+            taskColorLabel.widthAnchor.constraint(equalToConstant: 352),
             
             // Create Button in White Container
             createGoalButton.topAnchor.constraint(equalTo: colorStack.bottomAnchor, constant: margin),
