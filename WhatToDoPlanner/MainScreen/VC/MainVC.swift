@@ -85,6 +85,12 @@ final class MainScreenViewController: UIViewController {
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
     }
     
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
     private func setupCollectionViewConstraints() {
         categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

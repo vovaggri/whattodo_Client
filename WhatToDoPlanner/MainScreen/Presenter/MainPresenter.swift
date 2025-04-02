@@ -5,6 +5,7 @@ import UIKit
 protocol MainScreenPresentationLogic {
     func presentMainScreenData(response: MainModels.Fetch.Response)
     func navigateToCreateGoal()
+    func showErrorAlert(_ message: String?)
 }
 
 final class MainScreenPresenter: MainScreenPresentationLogic {
@@ -31,5 +32,7 @@ final class MainScreenPresenter: MainScreenPresentationLogic {
 //        mainVC.navigationController?.pushViewController(createTaskVC, animated: true)
     }
 
-
+    func showErrorAlert(_ message: String?) {
+        viewController?.showError(message: message ?? "Error")
+    }
 }
