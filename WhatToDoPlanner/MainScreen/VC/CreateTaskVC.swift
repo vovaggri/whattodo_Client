@@ -62,31 +62,25 @@ final class CreateTaskViewController: UIViewController {
     
     /// A custom rightView for the color text field (circle + arrow).
     private lazy var colorRightView: UIView = {
-        // narrower container so arrow is more centered
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 24))
-        
-        // colorDot placed around left side
-        colorDot.center = CGPoint(x: 8, y: 12)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        colorDot.center = CGPoint(x: 10, y: 15)
         container.addSubview(colorDot)
-        
-        // arrow placed to the right
         let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
         arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
         arrow.contentMode = .scaleAspectFit
-        arrow.frame = CGRect(x: 20, y: 4, width: 16, height: 16)
+        arrow.frame = CGRect(x: 30, y: 5, width: 20, height: 20)
         container.addSubview(arrow)
-        
         return container
     }()
     
     // Link Icon (arrow)
     private lazy var linkIconView: UIView = {
         // narrower container for link arrow
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
         let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
         imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
         imageView.contentMode = .scaleAspectFit
-        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
+        imageView.frame = CGRect(x: 30, y: 5, width: 20, height: 20)
         container.addSubview(imageView)
         return container
     }()
@@ -102,7 +96,7 @@ final class CreateTaskViewController: UIViewController {
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
         // use xmark, scaled up
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .regular)
         let xImage = UIImage(systemName: "xmark", withConfiguration: config)
         button.setImage(xImage, for: .normal)
         button.tintColor = UIColor.black.withAlphaComponent(0.33)
@@ -184,7 +178,7 @@ final class CreateTaskViewController: UIViewController {
     }()
     private lazy var calendarIconView: UIView = {
         // Make the container 28 wide and 52 tall (matching your text field height)
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 52))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
         let iconSize: CGFloat = 18
         // Center the icon within the container
         let offsetX = (container.bounds.width - iconSize) / 2
@@ -254,27 +248,37 @@ final class CreateTaskViewController: UIViewController {
         tf.font = UIFont(name: fontName, size: 20)
         tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = lightGrayColor
-        // no border
+        tf.backgroundColor = CreateTaskViewController.lightGrayColor
         tf.layer.borderWidth = 0
         tf.layer.borderColor = UIColor.clear.cgColor
-        // left padding
+        // Some left padding
         let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
         tf.leftView = leftPadding
         tf.leftViewMode = .always
-        tf.inputView = UIView()
+        // Provide a right view (arrow)
+        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+        arrow.contentMode = .scaleAspectFit
+        arrow.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 24))
+        container.addSubview(arrow)
+        arrow.center = container.center
+        tf.rightView = container
+        tf.rightViewMode = .always
+        
         return tf
     }()
     private lazy var startTimeIconView: UIView = {
         // narrower container
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
         let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
         imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
         imageView.contentMode = .scaleAspectFit
-        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
+        imageView.frame =  CGRect(x: 30, y: 5, width: 20, height: 20)
         container.addSubview(imageView)
         return container
     }()
+
     private lazy var startTimeStack: UIStackView = {
         let st = UIStackView(arrangedSubviews: [startTimeLabel, startTimeTextField])
         st.axis = .vertical
@@ -296,23 +300,33 @@ final class CreateTaskViewController: UIViewController {
         tf.font = UIFont(name: fontName, size: 20)
         tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = lightGrayColor
-        // no border
+        tf.backgroundColor = CreateTaskViewController.lightGrayColor
         tf.layer.borderWidth = 0
         tf.layer.borderColor = UIColor.clear.cgColor
-        // left padding
+        // Some left padding
         let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
         tf.leftView = leftPadding
         tf.leftViewMode = .always
-        tf.inputView = UIView()
+        // Provide a right view (arrow) - same as start time
+        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+        arrow.contentMode = .scaleAspectFit
+        arrow.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 24))
+        container.addSubview(arrow)
+        arrow.center = container.center
+        tf.rightView = container
+        tf.rightViewMode = .always
+        
         return tf
     }()
+
     private lazy var endTimeIconView: UIView = {
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
         let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
         imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
         imageView.contentMode = .scaleAspectFit
-        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
+        imageView.frame = CGRect(x: 30, y: 5, width: 20, height: 20)
         container.addSubview(imageView)
         return container
     }()
@@ -326,9 +340,11 @@ final class CreateTaskViewController: UIViewController {
         let st = UIStackView(arrangedSubviews: [startTimeStack, endTimeStack])
         st.axis = .horizontal
         st.alignment = .top
+        st.distribution = .fillEqually // <-- key line
         st.spacing = 16
         return st
     }()
+
     
     // Link to Goal
     private let linkLabel: UILabel = {
@@ -649,6 +665,8 @@ final class CreateTaskViewController: UIViewController {
             timeStack.topAnchor.constraint(equalTo: linkStack.bottomAnchor, constant: margin),
             timeStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
             timeStack.trailingAnchor.constraint(equalTo: whiteContainerView.trailingAnchor, constant: -margin),
+            endTimeLabel.widthAnchor.constraint(equalToConstant: 160),
+            startTimeLabel.widthAnchor.constraint(equalToConstant: 160),
             startTimeTextField.widthAnchor.constraint(equalToConstant: 160),
             endTimeTextField.widthAnchor.constraint(equalToConstant: 160),
             startTimeTextField.heightAnchor.constraint(equalToConstant: 44),

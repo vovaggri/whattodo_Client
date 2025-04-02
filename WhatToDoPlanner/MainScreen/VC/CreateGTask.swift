@@ -83,10 +83,20 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
     
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        let xImage = UIImage(systemName: "xmark", withConfiguration: config)
-        button.setImage(xImage, for: .normal)
-        button.tintColor = UIColor.black.withAlphaComponent(0.33)
+
+        // Use SF Symbol arrow
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+        button.setImage(image, for: .normal)
+
+        button.tintColor = .black
+        button.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        button.layer.cornerRadius = 35
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.05
+        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+        button.layer.shadowRadius = 2
+        button.clipsToBounds = false
         return button
     }()
     
@@ -109,22 +119,27 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
     private let titleLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "Title"
-        lbl.font = UIFont(name: CreateGTaskViewController.fontName, size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .medium)
+        lbl.font = UIFont(name: fontName, size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .medium)
         lbl.textColor = .black
         return lbl
     }()
-    
     private let taskNameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Enter task name"
-        tf.font = UIFont(name: CreateGTaskViewController.fontName, size: 20)
-        tf.borderStyle = .roundedRect
+        tf.font = UIFont(name: fontName, size: 20)
+        tf.borderStyle = .none
         tf.layer.cornerRadius = 14
         tf.layer.masksToBounds = true
         tf.backgroundColor = .white
+        // no border
+        tf.layer.borderWidth = 0
+        tf.layer.borderColor = UIColor.clear.cgColor
+        // left padding of 5 points
+        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
+        tf.leftView = leftPadding
+        tf.leftViewMode = .always
         return tf
     }()
-    
     private lazy var taskNameStack: UIStackView = {
         let st = UIStackView(arrangedSubviews: [titleLabel, taskNameTextField])
         st.axis = .vertical
@@ -143,11 +158,32 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
     private let taskDateTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "EEE, MMM d, yy"
-        tf.font = UIFont(name: CreateGTaskViewController.fontName, size: 20)
-        tf.borderStyle = .roundedRect
+        tf.font = UIFont(name: fontName, size: 20)
+        tf.borderStyle = .none
         tf.layer.cornerRadius = 14
+        tf.layer.masksToBounds = true
         tf.backgroundColor = .white
+        tf.layer.borderWidth = 0
+        tf.layer.borderColor = UIColor.clear.cgColor
+        // left padding
+        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
+        tf.leftView = leftPadding
+        tf.leftViewMode = .always
         return tf
+    }()
+    private lazy var calendarIconView: UIView = {
+        // Make the container 28 wide and 52 tall (matching your text field height)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 52))
+        let iconSize: CGFloat = 18
+        // Center the icon within the container
+        let offsetX = (container.bounds.width - iconSize) / 2
+        let offsetY = (container.bounds.height - iconSize) / 2
+        let imageView = UIImageView(frame: CGRect(x: offsetX, y: offsetY, width: iconSize, height: iconSize))
+        imageView.image = UIImage(systemName: "calendar")
+        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
+        imageView.contentMode = .scaleAspectFit
+        container.addSubview(imageView)
+        return container
     }()
     
     private lazy var dateStack: UIStackView = {
@@ -157,42 +193,117 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         return st
     }()
     
-    // Time
+    // Start Time
     private let startTimeLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "Start Time"
-        lbl.font = UIFont(name: CreateGTaskViewController.fontName, size: 14)
+        lbl.font = UIFont(name: fontName, size: 14)
         lbl.textColor = .black
         return lbl
     }()
-    
     private let startTimeTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "10:45 AM"
-        tf.font = UIFont(name: CreateGTaskViewController.fontName, size: 20)
-        tf.borderStyle = .roundedRect
+        tf.font = UIFont(name: fontName, size: 20)
+        tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = CreateGTaskViewController.lightGrayColor
+        tf.backgroundColor = CreateTaskViewController.lightGrayColor
+        tf.layer.borderWidth = 0
+        tf.layer.borderColor = UIColor.clear.cgColor
+        // Some left padding
+        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
+        tf.leftView = leftPadding
+        tf.leftViewMode = .always
+        // Provide a right view (arrow)
+        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+        arrow.contentMode = .scaleAspectFit
+        arrow.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 24))
+        container.addSubview(arrow)
+        arrow.center = container.center
+        tf.rightView = container
+        tf.rightViewMode = .always
+        
         return tf
     }()
+    private lazy var startTimeIconView: UIView = {
+        // narrower container
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
+        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame =  CGRect(x: 30, y: 5, width: 20, height: 20)
+        container.addSubview(imageView)
+        return container
+    }()
+
+    private lazy var startTimeStack: UIStackView = {
+        let st = UIStackView(arrangedSubviews: [startTimeLabel, startTimeTextField])
+        st.axis = .vertical
+        st.spacing = 2
+        return st
+    }()
     
+    // End Time
     private let endTimeLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "End Time"
-        lbl.font = UIFont(name: CreateGTaskViewController.fontName, size: 14)
+        lbl.font = UIFont(name: fontName, size: 14)
         lbl.textColor = .black
         return lbl
     }()
-    
     private let endTimeTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "11:45 AM"
-        tf.font = UIFont(name: CreateGTaskViewController.fontName, size: 20)
-        tf.borderStyle = .roundedRect
+        tf.font = UIFont(name: fontName, size: 20)
+        tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = CreateGTaskViewController.lightGrayColor
+        tf.backgroundColor = CreateTaskViewController.lightGrayColor
+        tf.layer.borderWidth = 0
+        tf.layer.borderColor = UIColor.clear.cgColor
+        // Some left padding
+        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
+        tf.leftView = leftPadding
+        tf.leftViewMode = .always
+        // Provide a right view (arrow) - same as start time
+        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+        arrow.contentMode = .scaleAspectFit
+        arrow.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 24))
+        container.addSubview(arrow)
+        arrow.center = container.center
+        tf.rightView = container
+        tf.rightViewMode = .always
+        
         return tf
     }()
+
+    private lazy var endTimeIconView: UIView = {
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
+        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 30, y: 5, width: 20, height: 20)
+        container.addSubview(imageView)
+        return container
+    }()
+    private lazy var endTimeStack: UIStackView = {
+        let st = UIStackView(arrangedSubviews: [endTimeLabel, endTimeTextField])
+        st.axis = .vertical
+        st.spacing = 4
+        return st
+    }()
+    private lazy var timeStack: UIStackView = {
+        let st = UIStackView(arrangedSubviews: [startTimeStack, endTimeStack])
+        st.axis = .horizontal
+        st.alignment = .top
+        st.distribution = .fillEqually // <-- key line
+        st.spacing = 16
+        return st
+    }()
+
     private let whiteContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -205,32 +316,33 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
     }()
 
     
-    private lazy var timeStack: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [startTimeLabel, startTimeTextField, endTimeLabel, endTimeTextField])
-        st.axis = .vertical
-        st.spacing = 4
-        return st
-    }()
+   
     
     // Task Color
     private let taskColorLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "Task Color"
-        lbl.font = UIFont(name: CreateGTaskViewController.fontName, size: 14)
+        lbl.font = UIFont(name: fontName, size: 14)
         lbl.textColor = .black
         return lbl
     }()
-    
     private let taskColorTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Pick a color"
-        tf.font = UIFont(name: CreateGTaskViewController.fontName, size: 20)
-        tf.borderStyle = .roundedRect
+        tf.font = UIFont(name: fontName, size: 20)
+        tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = CreateGTaskViewController.lightGrayColor
+        tf.backgroundColor = lightGrayColor
+        // no border
+        tf.layer.borderWidth = 0
+        tf.layer.borderColor = UIColor.clear.cgColor
+        // left padding
+        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
+        tf.leftView = leftPadding
+        tf.leftViewMode = .always
+        tf.inputView = UIView()
         return tf
     }()
-    
     private lazy var colorStack: UIStackView = {
         let st = UIStackView(arrangedSubviews: [taskColorLabel, taskColorTextField])
         st.axis = .vertical
@@ -390,7 +502,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         
         // Button actions
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
-        createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        //createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         // Tap gestures for pickers
         let dateTapGesture = UITapGestureRecognizer(target: self, action: #selector(dateTapped))
@@ -442,10 +554,11 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             topBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             topBarView.heightAnchor.constraint(equalToConstant: 60),
             
-            closeButton.leadingAnchor.constraint(equalTo: topBarView.leadingAnchor, constant: margin),
-            closeButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
-            closeButton.widthAnchor.constraint(equalToConstant: 40),
-            closeButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -10),
+            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            closeButton.widthAnchor.constraint(equalToConstant: 70),
+            closeButton.heightAnchor.constraint(equalToConstant: 70),
             
             screenTitleLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
             screenTitleLabel.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor),
@@ -467,6 +580,8 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             dateStack.centerXAnchor.constraint(equalTo: grayContainerView.centerXAnchor),
             taskDateTextField.heightAnchor.constraint(equalToConstant: 52),
             taskDateTextField.widthAnchor.constraint(equalToConstant: 352),
+           
+            
             
             // White Container
             whiteContainerView.topAnchor.constraint(equalTo: grayContainerView.bottomAnchor, constant: 16),
@@ -477,19 +592,32 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             // Description Stack in White Container
             descriptionStack.topAnchor.constraint(equalTo: whiteContainerView.topAnchor, constant: 12),
             descriptionStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
-            descriptionTextView.heightAnchor.constraint(equalToConstant: 70),
+            descriptionTextView.heightAnchor.constraint(equalToConstant: 65),
+            descriptionLabel.heightAnchor.constraint(equalToConstant: 25),
             descriptionTextView.widthAnchor.constraint(equalToConstant: 352),
+            descriptionStack.heightAnchor.constraint(equalToConstant: 100),
             
             // Time Stack in White Container
             timeStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: margin),
             timeStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
             timeStack.trailingAnchor.constraint(equalTo: whiteContainerView.trailingAnchor, constant: -margin),
+            endTimeLabel.widthAnchor.constraint(equalToConstant: 160),
+            startTimeLabel.widthAnchor.constraint(equalToConstant: 160),
+            startTimeTextField.widthAnchor.constraint(equalToConstant: 160),
+            endTimeTextField.widthAnchor.constraint(equalToConstant: 160),
+            startTimeTextField.heightAnchor.constraint(equalToConstant: 44),
+            endTimeTextField.heightAnchor.constraint(equalToConstant: 44),
+            timeStack.heightAnchor.constraint(equalToConstant: 70),
             
             // Task Color Stack in White Container
+            // Task Color
+            // Task Color
             colorStack.topAnchor.constraint(equalTo: timeStack.bottomAnchor, constant: margin),
             colorStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
             taskColorTextField.heightAnchor.constraint(equalToConstant: 52),
             taskColorTextField.widthAnchor.constraint(equalToConstant: 352),
+            colorStack.heightAnchor.constraint(equalToConstant: 75),
+            taskColorLabel.heightAnchor.constraint(equalToConstant: 20),
             
             // Create Button in White Container
             createButton.topAnchor.constraint(equalTo: colorStack.bottomAnchor, constant: 24),
@@ -510,6 +638,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             datePicker.bottomAnchor.constraint(equalTo: datePickerContainer.bottomAnchor),
             
             // Start Time Picker Container
+            // Start time picker
             startTimePickerContainer.topAnchor.constraint(equalTo: startTimeTextField.bottomAnchor, constant: 4),
             startTimePickerContainer.leadingAnchor.constraint(equalTo: startTimeTextField.leadingAnchor),
             startTimePickerContainer.widthAnchor.constraint(equalToConstant: 180),
@@ -520,7 +649,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             startTimePicker.trailingAnchor.constraint(equalTo: startTimePickerContainer.trailingAnchor),
             startTimePicker.bottomAnchor.constraint(equalTo: startTimePickerContainer.bottomAnchor),
             
-            // End Time Picker Container
+            // End time picker
             endTimePickerContainer.topAnchor.constraint(equalTo: endTimeTextField.bottomAnchor, constant: 4),
             endTimePickerContainer.trailingAnchor.constraint(equalTo: endTimeTextField.trailingAnchor),
             endTimePickerContainer.widthAnchor.constraint(equalToConstant: 180),
@@ -530,6 +659,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             endTimePicker.leadingAnchor.constraint(equalTo: endTimePickerContainer.leadingAnchor),
             endTimePicker.trailingAnchor.constraint(equalTo: endTimePickerContainer.trailingAnchor),
             endTimePicker.bottomAnchor.constraint(equalTo: endTimePickerContainer.bottomAnchor),
+            
             
             // Color Picker Container
             colorPickerContainer.topAnchor.constraint(equalTo: taskColorTextField.bottomAnchor, constant: 4),
@@ -553,11 +683,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         }
     }
     
-//    @objc private func createButtonTapped() {
-//        // Navigate to the Task Detail screen when pressing Create button.
-//        let taskDetailVC = CreateGTaskAssembly.assembly()
-//        self.navigationController?.pushViewController(taskDetailVC, animated: true)
-//    }
+
     
     @objc private func dateTapped() {
         datePickerContainer.isHidden.toggle()
@@ -628,11 +754,11 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
     func displayTaskData(viewModel: CreateGTask.Fetch.ViewModel) {
         descriptionTextView.text = viewModel.defaultDescription
     }
-    @objc private func createButtonTapped() {
-        // Navigate directly to Task Detail screen
-        let taskDetailVC = CreateGTaskAssembly.assembly() // Ensure TaskDetailAssembly is implemented
-        self.navigationController?.pushViewController(taskDetailVC, animated: true)
-    }
+//    @objc private func createButtonTapped() {
+//        // Navigate directly to Task Detail screen
+//        let taskDetailVC = CreateGTaskAssembly.assembly() // Ensure TaskDetailAssembly is implemented
+//        self.navigationController?.pushViewController(taskDetailVC, animated: true)
+//    }
 
 }
 

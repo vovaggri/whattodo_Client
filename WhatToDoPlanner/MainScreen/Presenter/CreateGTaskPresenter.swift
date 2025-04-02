@@ -11,7 +11,7 @@ final class CreateGTaskPresenter: CreateGTaskPresentationLogic {
     func navigateToTaskDetail() {
         guard let vc = viewController as? UIViewController else { return }
         // Call the correct assembly for the Task Detail screen
-        let taskDetailVC = CreateGTaskAssembly.assembly() // Ensure this assembly returns your Task Detail screen
-        vc.navigationController?.pushViewController(taskDetailVC, animated: true)
+//        let taskDetailVC = CreateGTaskAssembly.assembly() // Ensure this assembly returns your Task Detail screen
+//        vc.navigationController?.pushViewController(taskDetailVC, animated: true)
     }
 }

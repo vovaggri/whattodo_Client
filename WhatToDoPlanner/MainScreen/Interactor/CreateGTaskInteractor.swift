@@ -5,7 +5,7 @@ final class CreateGTaskInteractor: CreateGTaskBusinessLogic {
     
     func fetchTaskData(request: CreateGTask.Fetch.Request) {
         // In a real application, you could load or process data here.
-        let response = CreateGTask.Fetch.Response(defaultDescription: "Enter your task description here...")
+        let response = CreateGTask.Fetch.Response(defaultDescription: "")
         presenter?.presentTaskData(response: response)
     }
 }
