@@ -151,11 +151,18 @@ final class MainScreenViewController: UIViewController {
     }
     
     private func presentCreateGoalScreen() {
-//        bottomSheetVC?.dismiss(animated: false) { [weak self] in
-//            self?.interactor?.navigateToCreateGoal()
-//        }
+        // If you want to dismiss the bottom sheet first, do it here
+        bottomSheetVC?.dismiss(animated: false) { [weak self] in
+            guard let self = self else { return }
+            
+            // 1) Build your CreateNewGoal screen
+            let createGoalVC = CreateGoalAssembly.assemble()
+            
+            // 2) Push it on the navigation stack
+            self.navigationController?.pushViewController(createGoalVC, animated: true)
+        }
     }
-    
+
     private func configureCalendarButton() {
         view.addSubview(calendarButton)
         
