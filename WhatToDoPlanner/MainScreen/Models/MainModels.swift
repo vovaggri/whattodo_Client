@@ -1,6 +1,6 @@
 import UIKit
 
-enum MainScreen {
+enum MainModels {
     
     // MARK: - Nested Types
     enum Fetch {
@@ -26,7 +26,23 @@ enum MainScreen {
             let color: UIColor
         }
 
-
+        struct UserResponse: Codable {
+            let email: String
+            let firstName: String
+            let secondName: String
+            
+            enum CodingKeys: String, CodingKey {
+                case email
+                case firstName = "first_name"
+                case secondName = "second_name"
+            }
+        }
+        
+        enum MainError: Error {
+            case incorrectURL
+            case noKeychain
+            case noData
+        }
 
     }
 }

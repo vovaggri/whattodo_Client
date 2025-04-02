@@ -50,7 +50,7 @@ final class CategoryCell: UICollectionViewCell {
     }
 
         
-        func configure(with category: MainScreen.Fetch.CategoryViewModel) {
+        func configure(with category: MainModels.Fetch.CategoryViewModel) {
             // Normal category display
             titleLabel.text = category.title
             progressLabel.text = category.progressText

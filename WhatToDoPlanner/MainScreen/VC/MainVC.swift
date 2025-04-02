@@ -19,7 +19,7 @@ final class MainScreenViewController: UIViewController {
   
     //private let keychainService = KeychainService()
     
-    private var categories: [MainScreen.Fetch.CategoryViewModel] = []
+    private var categories: [MainModels.Fetch.CategoryViewModel] = []
     
     private let categoriesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -41,7 +41,7 @@ final class MainScreenViewController: UIViewController {
 
         setupCollectionViewConstraints()
         
-        let request = MainScreen.Fetch.Request()
+        let request = MainModels.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
         
         presentBottomSheet()
@@ -81,7 +81,7 @@ final class MainScreenViewController: UIViewController {
     }
     
     // MARK: - MainScreenDisplayLogic
-    func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel) {
+    func displayMainScreenData(viewModel: MainModels.Fetch.ViewModel) {
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
     }
     

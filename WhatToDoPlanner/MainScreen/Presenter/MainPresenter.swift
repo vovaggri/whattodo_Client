@@ -3,7 +3,7 @@
 import UIKit
 
 protocol MainScreenPresentationLogic {
-    func presentMainScreenData(response: MainScreen.Fetch.Response)
+    func presentMainScreenData(response: MainModels.Fetch.Response)
     func navigateToCreateGoal()
 }
 
@@ -11,8 +11,8 @@ final class MainScreenPresenter: MainScreenPresentationLogic {
     
     weak var viewController: MainScreenViewController?
     
-    func presentMainScreenData(response: MainScreen.Fetch.Response) {
-        let viewModel = MainScreen.Fetch.ViewModel(
+    func presentMainScreenData(response: MainModels.Fetch.Response) {
+        let viewModel = MainModels.Fetch.ViewModel(
             greetingText: response.greeting,
             avatarImage: response.avatar,
             categories: [] // Pass an empty array for now
