@@ -1,14 +1,15 @@
 import Foundation
 
 protocol CreateTaskWorkerProtocol {
-    func createTask(with requestData: Task, completion: @escaping (Result<Void, Error>) -> Void)
+    func createTask(with requestData: CreateTaskModels.CreateTaskRequest, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void)
 }
 
 final class CreateTaskWorker: CreateTaskWorkerProtocol {
     private let keychainServer = KeychainService()
-    private let urlText: String = "http://localhost:8000/api/goal/0/items/"
     
-    func createTask(with requestData: Task, completion: @escaping (Result<Void, Error>) -> Void) {
+    func createTask(with requestData: CreateTaskModels.CreateTaskRequest, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void) {
+        let urlText: String = "http://localhost:8000/api/goal/\(gId)/items/"
+        
         guard let url = URL(string: urlText) else {
             completion(.failure(CreateTaskModels.CreateTaskError.incorrectURL))
             return
@@ -42,11 +43,32 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
                 return
             }
             
-            if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
-                print("Created success")
-                completion(.success(()))
-            } else {
+            guard let data = data, let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 completion(.failure(CreateTaskModels.CreateTaskError.noData))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                let response = try decoder.decode(CreateTaskModels.CreateTaskResponse.self, from: data)
+                let newId = response.id
+                let createdTask = Task(
+                    id: newId,
+                    title: requestData.title,
+                    description: requestData.description,
+                    colour: requestData.colour,
+                    endDate: requestData.endDate,
+                    done: requestData.done,
+                    startTime: requestData.startTime,
+                    endTime: requestData.endTime,
+                    goalId: gId
+                )
+                print("Created success")
+                completion(.success(createdTask))
+            } catch {
+                print(error)
+                completion(.failure(error))
             }
         }.resume()
     }

@@ -20,19 +20,17 @@ final class CreateTaskInteractor: CreateTaskInteractorProtocol {
     }
     
     func uploadTask(title: String, date: Date, color: Int, description: String?, startTime: Date?, endTime: Date?, goalId: Int?) {
-        let task = Task(
-            id: 1,
+        let task = CreateTaskModels.CreateTaskRequest(
             title: title,
             description: description,
             colour: color,
             endDate: date,
             done: false,
             startTime: startTime,
-            endTime: endTime,
-            goalId: goalId
+            endTime: endTime
         )
         
-        worker?.createTask(with: task) { [weak self] result in
+        worker?.createTask(with: task, goalId: 0) { [weak self] result in
             switch result {
             case.success:
                 print("Self in closure: \(String(describing: self))")

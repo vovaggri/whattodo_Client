@@ -767,6 +767,8 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEE, MMM d, yy"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) 
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         
         guard let date = dateFormatter.date(from: dateText) else {
             showError(message: CreateTaskViewController.fieldsError)
@@ -807,7 +809,7 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
         
         if colorText == "Aqua Blue" {
             color = ColorIDs.aquaBlue
-        } else if colorText == "MossGreen" {
+        } else if colorText == "Moss Green" {
             color = ColorIDs.mossGreen
         } else if colorText == "Marigold" {
             color = ColorIDs.marigold

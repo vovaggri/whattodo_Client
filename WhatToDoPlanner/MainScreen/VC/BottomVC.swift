@@ -35,7 +35,7 @@ final class BottomSheetViewController: UIViewController {
     private let presentSwictherButton: UIButton = UIButton(type: .system)
     private let addTaskButton: UIButton = UIButton(type: .system)
 //    private let calendarButton: UIButton = UIButton(type: .system)
-    private var tasks: [Task] = []
+    private var todayTasks: [Task] = []
     
     private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -69,7 +69,7 @@ final class BottomSheetViewController: UIViewController {
     }
     
     func showTasks(with tasks: [Task]) {
-        self.tasks = tasks
+        self.todayTasks = tasks
         collectionView.reloadData()
     }
     
@@ -182,15 +182,15 @@ extension BottomSheetViewController: UISheetPresentationControllerDelegate {
 extension BottomSheetViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 //        return TasksTest.tasks.count
-        if tasks.isEmpty {
+        if todayTasks.isEmpty {
             return 1
         } else {
-            return tasks.count
+            return todayTasks.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if tasks.isEmpty {
+        if todayTasks.isEmpty {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
                 return UICollectionViewCell()
             }
@@ -200,7 +200,7 @@ extension BottomSheetViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
                 return UICollectionViewCell()
             }
-            let task = self.tasks[indexPath.row]
+            let task = self.todayTasks[indexPath.row]
             cell.configure(with: task)
             return cell
         }
@@ -209,8 +209,8 @@ extension BottomSheetViewController: UICollectionViewDataSource {
 
 extension BottomSheetViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if !tasks.isEmpty {
-            let selectedTask = TasksTest.tasks[indexPath.row]
+        if !todayTasks.isEmpty {
+            let selectedTask = todayTasks[indexPath.row]
             print("Selected: \(selectedTask.title)")
         }
     }

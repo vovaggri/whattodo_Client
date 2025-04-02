@@ -31,9 +31,22 @@ final class BottomInteractor: BottomBusinessLogic {
     
     func loadTasks() {
         worker?.getTasks { [weak self] tasks in
+            let today = Date()
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone.current  // Убеждаемся, что используем локальный часовой пояс
+
+            let todayComponents = calendar.dateComponents([.year, .month, .day], from: today)
+                    
+            let todaysTasks = tasks.filter { task in
+                let taskComponents = calendar.dateComponents([.year, .month, .day], from: task.endDate)
+                return taskComponents.year == todayComponents.year &&
+                        taskComponents.month == todayComponents.month &&
+                        taskComponents.day == todayComponents.day
+            }
+            
             // Обновляем UI в главном потоке, если presenter работает с UI
             DispatchQueue.main.async {
-                self?.presenter?.showTasks(with: tasks)
+                self?.presenter?.showTasks(with: todaysTasks)
             }
         }
     }
