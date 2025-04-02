@@ -1,13 +1,14 @@
 import UIKit
 
 protocol CreateTaskViewControllerDelegate: AnyObject {
-    func createGoalViewController(_ viewController: CreateTaskViewController, didCreateGoal goal: Goal)
+    func createTaskViewController(_ viewController: CreateTaskViewController, didCreateGoal goal: Goal)
 }
 
-final class CreateTaskViewController: UIViewController {
+final class CreateTaskViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
+    static let fieldsError: String = "Not all necessary fields was filled!"
     
     // MARK: - Properties
     weak var delegate: CreateTaskViewControllerDelegate?
@@ -37,19 +38,6 @@ final class CreateTaskViewController: UIViewController {
         blue: 249.0/255.0,
         alpha: 1.0
     )
-    
-    // MARK: - Helper: create tinted icon in a smaller container
-    private func createIconView(image: UIImage) -> UIView {
-        // narrower container than before, so icon is more centered
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        let imageView = UIImageView(image: image)
-        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
-        imageView.contentMode = .scaleAspectFit
-        // a bit more insetting
-        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
-        container.addSubview(imageView)
-        return container
-    }
     
     // MARK: - Color Dot
     private let colorDot: UIView = {
@@ -507,6 +495,12 @@ final class CreateTaskViewController: UIViewController {
         
         navigationItem.hidesBackButton = true
         
+        // Создаем tap gesture для скрытия клавиатуры
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        tapGesture.delegate = self  // Устанавливаем делегата
+        view.addGestureRecognizer(tapGesture)
+        
         // Set right views
         taskDateTextField.rightView = calendarIconView
         taskDateTextField.rightViewMode = .always
@@ -589,9 +583,35 @@ final class CreateTaskViewController: UIViewController {
         linkPicker.delegate = self
         linkPicker.dataSource = self
         
+        // Если требуется второй жест (например, для закрытия pickers)
         let outsideTap = UITapGestureRecognizer(target: self, action: #selector(handleOutsideTap(_:)))
         outsideTap.cancelsTouchesInView = false
+        outsideTap.delegate = self  // Устанавливаем делегата и для второго жеста
         view.addGestureRecognizer(outsideTap)
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    // Метод делегата для разрешения одновременного распознавания
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    // MARK: - Helper: create tinted icon in a smaller container
+    private func createIconView(image: UIImage) -> UIView {
+        // narrower container than before, so icon is more centered
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
+        imageView.contentMode = .scaleAspectFit
+        // a bit more insetting
+        imageView.frame = container.bounds.insetBy(dx: 2, dy: 2)
+        container.addSubview(imageView)
+        return container
     }
     
     // MARK: - Constraints
@@ -754,16 +774,86 @@ final class CreateTaskViewController: UIViewController {
     @objc private func createButtonTapped() {
         guard let taskName = taskNameTextField.text, !taskName.isEmpty else {
             print("Task name is required.")
+            showError(message: CreateTaskViewController.fieldsError)
             return
         }
-        let newGoal = Goal(
-            id: Int.random(in: 1000...9999),
-            title: taskName,
-            description: descriptionTextView.text,
-            tasks: []
-        )
-        delegate?.createGoalViewController(self, didCreateGoal: newGoal)
-        navigationController?.popViewController(animated: true)
+        
+        guard let dateText = taskDateTextField.text, !dateText.isEmpty else {
+            print("Date is required.")
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE, MMM d, yy"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) 
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        guard let date = dateFormatter.date(from: dateText) else {
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        var startTime: Date?
+        if let startTimeText = startTimeTextField.text, !startTimeText.isEmpty {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "hh:mm a"
+                
+            guard let parsedStartTime = timeFormatter.date(from: startTimeText) else {
+                showError(message: "Incorrect format")
+                return
+            }
+            startTime = parsedStartTime
+        }
+        
+        var endTime: Date?
+        if let endTimeText = endTimeTextField.text, !endTimeText.isEmpty {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "hh:mm a"
+            
+            guard let parsedEndTime = timeFormatter.date(from: endTimeText) else {
+                showError(message: "Incorrect format")
+                return
+            }
+            endTime = parsedEndTime
+        }
+        
+        guard let colorText = taskColorTextField.text, !colorText.isEmpty else {
+            print("Color is required")
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        var color: Int
+        
+        if colorText == "Aqua Blue" {
+            color = ColorIDs.aquaBlue
+        } else if colorText == "Moss Green" {
+            color = ColorIDs.mossGreen
+        } else if colorText == "Marigold" {
+            color = ColorIDs.marigold
+        } else if colorText == "Lilac" {
+            color = ColorIDs.lilac
+        } else if colorText == "Ultra Pink" {
+            color = ColorIDs.ultraPink
+        } else if colorText == "Default White" {
+            color = ColorIDs.defaultWhite
+        } else {
+            print("Unknown color")
+            return
+        }
+        
+        let description = descriptionTextView.text
+        // TODO: - Correct linkGoals
+        let goalId: Int = 0
+//        let newGoal = Goal(
+//            id: Int.random(in: 1000...9999),
+//            title: taskName,
+//            description: descriptionTextView.text,
+//            tasks: []
+//        )
+//        delegate?.createTaskViewController(self, didCreateGoal: newGoal)
+        interactor?.uploadTask(title: taskName, date: date, color: color, description: description, startTime: startTime, endTime: endTime, goalId: goalId)
     }
     
     @objc private func dateTapped() {
@@ -837,6 +927,10 @@ final class CreateTaskViewController: UIViewController {
             colorPickerContainer.isHidden = true
             linkPickerContainer.isHidden = true
         }
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

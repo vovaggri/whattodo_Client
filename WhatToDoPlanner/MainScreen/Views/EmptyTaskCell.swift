@@ -2,7 +2,7 @@ import UIKit
 
 final class EmptyTaskCell: UICollectionViewCell {
     enum Constants {
-        static let identifier = "TaskCell"
+        static let identifier = "EmptyTaskCell"
         static let fontName: String = "AoboshiOne-Regular"
         static let titleText: String = "No tasks for today"
     }

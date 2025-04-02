@@ -19,6 +19,16 @@ final class CalendarViewController: UIViewController {
         return label
     }()
     
+    private let closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        // use xmark, scaled up
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let xImage = UIImage(systemName: "xmark", withConfiguration: config)
+        button.setImage(xImage, for: .normal)
+        button.tintColor = UIColor.black.withAlphaComponent(0.33)
+        return button
+    }()
+    
     private lazy var monthLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: Constants.fontName, size: 20)
@@ -69,7 +79,9 @@ final class CalendarViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        configureCloseButton()
         navigationItem.titleView = calendarTitle
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
         setupLayout()
         
         interactor?.fetchCalendar()
@@ -103,5 +115,13 @@ final class CalendarViewController: UIViewController {
         weeksCollectionView.pinLeft(to: view.leadingAnchor)
         weeksCollectionView.pinRight(to: view.trailingAnchor)
         weeksCollectionView.setHeight(60)
+    }
+    
+    private func configureCloseButton() {
+        closeButton.addTarget(self, action: #selector(closeButtonPressed), for: .touchUpInside)
+    }
+    
+    @objc private func closeButtonPressed() {
+        navigationController?.popViewController(animated: true)
     }
 }

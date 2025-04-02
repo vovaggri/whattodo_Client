@@ -6,6 +6,7 @@ import UIKit
 protocol BottomSheetDelegate: AnyObject {
     func changeDetent(to detent: UISheetPresentationController.Detent.Identifier)
     func didTapAddTaskButton()
+    func didTapCalendarButton()
 }
 
 final class BottomSheetViewController: UIViewController {
@@ -24,6 +25,7 @@ final class BottomSheetViewController: UIViewController {
         static let switcherAlpha: CGFloat = 0.34
         
         static let addButtonName: String = "plus"
+        static let calendarButtonName: String = "calendar"
     }
     
     var interactor: BottomBusinessLogic?
@@ -32,7 +34,8 @@ final class BottomSheetViewController: UIViewController {
     private let todayLabel: UILabel = UILabel()
     private let presentSwictherButton: UIButton = UIButton(type: .system)
     private let addTaskButton: UIButton = UIButton(type: .system)
-    private var tasks: [Task] = []
+//    private let calendarButton: UIButton = UIButton(type: .system)
+    private var todayTasks: [Task] = []
     
     private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -54,10 +57,11 @@ final class BottomSheetViewController: UIViewController {
             sheet.delegate = self
         }
         
-        interactor?.loadTasks()
         configureUI()
         configureTaskCollection()
         configureAddTaskButton()
+        interactor?.loadTasks()
+//        configureCalendarButton()
     }
     
     func updateSwitcherButton(title: String) {
@@ -65,7 +69,8 @@ final class BottomSheetViewController: UIViewController {
     }
     
     func showTasks(with tasks: [Task]) {
-        self.tasks = tasks
+        self.todayTasks = tasks
+        collectionView.reloadData()
     }
     
     private func configureUI() {
@@ -100,11 +105,9 @@ final class BottomSheetViewController: UIViewController {
     
     private func configureTaskCollection() {
         // Регистрируем нашу кастомную ячейку
-        if tasks.isEmpty {
-            collectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
-        } else {
-            collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
-        }
+        collectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
+        collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+
         
         view.addSubview(collectionView)
         collectionView.dataSource = self
@@ -137,6 +140,25 @@ final class BottomSheetViewController: UIViewController {
         addTaskButton.addTarget(self, action: #selector(addTaskPressed), for: .touchUpInside)
     }
     
+//    private func configureCalendarButton() {
+//        view.addSubview(calendarButton)
+//        
+//        calendarButton.translatesAutoresizingMaskIntoConstraints = false
+//        
+//        calendarButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor)
+//        calendarButton.pinRight(to: view.trailingAnchor, 50)
+//        
+//        calendarButton.backgroundColor = .black
+//        calendarButton.setImage(UIImage(systemName: Constants.calendarButtonName), for: .normal)
+//        calendarButton.tintColor = .white
+//        
+//        calendarButton.setHeight(50)
+//        calendarButton.setWidth(50)
+//        calendarButton.layer.cornerRadius = 25
+//        
+//        calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
+//    }
+    
     @objc private func switcherPressed() {
         interactor?.switcherPressed()
     }
@@ -144,6 +166,11 @@ final class BottomSheetViewController: UIViewController {
     @objc private func addTaskPressed() {
         delegate?.didTapAddTaskButton()
     }
+//    
+//    @objc private func calendarPressed() {
+//        print("Calendar was pressed")
+//        delegate?.didTapCalendarButton()
+//    }
 }
 
 extension BottomSheetViewController: UISheetPresentationControllerDelegate {
@@ -155,28 +182,25 @@ extension BottomSheetViewController: UISheetPresentationControllerDelegate {
 extension BottomSheetViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 //        return TasksTest.tasks.count
-        if tasks.isEmpty {
+        if todayTasks.isEmpty {
             return 1
         } else {
-            return tasks.count
+            return todayTasks.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if tasks.isEmpty {
+        if todayTasks.isEmpty {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
                 return UICollectionViewCell()
             }
-            
             cell.configure()
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
                 return UICollectionViewCell()
             }
-            
-//            let task = TasksTest.tasks[indexPath.row]
-            let task = self.tasks[indexPath.row]
+            let task = self.todayTasks[indexPath.row]
             cell.configure(with: task)
             return cell
         }
@@ -185,8 +209,8 @@ extension BottomSheetViewController: UICollectionViewDataSource {
 
 extension BottomSheetViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if !tasks.isEmpty {
-            let selectedTask = TasksTest.tasks[indexPath.row]
+        if !todayTasks.isEmpty {
+            let selectedTask = todayTasks[indexPath.row]
             print("Selected: \(selectedTask.title)")
         }
     }
