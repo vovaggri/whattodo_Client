@@ -1,17 +1,14 @@
 import UIKit
 
-class SuccessScreenConfigurator {
+final class SuccessScreenConfigurator {
     static func configureModule() -> UIViewController {
         let interactor = SuccessScreenInteractor()
         let presenter = SuccessScreenPresenter()
-        let router = SuccessScreenRouter()
         
         let viewController = SuccessScreenViewController(interactor: interactor)
         
         interactor.presenter = presenter
-        presenter.viewController = viewController
-        router.viewController = viewController
-        
+        presenter.viewController = viewController        
         return viewController
     }
 }
