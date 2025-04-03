@@ -11,8 +11,6 @@ final class MainWorker: MainWorkerProtocol {
     func getUser(completion: @escaping (Result<MainModels.Fetch.UserResponse, Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),
            let token = String(data: tokenData, encoding: .utf8) {
-            print("token: \(token)")
-            
             guard let url = URL(string: urlText) else {
                 print("Incorrect url user")
                 completion(.failure(MainModels.Fetch.MainError.incorrectURL))
