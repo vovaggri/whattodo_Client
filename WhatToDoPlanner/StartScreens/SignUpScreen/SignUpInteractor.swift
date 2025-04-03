@@ -39,7 +39,7 @@ final class SignUpInteractor: SignUpInteractorProtocol {
             switch result {
             case.success:
                 print("Self in closure: \(String(describing: self))")
-                self?.presenter?.signUpSuccess()
+                self?.presenter?.signUpSuccess(email: user.email)
                 print("Done")
             case.failure(let error):
                 self?.presenter?.showError(message: error.localizedDescription)

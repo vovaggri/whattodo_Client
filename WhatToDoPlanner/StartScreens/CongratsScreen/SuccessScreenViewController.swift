@@ -59,6 +59,7 @@ final class SuccessScreenViewController: UIViewController {
         setupViews()
         configureWelcomeLabels()
         setupConstraints()
+        setButton()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.animateFifthLabel()
@@ -67,7 +68,9 @@ final class SuccessScreenViewController: UIViewController {
         interactor.fetchSuccessMessage(request: SuccessScreen.SuccessMessage.Request())
     }
 
-
+    func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel) {
+        firstLabel.text = viewModel.message
+    }
 
     private func setupViews() {
         view.addSubview(continueButton)
@@ -179,8 +182,12 @@ final class SuccessScreenViewController: UIViewController {
         continueButton.setHeight(50)
         continueButton.alpha = 0
     }
-
-    func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel) {
-        firstLabel.text = viewModel.message
+    
+    private func setButton() {
+        continueButton.addTarget(self, action: #selector(continueButtonPressed), for: .touchUpInside)
+    }
+    
+    @objc private func continueButtonPressed() {
+        interactor.continueButtonLogic()
     }
 }

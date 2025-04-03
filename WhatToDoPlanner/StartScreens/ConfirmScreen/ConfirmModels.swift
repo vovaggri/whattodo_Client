@@ -22,4 +22,8 @@ enum ConfirmScreen {
         let email: String
         let code: String
     }
+    
+    struct TokenResponse: Codable {
+        let token: String
+    }
 }
