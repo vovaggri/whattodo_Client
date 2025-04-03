@@ -8,10 +8,10 @@
 import UIKit
 
 final class ConfirmModuleAssembly {
-    static func assembly() -> UIViewController {
+    static func assembly(email: String) -> UIViewController {
         let presenter = ConfirmPresenter()
         let worker = ConfirmWorker()
-        let interactor = ConfirmInteractor(presenter: presenter, worker: worker)
+        let interactor = ConfirmInteractor(presenter: presenter, worker: worker, email: email)
         let viewController = ConfirmViewController(interactor: interactor)
        
         presenter.viewController = viewController
