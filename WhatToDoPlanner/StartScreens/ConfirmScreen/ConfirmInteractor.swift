@@ -12,7 +12,13 @@ protocol ConfirmInteractorProtocol: AnyObject {
 }
 
 final class ConfirmInteractor: ConfirmInteractorProtocol {
-    var presenter: ConfirmPresenterProtocol?
+    private var presenter: ConfirmPresenterProtocol?
+    private var worker: ConfirmWorkerProtocol?
+    
+    init(presenter: ConfirmPresenterProtocol?, worker: ConfirmWorkerProtocol?) {
+        self.presenter = presenter
+        self.worker = worker
+    }
     
     func verifyCode(_ code: String) {
         // MARK: - Need to fix for real realization

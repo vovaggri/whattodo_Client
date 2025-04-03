@@ -1,9 +1,5 @@
 import UIKit
 
-protocol SuccessScreenDisplayLogic: AnyObject {
-    func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel)
-}
-
 enum Constants {
     static let fontName: String = "AoboshiOne-Regular"
 
@@ -15,7 +11,7 @@ enum Constants {
     static let fifthLabelText: String = "WhatToDo"
 }
 
-class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
+final class SuccessScreenViewController: UIViewController {
     var interactor: SuccessScreenBusinessLogic
 
     private let firstLabel = UILabel()
