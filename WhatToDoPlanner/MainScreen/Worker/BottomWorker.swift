@@ -1,21 +1,21 @@
 import Foundation
 
 protocol BottomWorkerProtocol {
-    func getTasks(completion: @escaping ([Task]) -> Void)
+    func getTasks(completion: @escaping (Result<[Task], Error>) -> Void)
 }
 
 final class BottomWorker: BottomWorkerProtocol {
     private let keychainService = KeychainService()
     private let urlText: String = "http://localhost:8000/api/goal/0/items/"
     
-    func getTasks(completion: @escaping ([Task]) -> Void) {
+    func getTasks(completion: @escaping (Result<[Task], Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),
            let token = String(data: tokenData, encoding: .utf8) {
             print("token: \(token)")
             
             guard let url = URL(string: urlText) else {
                 print("Incorrect URL")
-                completion([])
+                completion(.failure(NSError(domain: "BottomError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
                 return
             }
             
@@ -26,13 +26,13 @@ final class BottomWorker: BottomWorkerProtocol {
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("Error of getting data: \(error.localizedDescription)")
-                    completion([])
+                    completion(.failure(error))
                     return
                 }
                 
                 guard let data = data else {
                     print("No data on answer")
-                    completion([])
+                    completion(.success([]))
                     return
                 }
                 
@@ -40,7 +40,7 @@ final class BottomWorker: BottomWorkerProtocol {
                     print("JSON Response: \(jsonString)")
                     if jsonString == "null" {
                         print("Empty tasks")
-                        completion([])
+                        completion(.success([]))
                         return
                     }
                 }
@@ -50,18 +50,18 @@ final class BottomWorker: BottomWorkerProtocol {
                 decoder.dateDecodingStrategy = .iso8601
                 
                 do {
-                    var tasks = try decoder.decode([Task].self, from: data)
+                    let tasks = try decoder.decode([Task].self, from: data)
                     print("Got tasks: \(tasks)")
-                    completion(tasks)
+                    completion(.success(tasks))
                 } catch {
                     print("Error while decoding data: \(error)")
-                    completion([])
+                    completion(.failure(error))
                 }
             }.resume()
             
         } else {
             print("Cannot take keychain")
-            completion([])
+            completion(.failure(NSError(domain: "KeychainError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Account wasn't found"])))
         }
     }
 }

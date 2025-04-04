@@ -46,18 +46,22 @@ final class TaskCell: UICollectionViewCell {
         titleLabel.text = task.title
         contentView.backgroundColor = task.getColour()
         
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = TimeZone(abbreviation: "UTC") // Указываем явно UTC
-        
-        if let startTime = task.startTime, let endTime = task.endTime {
-            // Конвертируем UTC-время в локальную зону устройства
-            let localStart = startTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
-            let localEnd = endTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
-            
-            timeLabel.text = "\(formatter.string(from: localStart)) - \(formatter.string(from: localEnd))"
-        } else {
+        if task.startTime == task.endTime {
             timeLabel.text = "Any time today"
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            formatter.timeZone = TimeZone(abbreviation: "UTC") // Указываем явно UTC
+            
+            if let startTime = task.startTime, let endTime = task.endTime {
+                // Конвертируем UTC-время в локальную зону устройства
+                let localStart = startTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
+                let localEnd = endTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
+                
+                timeLabel.text = "\(formatter.string(from: localStart)) - \(formatter.string(from: localEnd))"
+            } else {
+                timeLabel.text = "Any time today"
+            }
         }
     }
     
