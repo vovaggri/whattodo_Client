@@ -22,12 +22,12 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
     
     // Color map for background updates
     private let colorMap: [String: UIColor] = [
-        "Marigold":     UIColor(red: 242/255, green: 233/255, blue: 212/255, alpha: 1.0),
-        "Aqua Blue":    UIColor(red: 218/255, green: 236/255, blue: 243/255, alpha: 1.0),
-        "Moss Green":   UIColor(red: 232/255, green: 249/255, blue: 228/255, alpha: 1.0),
-        "Lilac":        UIColor(red: 223/255, green: 223/255, blue: 244/255, alpha: 1.0),
-        "Ultra Pink":   UIColor(red: 252/255, green: 231/255, blue: 255/255, alpha: 1.0),
-        "Default White":UIColor(red: 247/255, green: 249/255, blue: 249/255, alpha: 1.0)
+        "Marigold":     UIColor(hex: "F2E9D4") ?? .yellow,
+        "Aqua Blue":    UIColor(hex: "DAECF3") ?? .blue,
+        "Moss Green":   UIColor(hex: "E8F9E4") ?? .green,
+        "Lilac":        UIColor(hex: "DFDFF4") ?? .purple,
+        "Ultra Pink":   UIColor(hex: "FCE7FF") ?? .systemPink,
+        "Default White": UIColor(hex: "F7F9F9") ?? .white
     ]
 
     

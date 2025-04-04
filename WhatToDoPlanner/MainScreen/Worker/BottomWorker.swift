@@ -50,7 +50,7 @@ final class BottomWorker: BottomWorkerProtocol {
                 decoder.dateDecodingStrategy = .iso8601
                 
                 do {
-                    let tasks = try decoder.decode([Task].self, from: data)
+                    var tasks = try decoder.decode([Task].self, from: data)
                     print("Got tasks: \(tasks)")
                     completion(tasks)
                 } catch {

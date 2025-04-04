@@ -53,6 +53,10 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
                 decoder.dateDecodingStrategy = .iso8601
                 let response = try decoder.decode(CreateTaskModels.CreateTaskResponse.self, from: data)
                 let newId = response.id
+                
+                // Исправляем startTime и endTime, если год равен 0
+                let fixedStartTime = self.fixYearIfNeeded(requestData.startTime)
+                let fixedEndTime = self.fixYearIfNeeded(requestData.endTime)
                 let createdTask = Task(
                     id: newId,
                     title: requestData.title,
@@ -60,8 +64,8 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
                     colour: requestData.colour,
                     endDate: requestData.endDate,
                     done: requestData.done,
-                    startTime: requestData.startTime,
-                    endTime: requestData.endTime,
+                    startTime: fixedStartTime,
+                    endTime: fixedEndTime,
                     goalId: gId
                 )
                 print("Created success")
@@ -73,6 +77,18 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
         }.resume()
     }
     
-    
+    // Функция для корректировки даты: если год равен 0, заменяем его на 1970
+    private func fixYearIfNeeded(_ date: Date?) -> Date? {
+        guard let date = date else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        // Если нужно работать с UTC, можно установить:
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        if let year = components.year, year == 0 {
+            components.year = 1970
+            return calendar.date(from: components)
+        }
+        return date
+    }
 }
 

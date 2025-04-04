@@ -20,14 +20,17 @@ final class CreateTaskInteractor: CreateTaskInteractorProtocol {
     }
     
     func uploadTask(title: String, date: Date, color: Int, description: String?, startTime: Date?, endTime: Date?, goalId: Int?) {
+        let fixedStartTime = fixedDate(from: startTime)
+        let fixedEndTime = fixedDate(from: endTime)
+        
         let task = CreateTaskModels.CreateTaskRequest(
             title: title,
             description: description,
             colour: color,
             endDate: date,
             done: false,
-            startTime: startTime,
-            endTime: endTime
+            startTime: fixedStartTime,
+            endTime: fixedEndTime
         )
         
         worker?.createTask(with: task, goalId: 0) { [weak self] result in
@@ -46,6 +49,17 @@ final class CreateTaskInteractor: CreateTaskInteractorProtocol {
         }
         
         print("done")
+    }
+    
+    private func fixedDate(from date: Date?) -> Date? {
+        guard let date = date else { return nil }
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        if let year = components.year, year == 0 {
+            components.year = 1970
+            return calendar.date(from: components)
+        }
+        return date
     }
 }
 
