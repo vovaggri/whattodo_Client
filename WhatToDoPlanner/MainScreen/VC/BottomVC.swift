@@ -237,8 +237,6 @@ extension BottomSheetViewController: taskCellDelegate {
                 
         todayTasks[indexPath.row].done.toggle()
         cell.updateCompleteButtonAppearance() // Обновляем визуал
-        print(todayTasks[indexPath.row])
-        let check = todayTasks[indexPath.row].goalId
             
         // Здесь должен быть вызов Interactor'а для сохранения изменений в БД/сервере
         // TODO: - Update server

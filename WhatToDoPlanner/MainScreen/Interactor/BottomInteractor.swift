@@ -65,5 +65,17 @@ final class BottomInteractor: BottomBusinessLogic {
     
     func updateTask(_ task: Task) {
         print("update")
+        worker?.updateTask(task) { [weak self] result in
+            switch result {
+            case.success:
+                DispatchQueue.main.async {
+                    print("update task done")
+                }
+            case.failure(let error):
+                DispatchQueue.main.async {
+                    self?.presenter?.showErrorAlert(error.localizedDescription)
+                }
+            }
+        }
     }
 }
