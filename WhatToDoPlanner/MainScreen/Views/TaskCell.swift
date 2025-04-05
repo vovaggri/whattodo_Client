@@ -20,6 +20,15 @@ final class TaskCell: UICollectionViewCell {
         return label
     }()
     
+    private var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
+        label.font = UIFont(name: Constants.fontName, size: 14)
+        label.textColor = UIColor(hex: "000000", alpha: 0.5)
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Устанавливаем скруглённые углы на contentView
@@ -36,6 +45,7 @@ final class TaskCell: UICollectionViewCell {
         
         configureTitleLabel()
         configureTimeLabel()
+        configureDescriptionLabel()
     }
     
     required init?(coder: NSCoder) {
@@ -51,7 +61,7 @@ final class TaskCell: UICollectionViewCell {
         } else {
             let formatter = DateFormatter()
             formatter.dateFormat = "HH:mm"
-            formatter.timeZone = TimeZone(abbreviation: "UTC") // Указываем явно UTC
+            formatter.timeZone = TimeZone(abbreviation: "UTC")
             
             if let startTime = task.startTime, let endTime = task.endTime {
                 // Конвертируем UTC-время в локальную зону устройства
@@ -63,13 +73,23 @@ final class TaskCell: UICollectionViewCell {
                 timeLabel.text = "Any time today"
             }
         }
+        
+        if task.description == "" {
+            descriptionLabel.text = "No description"
+        } else {
+            if let description = task.description {
+                descriptionLabel.text = description
+            } else {
+                descriptionLabel.text = "No description"
+            }
+        }
     }
     
     private func configureTitleLabel() {
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        titleLabel.pinTop(to: contentView.topAnchor, 40)
+        titleLabel.pinTop(to: contentView.topAnchor, 20)
         titleLabel.pinLeft(to: contentView.leadingAnchor, 30)
         titleLabel.pinRight(to: contentView.trailingAnchor)
     }
@@ -78,8 +98,17 @@ final class TaskCell: UICollectionViewCell {
         contentView.addSubview(timeLabel)
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        timeLabel.pinTop(to: titleLabel.bottomAnchor, 20)
+        timeLabel.pinTop(to: titleLabel.bottomAnchor, 10)
         timeLabel.pinLeft(to: contentView.leadingAnchor, 30)
         timeLabel.pinRight(to: contentView.trailingAnchor)
+    }
+    
+    private func configureDescriptionLabel() {
+        contentView.addSubview(descriptionLabel)
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        descriptionLabel.pinTop(to: timeLabel.bottomAnchor, 10)
+        descriptionLabel.pinLeft(to: contentView.leadingAnchor, 30)
+        descriptionLabel.pinRight(to: contentView.trailingAnchor, 30)
     }
 }
