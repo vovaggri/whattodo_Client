@@ -9,6 +9,7 @@ protocol BottomPresentationLogic {
     func updateMode(isLarge: Bool)
     func showTasks(with tasks: [Task])
     func navigateToCreateTaskVC()
+    func showErrorAlert(_ message: String?)
 }
 
 final class BottomPresenter: BottomPresentationLogic {
@@ -42,5 +43,9 @@ final class BottomPresenter: BottomPresentationLogic {
         guard let bottomVC = bottomVC else { return }
         let createTaskVC = CreateTaskAssembly.assembly(delegate: bottomVC as? CreateTaskViewControllerDelegate)
         bottomVC.navigationController?.pushViewController(createTaskVC, animated: true)
+    }
+    
+    func showErrorAlert(_ message: String?) {
+        bottomVC?.showError(message: message ?? "Error")
     }
 }

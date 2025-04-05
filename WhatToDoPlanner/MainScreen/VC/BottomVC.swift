@@ -73,6 +73,12 @@ final class BottomSheetViewController: UIViewController {
         collectionView.reloadData()
     }
     
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
     private func configureUI() {
         configureTodayLabel()
         configureSwitcherButton()
@@ -202,6 +208,7 @@ extension BottomSheetViewController: UICollectionViewDataSource {
             }
             let task = self.todayTasks[indexPath.row]
             cell.configure(with: task)
+            cell.delegate = self
             return cell
         }
     }
@@ -218,10 +225,22 @@ extension BottomSheetViewController: UICollectionViewDelegate {
 
 extension BottomSheetViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // Пример: ширина = вся ширина экрана с отступами 16, высота = 50
         let width = collectionView.bounds.width - 16
         let height: CGFloat = 158
         return CGSize(width: width, height: height)
+    }
+}
+
+extension BottomSheetViewController: taskCellDelegate {
+    func taskCellDidCompleteTask(_ cell: TaskCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+                
+        todayTasks[indexPath.row].done.toggle()
+        cell.updateCompleteButtonAppearance() // Обновляем визуал
+            
+        // Здесь должен быть вызов Interactor'а для сохранения изменений в БД/сервере
+        // TODO: - Update server
+        interactor?.updateTask(todayTasks[indexPath.row])
     }
 }
 
