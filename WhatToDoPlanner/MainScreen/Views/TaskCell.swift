@@ -1,10 +1,17 @@
 import UIKit
 
+protocol taskCellDelegate: AnyObject {
+    func taskCellDidCompleteTask(_ cell: TaskCell)
+}
+
 final class TaskCell: UICollectionViewCell {
     enum Constants {
         static let identifier = "TaskCell"
         static let fontName: String = "AoboshiOne-Regular"
     }
+    
+    weak var delegate: taskCellDelegate?
+    private var task: Task?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -29,6 +36,15 @@ final class TaskCell: UICollectionViewCell {
         return label
     }()
     
+    private lazy var completeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor(hex: "FFFFFF", alpha: 0.4) // Базовый цвет
+        button.layer.cornerRadius = 15
+        button.clipsToBounds = true
+        button.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
+        return button
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Устанавливаем скруглённые углы на contentView
@@ -46,13 +62,25 @@ final class TaskCell: UICollectionViewCell {
         configureTitleLabel()
         configureTimeLabel()
         configureDescriptionLabel()
+        configureCompleteButton()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        task = nil
+        titleLabel.text = nil
+        timeLabel.text = nil
+        descriptionLabel.text = nil
+        completeButton.backgroundColor = UIColor(hex: "FFFFFF", alpha: 0.4) // Сброс к базовому состоянию
+        completeButton.setImage(nil, for: .normal)
+    }
+    
     func configure(with task: Task) {
+        self.task = task
         titleLabel.text = task.title
         contentView.backgroundColor = task.getColour()
         
@@ -64,7 +92,7 @@ final class TaskCell: UICollectionViewCell {
             formatter.timeZone = TimeZone(abbreviation: "UTC")
             
             if let startTime = task.startTime, let endTime = task.endTime {
-                // Конвертируем UTC-время в локальную зону устройства
+                // Converting UTC to the local zone
                 let localStart = startTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
                 let localEnd = endTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
                 
@@ -82,6 +110,21 @@ final class TaskCell: UICollectionViewCell {
             } else {
                 descriptionLabel.text = "No description"
             }
+        }
+        
+        updateCompleteButtonAppearance()
+    }
+    
+    func updateCompleteButtonAppearance() {
+        guard let task = task else { return }
+        
+        if task.done {
+            completeButton.backgroundColor = .systemYellow
+            completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+            completeButton.tintColor = .white
+        } else {
+            completeButton.backgroundColor = UIColor(hex: "FFFFFF", alpha: 0.4)
+            completeButton.setImage(nil, for: .normal)
         }
     }
     
@@ -110,5 +153,32 @@ final class TaskCell: UICollectionViewCell {
         descriptionLabel.pinTop(to: timeLabel.bottomAnchor, 10)
         descriptionLabel.pinLeft(to: contentView.leadingAnchor, 30)
         descriptionLabel.pinRight(to: contentView.trailingAnchor, 30)
+    }
+    
+    private func configureCompleteButton() {
+        contentView.addSubview(completeButton)
+        completeButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        completeButton.setHeight(30)
+        completeButton.setWidth(30)
+        completeButton.pinCenterY(to: contentView.centerYAnchor)
+        completeButton.pinRight(to: contentView.trailingAnchor, 10)
+    }
+    
+    @objc private func didTapCompleteButton() {
+        UIView.animate(withDuration: 0.3, animations: {
+            if self.task?.done == false {
+                self.task?.done = true
+                self.completeButton.backgroundColor = .systemYellow
+                self.completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+            } else {
+                self.task?.done = false
+                self.completeButton.backgroundColor = UIColor(hex: "FFFFFF", alpha: 0.4)
+                self.completeButton.setImage(nil, for: .normal)
+            }
+        }) { _ in
+            // Message to vc that task is completed
+            self.delegate?.taskCellDidCompleteTask(self)
+        }
     }
 }

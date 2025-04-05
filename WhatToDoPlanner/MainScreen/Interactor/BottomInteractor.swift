@@ -9,6 +9,7 @@ protocol BottomBusinessLogic {
     func detentChanged(newDetent: UISheetPresentationController.Detent.Identifier?)
     func loadTasks()
     func addTaskButton()
+    func updateTask(_ task: Task)
 }
 
 final class BottomInteractor: BottomBusinessLogic {
@@ -60,5 +61,9 @@ final class BottomInteractor: BottomBusinessLogic {
     
     func addTaskButton() {
         presenter?.navigateToCreateTaskVC()
+    }
+    
+    func updateTask(_ task: Task) {
+        print("update")
     }
 }

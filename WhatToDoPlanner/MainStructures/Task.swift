@@ -6,7 +6,7 @@ struct Task: Codable {
     var description: String?
     var colour: Int
     let endDate: Date
-    let done: Bool
+    var done: Bool
     
     // Optional
     var startTime: Date?
