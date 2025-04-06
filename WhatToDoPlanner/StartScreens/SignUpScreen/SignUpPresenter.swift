@@ -2,7 +2,7 @@ import UIKit
 
 protocol SignUpPresenterProtocol: AnyObject {
     func showError(message: String)
-    func signUpSuccess()
+    func signUpSuccess(email: String)
 }
 
 final class SignUpPresenter: SignUpPresenterProtocol {
@@ -14,13 +14,13 @@ final class SignUpPresenter: SignUpPresenterProtocol {
         view?.present(alert, animated: true)
     }
     
-    func signUpSuccess() {
+    func signUpSuccess(email: String) {
         print("Succes")
-        navigateToNextScreen()
+        navigateToNextScreen(email: email)
     }
     
-    private func navigateToNextScreen() {
-        let confirmVC = ConfirmModuleAssembly.assembly()
+    private func navigateToNextScreen(email: String) {
+        let confirmVC = ConfirmModuleAssembly.assembly(email: email)
         
         // Ensure the viewController has a navigationController
         guard let navigationController = view?.navigationController else {

@@ -7,7 +7,8 @@ final class MainAssembly {
     static func assembly() -> UIViewController {
         let viewController = MainScreenViewController()
         let presenter = MainScreenPresenter()
-        let interactor = MainScreenInteractor(presenter: presenter)
+        let worker = MainWorker()
+        let interactor = MainScreenInteractor(presenter: presenter, worker: worker)
         
         viewController.interactor = interactor
         presenter.viewController = viewController

@@ -1,9 +1,5 @@
 import UIKit
 
-protocol SuccessScreenDisplayLogic: AnyObject {
-    func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel)
-}
-
 enum Constants {
     static let fontName: String = "AoboshiOne-Regular"
 
@@ -15,7 +11,7 @@ enum Constants {
     static let fifthLabelText: String = "WhatToDo"
 }
 
-class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
+final class SuccessScreenViewController: UIViewController {
     var interactor: SuccessScreenBusinessLogic
 
     private let firstLabel = UILabel()
@@ -63,6 +59,7 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         setupViews()
         configureWelcomeLabels()
         setupConstraints()
+        setButton()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.animateFifthLabel()
@@ -71,7 +68,9 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         interactor.fetchSuccessMessage(request: SuccessScreen.SuccessMessage.Request())
     }
 
-
+    func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel) {
+        firstLabel.text = viewModel.message
+    }
 
     private func setupViews() {
         view.addSubview(continueButton)
@@ -183,8 +182,12 @@ class SuccessScreenViewController: UIViewController, SuccessScreenDisplayLogic {
         continueButton.setHeight(50)
         continueButton.alpha = 0
     }
-
-    func displaySuccessMessage(_ viewModel: SuccessScreen.SuccessMessage.ViewModel) {
-        firstLabel.text = viewModel.message
+    
+    private func setButton() {
+        continueButton.addTarget(self, action: #selector(continueButtonPressed), for: .touchUpInside)
+    }
+    
+    @objc private func continueButtonPressed() {
+        interactor.continueButtonLogic()
     }
 }

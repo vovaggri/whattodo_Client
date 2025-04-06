@@ -7,7 +7,8 @@ enum CreateTaskAssembly {
         let vc = CreateTaskViewController()
         // Let’s assume you have a presenter & interactor, etc.
         let presenter = CreateTaskPresenter()
-        let interactor = CreateTaskInteractor(presenter: presenter)
+        let worker = CreateTaskWorker()
+        let interactor = CreateTaskInteractor(presenter: presenter, worker: worker)
         presenter.createTaskVC = vc
         vc.interactor = interactor
         

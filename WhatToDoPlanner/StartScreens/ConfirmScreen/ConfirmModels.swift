@@ -17,4 +17,13 @@ enum ConfirmScreen {
             let message: String
         }
     }
+    
+    struct UserConfirmRequest {
+        let email: String
+        let code: String
+    }
+    
+    struct TokenResponse: Codable {
+        let token: String
+    }
 }

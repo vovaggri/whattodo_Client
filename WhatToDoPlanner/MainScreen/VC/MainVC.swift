@@ -5,6 +5,7 @@ final class MainScreenViewController: UIViewController {
         static let fontName: String = "AoboshiOne-Regular"
         
         static let smallIdentifier: String = "small"
+        static let calendarButtonName: String = "calendar"
     }
     
     // SVIP references
@@ -13,11 +14,12 @@ final class MainScreenViewController: UIViewController {
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
+    private let calendarButton: UIButton = UIButton(type: .system)
     private var bottomSheetVC: BottomSheetViewController?
   
     //private let keychainService = KeychainService()
     
-    private var categories: [MainScreen.Fetch.CategoryViewModel] = []
+    private var categories: [MainModels.Fetch.CategoryViewModel] = []
     
     private let categoriesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -26,15 +28,6 @@ final class MainScreenViewController: UIViewController {
         collectionView.backgroundColor = .clear
         return collectionView
     }()
-    private func setupCollectionViewConstraints() {
-        categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            categoriesCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-            categoriesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            categoriesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            categoriesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,10 +41,11 @@ final class MainScreenViewController: UIViewController {
 
         setupCollectionViewConstraints()
         
-        let request = MainScreen.Fetch.Request()
+        let request = MainModels.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
         
         presentBottomSheet()
+        configureCalendarButton()
        
 //        if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
 //            print("Полученный токен: \(token)")
@@ -87,14 +81,37 @@ final class MainScreenViewController: UIViewController {
     }
     
     // MARK: - MainScreenDisplayLogic
-    func displayMainScreenData(viewModel: MainScreen.Fetch.ViewModel) {
+    func displayMainScreenData(viewModel: MainModels.Fetch.ViewModel) {
         headerView.displayHeader(greeting: viewModel.greetingText, avatar: viewModel.avatarImage)
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func setupCollectionViewConstraints() {
+        categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            categoriesCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+            categoriesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            categoriesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            categoriesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
     
     private func pushCreateTaskVC() {
         let createTaskVC = CreateTaskAssembly.assembly(delegate: self as? CreateTaskViewControllerDelegate)
         bottomSheetVC?.dismiss(animated: false) { [weak self] in
             self?.navigationController?.pushViewController(createTaskVC, animated: true)
+        }
+    }
+    
+    private func pushCalendar() {
+        let calendarVC = CalendarAssembly.assembly()
+        bottomSheetVC?.dismiss(animated: false) { [weak self] in
+            self?.navigationController?.pushViewController(calendarVC, animated: true)
         }
     }
     
@@ -152,6 +169,29 @@ final class MainScreenViewController: UIViewController {
         }
     }
 
+    private func configureCalendarButton() {
+        view.addSubview(calendarButton)
+        
+        calendarButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        calendarButton.pinTop(to: headerView.topAnchor)
+        calendarButton.pinRight(to: view.trailingAnchor, 20)
+        
+        calendarButton.backgroundColor = .black
+        calendarButton.setImage(UIImage(systemName: Constants.calendarButtonName), for: .normal)
+        calendarButton.tintColor = .white
+        
+        calendarButton.setHeight(50)
+        calendarButton.setWidth(50)
+        calendarButton.layer.cornerRadius = 25
+        
+        calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
+    }
+    
+    @objc private func calendarPressed() {
+        print("Calendar was pressed")
+        pushCalendar()
+    }
 }
 
 extension MainScreenViewController: UIAdaptivePresentationControllerDelegate {
@@ -170,6 +210,10 @@ extension MainScreenViewController: BottomSheetDelegate {
     
     func didTapAddTaskButton() {
         pushCreateTaskVC()
+    }
+    
+    func didTapCalendarButton() {
+        pushCalendar()
     }
 }
 
