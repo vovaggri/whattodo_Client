@@ -3,6 +3,7 @@ import Foundation
 protocol CalendarInteractorProtocol {
     func fetchCalendar()
     func didSelectDay(_ date: Date)
+    func updateCalendar(to date: Date)
 }
 
 final class CalendarInteractor: CalendarInteractorProtocol {
@@ -11,6 +12,7 @@ final class CalendarInteractor: CalendarInteractorProtocol {
     
     private var weeks: [[CalendarModels.CalendarDay]] = []
     private var title: String = ""
+    private var currentDate: Date = Date()
     
     init(presenter: CalendarPresenterProtocol?, worker: CalendarWorkerProtocol?) {
         self.presenter = presenter
@@ -43,6 +45,15 @@ final class CalendarInteractor: CalendarInteractorProtocol {
         }
         
         self.weeks = newWeeks
+        presenter?.presentCalendar(title: title, weeks: weeks)
+    }
+    
+    func updateCalendar(to date: Date) {
+        self.currentDate = date
+        let result = getWeeks(for: date)
+        self.title = result.title
+        self.weeks = result.weeks
+        
         presenter?.presentCalendar(title: title, weeks: weeks)
     }
     
