@@ -1,6 +1,9 @@
 import UIKit
 
 final class HeaderView: UIView {
+    enum Constants {
+        static let fontName: String = "AoboshiOne-Regular"
+    }
     
     private let avatarImageView = UIImageView()
     private let greetingLabel = UILabel()
@@ -102,6 +105,8 @@ final class HeaderView: UIView {
         settingsButton.pinRight(to: self, 16)
         settingsButton.setWidth(mode: .equal, 24)
         settingsButton.setHeight(mode: .equal, 24)
+        
+        greetingLabel.font = UIFont(name: Constants.fontName, size: 20)
     }
 
     

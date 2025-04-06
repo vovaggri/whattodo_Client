@@ -13,12 +13,8 @@ extension CalendarViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayCell.Constants.reuseId, for: indexPath) as? DayCell else {
             return UICollectionViewCell()
         }
-        
-        // Which week
         let weekIndex = indexPath.item / 7
-        // Which day in a week (0..6)
         let dayIndex = indexPath.item % 7
-        
         let day = weeks[weekIndex][dayIndex]
         cell.configure(with: day)
         return cell
@@ -39,6 +35,12 @@ extension CalendarViewController: UICollectionViewDelegateFlowLayout {
         let weekIndex = indexPath.item / 7
         let dayIndex = indexPath.item % 7
         let day = weeks[weekIndex][dayIndex]
+            
+        // Обновляем выбранную дату
+        selectedDate = day.date
+        collectionView.reloadData()
+            
+        // Сообщаем интеректору выбранную дату
         interactor?.didSelectDay(day.date)
     }
 }
