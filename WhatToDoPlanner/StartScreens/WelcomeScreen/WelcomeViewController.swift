@@ -334,6 +334,7 @@ final class WelcomeViewController: UIViewController  {
         
         forgetPasswordButton.pinTop(to: passwordTextField.bottomAnchor, Constants.forgetPasswordButtonTop)
         forgetPasswordButton.pinRight(to: passwordTextField)
+        forgetPasswordButton.addTarget(self, action: #selector(forgotPasswordButtonTapped), for: .touchUpInside)
     }
     
     private func cofigureRememberMe() {
@@ -446,6 +447,15 @@ final class WelcomeViewController: UIViewController  {
             self.view.frame.origin.y = 0
         }
     }
+    @objc private func forgotPasswordButtonTapped() {
+        let forgotVC = ForgotScreenAssembly.assemble()
+        navigationController?.pushViewController(forgotVC, animated: true)
+    }
+    @objc private func presentforgotpassscreen() {
+        
+        forgotPasswordButtonTapped()
+    }
+    
 
     // Show the blue highlight when password field is focused
     @objc private func passwordFieldDidBeginEditing() {
@@ -454,6 +464,7 @@ final class WelcomeViewController: UIViewController  {
             self.passwordHighlightView.alpha = 1
         }
     }
+    
 
     // Hide the blue highlight when password field loses focus
     @objc private func passwordFieldDidEndEditing() {

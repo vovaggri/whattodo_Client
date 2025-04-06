@@ -13,14 +13,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-
         let window = UIWindow(windowScene: windowScene)
-        let welcomeVC = MainAssembly.assembly() // Build WelcomeViewController
-        let navigationController = UINavigationController(rootViewController: welcomeVC) // Embed in navigation controller
-        window.rootViewController = navigationController
+        
+        let welcomeVC = MainAssembly.assembly()
+        let navController = UINavigationController(rootViewController: welcomeVC)
+        window.rootViewController = navController
+        
         self.window = window
         window.makeKeyAndVisible()
-
+    }
 //        let window = UIWindow(windowScene: windowScene)
 //
 //        let successVC = SuccessScreenConfigurator.configureModule()
@@ -36,7 +37,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        self.window = window
 //        window.makeKeyAndVisible()
     }
-}
+
 
 
 
