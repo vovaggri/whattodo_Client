@@ -90,7 +90,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         button.setImage(image, for: .normal)
 
         button.tintColor = .black
-        button.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        button.backgroundColor = .white
         button.layer.cornerRadius = 35
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOpacity = 0.05
@@ -580,6 +580,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
             dateStack.centerXAnchor.constraint(equalTo: grayContainerView.centerXAnchor),
             taskDateTextField.heightAnchor.constraint(equalToConstant: 52),
             taskDateTextField.widthAnchor.constraint(equalToConstant: 352),
+       dateLabel.widthAnchor.constraint(equalToConstant: 352),
            
             
             
