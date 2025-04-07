@@ -6,6 +6,7 @@ protocol MainScreenPresentationLogic {
     func presentMainScreenData(response: MainModels.Fetch.Response)
     func navigateToCreateGoal()
     func showErrorAlert(_ message: String?)
+    func showGoals(with goals: [Goal])
 }
 
 final class MainScreenPresenter: MainScreenPresentationLogic {
@@ -34,5 +35,9 @@ final class MainScreenPresenter: MainScreenPresentationLogic {
 
     func showErrorAlert(_ message: String?) {
         viewController?.showError(message: message ?? "Error")
+    }
+    
+    func showGoals(with goals: [Goal]) {
+        viewController?.showGoals(with: goals)
     }
 }

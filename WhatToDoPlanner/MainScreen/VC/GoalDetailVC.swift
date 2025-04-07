@@ -6,7 +6,7 @@ protocol GoalDetailDisplayLogic: AnyObject {
 }
 import UIKit
 
-class ShimmerView: UIView {
+final class ShimmerView: UIView {
     private let gradientLayer = CAGradientLayer()
 
     override init(frame: CGRect) {

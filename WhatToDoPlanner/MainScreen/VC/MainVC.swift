@@ -16,6 +16,7 @@ final class MainScreenViewController: UIViewController {
     private let headerView = HeaderView(frame: .zero)
     private let calendarButton: UIButton = UIButton(type: .system)
     private var bottomSheetVC: BottomSheetViewController?
+    private var goals: [Goal] = []
   
     //private let keychainService = KeychainService()
     
@@ -43,6 +44,7 @@ final class MainScreenViewController: UIViewController {
         
         let request = MainModels.Fetch.Request()
         interactor?.fetchMainScreenData(request: request)
+        interactor?.loadGoals()
         
         presentBottomSheet()
         configureCalendarButton()
@@ -90,6 +92,10 @@ final class MainScreenViewController: UIViewController {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+    
+    func showGoals(with goals: [Goal]) {
+        self.goals = goals
     }
     
     private func setupCollectionViewConstraints() {

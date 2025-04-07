@@ -175,7 +175,6 @@ final class WelcomeViewController: UIViewController  {
 //        descriptionLabel.pinRight(to: view, 40)
         descriptionLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.62).isActive = true
         descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         
         
     }
