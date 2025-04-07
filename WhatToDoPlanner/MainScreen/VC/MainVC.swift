@@ -63,6 +63,7 @@ final class MainScreenViewController: UIViewController {
         if bottomSheetVC?.presentingViewController == nil {
             presentBottomSheet()
         }
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewDidLayoutSubviews() {

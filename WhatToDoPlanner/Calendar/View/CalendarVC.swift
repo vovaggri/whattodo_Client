@@ -104,6 +104,11 @@ final class CalendarViewController: UIViewController {
         interactor?.fetchCalendar()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     func displayCalendar(viewModel: CalendarModels.CalendarViewModel) {
         let titleText = viewModel.title
         let attributedTitle = NSMutableAttributedString(string: titleText + " ")
