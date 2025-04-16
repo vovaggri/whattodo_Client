@@ -13,13 +13,14 @@
 //    }
 //}
 final class GoalDetailAssembly  {
-    static func assembly() -> GoalDetailViewController {
+    static func assembly(_ goalId: Int) -> GoalDetailViewController {
         let viewController = GoalDetailViewController()
-        let interactor = GoalDetailInteractor()
         let presenter = GoalDetailPresenter()
+        let worker = GoalDetailWorker()
+        let interactor = GoalDetailInteractor(presenter: presenter, worker: worker)
         
         viewController.interactor = interactor
-        interactor.presenter = presenter
+        viewController.goalId = goalId
         presenter.viewController = viewController
         
         return viewController

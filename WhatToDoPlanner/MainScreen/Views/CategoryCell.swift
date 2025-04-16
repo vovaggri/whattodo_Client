@@ -17,18 +17,18 @@ final class CategoryCell: UICollectionViewCell {
         setupUI()
     }
     
-    func configure(with category: MainModels.Fetch.CategoryViewModel) {
+    func configure(with category: Goal) {
         // Normal category display
         titleLabel.text = category.title
-        progressLabel.text = category.progressText
-        progressView.progress = category.progressValue
+//        progressLabel.text = category.progressText
+//        progressView.progress = category.progressValue
         
-        contentView.backgroundColor = category.color.withAlphaComponent(0.2)
+        contentView.backgroundColor = category.getColour()
             
         // Show/hide whichever subviews you need
         titleLabel.isHidden = false
-        progressLabel.isHidden = false
-        progressView.isHidden = false
+//        progressLabel.isHidden = false
+//        progressView.isHidden = false
     }
         
     func configureAsAddGoal() {
@@ -53,13 +53,6 @@ final class CategoryCell: UICollectionViewCell {
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 8),
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -8)
-        ])
-        
-        // Adjust cell size: set fixed width and height for the contentView.
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            contentView.widthAnchor.constraint(equalToConstant: 180),
-            contentView.heightAnchor.constraint(equalToConstant: 135)
         ])
         
         // Hide progress elements.

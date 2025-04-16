@@ -1,11 +1,5 @@
 import UIKit
 
-// MARK: - Protocols
-protocol GoalDetailDisplayLogic: AnyObject {
-    func displayGoalInfo(viewModel: GoalDetail.Info.ViewModel)
-}
-import UIKit
-
 final class ShimmerView: UIView {
     private let gradientLayer = CAGradientLayer()
 
@@ -55,26 +49,8 @@ final class ShimmerView: UIView {
 
 // MARK: - View Controller
 final class GoalDetailViewController: UIViewController {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        navigationItem.hidesBackButton = true
-
-
-        // Add shimmer only once
-        if aiButton.subviews.contains(where: { $0 is ShimmerView }) { return }
-
-        let shimmer = ShimmerView(frame: aiButton.bounds)
-        shimmer.isUserInteractionEnabled = false
-        shimmer.layer.cornerRadius = aiButton.layer.cornerRadius
-        shimmer.clipsToBounds = true
-        shimmer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-        aiButton.insertSubview(shimmer, belowSubview: aiButton.titleLabel!)
-        shimmer.startAnimating()
-    }
-
-
-
+    var goalId: Int?
+    var goal: Goal?
     // MARK: - SVIP
     var interactor: GoalDetailBusinessLogic?
 
@@ -159,14 +135,46 @@ final class GoalDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
 
-       
-
         aiButton.titleLabel?.layer.zPosition = 1
+        guard let goalId = goalId else {
+            return
+        }
+        interactor?.fetchGoalInfo(with: goalId)
 
         setupUI()
         setupConstraints()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        navigationItem.hidesBackButton = true
 
-        interactor?.fetchGoalInfo(request: GoalDetail.Info.Request())
+
+        // Add shimmer only once
+        if aiButton.subviews.contains(where: { $0 is ShimmerView }) { return }
+
+        let shimmer = ShimmerView(frame: aiButton.bounds)
+        shimmer.isUserInteractionEnabled = false
+        shimmer.layer.cornerRadius = aiButton.layer.cornerRadius
+        shimmer.clipsToBounds = true
+        shimmer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        aiButton.insertSubview(shimmer, belowSubview: aiButton.titleLabel!)
+        shimmer.startAnimating()
+    }
+    
+    func displayGoalInfo(viewModel: GoalDetail.Info.ViewModel, goalResponse: Goal) {
+        goal = goalResponse
+        goalTitleLabel.text = viewModel.title
+        goalTitleLabel.textColor = goal?.getColour()
+        taskContainerView.backgroundColor = goal?.getColour()
+        addTaskButton.backgroundColor = goal?.getColour()
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
     private func setupUI() {
@@ -174,7 +182,6 @@ final class GoalDetailViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-
 
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
         addTaskButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
@@ -223,12 +230,5 @@ final class GoalDetailViewController: UIViewController {
             aiButton.widthAnchor.constraint(equalToConstant: 78),
             aiButton.heightAnchor.constraint(equalToConstant: 78),
         ])
-    }
-}
-
-// MARK: - Display Logic
-extension GoalDetailViewController: GoalDetailDisplayLogic {
-    func displayGoalInfo(viewModel: GoalDetail.Info.ViewModel) {
-        goalTitleLabel.text = viewModel.title
     }
 }

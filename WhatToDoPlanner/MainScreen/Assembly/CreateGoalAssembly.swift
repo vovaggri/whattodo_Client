@@ -1,13 +1,13 @@
 import UIKit
 
 final class CreateGoalAssembly {
-    static func assemble() -> CreateGoalViewController {
+    static func assembly() -> CreateGoalViewController {
         let viewController = CreateGoalViewController()
-        let interactor = CreateGoalInteractor()
         let presenter = CreateGoalPresenter()
+        let worker = CreateGoalWorker()
+        let interactor = CreateGoalInteractor(presenter: presenter, worker: worker)
         
         viewController.interactor = interactor
-        interactor.presenter = presenter
         presenter.viewController = viewController
         
         return viewController

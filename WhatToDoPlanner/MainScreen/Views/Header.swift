@@ -5,6 +5,10 @@ final class HeaderView: UIView {
         static let fontName: String = "AoboshiOne-Regular"
     }
     
+    var bottomAnchorView: UIView {
+        return line2Label
+    }
+    
     private let avatarImageView = UIImageView()
     private let greetingLabel = UILabel()
     private let settingsButton = UIButton(type: .system)
@@ -20,27 +24,12 @@ final class HeaderView: UIView {
 
     private let line2Label: UILabel = {
         let label = UILabel()
-        label.text = "goals in"
+        label.text = "goals in categories"
         label.font = UIFont(name: Constants.fontName, size: 32)
         label.textColor = .black
         label.textAlignment = .left
         return label
     }()
-
-    private let line3Label: UILabel = {
-        let label = UILabel()
-        label.text = "categories"
-        label.font = UIFont(name: Constants.fontName, size: 32)
-        label.textColor = .black
-        label.textAlignment = .left
-        return label
-    }()
-    
-   
-        
-       
-    
-
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -61,7 +50,6 @@ final class HeaderView: UIView {
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
         line1Label.translatesAutoresizingMaskIntoConstraints = false
         line2Label.translatesAutoresizingMaskIntoConstraints = false
-        line3Label.translatesAutoresizingMaskIntoConstraints = false
 
         // Add subviews
         addSubview(avatarImageView)
@@ -69,7 +57,6 @@ final class HeaderView: UIView {
         addSubview(settingsButton)
         addSubview(line1Label)
         addSubview(line2Label)
-        addSubview(line3Label)
 
         // Example layout:
         // 1) "Hi, Jovana!" pinned to top-left
@@ -85,14 +72,6 @@ final class HeaderView: UIView {
         line2Label.pinTop(to: line1Label.bottomAnchor, 4)
         line2Label.pinLeft(to: line1Label.leadingAnchor)
         line2Label.pinRight(to: line1Label.trailingAnchor)
-
-        // 4) line3Label pinned below line2Label
-        line3Label.pinTop(to: line2Label.bottomAnchor, 4)
-        line3Label.pinLeft(to: line2Label.leadingAnchor)
-        line3Label.pinRight(to: line2Label.trailingAnchor)
-
-        // 5) Pin the bottom of line3Label to the bottom of headerView
-        line3Label.pinBottom(to: self, 16)
 
         // (Optional) Position the avatar top-left, or near greetingLabel
         avatarImageView.pinTop(to: self, 16)
