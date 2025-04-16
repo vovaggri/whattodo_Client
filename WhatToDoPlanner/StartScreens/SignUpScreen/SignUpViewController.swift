@@ -112,15 +112,17 @@ final class SignUpViewController: UIViewController {
 
     private func configureTitleLabel() {
         view.addSubview(titleLabel)
+        
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = UIFont(name: Constants.fontName, size: Constants.fontTitleSize)
         titleLabel.textAlignment = .left
         titleLabel.text = Constants.titleLabelText
         titleLabel.textColor = .black
-        
 
+        // Make sure the backButton is added before this (or use safeArea)
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
+            // Try anchoring it to the bottom of the backButton instead of safe area
+            titleLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 24),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 21)
         ])
     }

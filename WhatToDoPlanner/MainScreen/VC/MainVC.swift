@@ -114,6 +114,13 @@ final class MainScreenViewController: UIViewController {
             self?.navigationController?.pushViewController(calendarVC, animated: true)
         }
     }
+    func didSelectTask(_ task: Task) {
+        bottomSheetVC?.dismiss(animated: true) { [weak self] in
+            let reviewVC = ReviewScreenAssembly.assembly(task)
+            self?.navigationController?.pushViewController(reviewVC, animated: true)
+        }
+    }
+
     
     // MARK: - Setup Header
     private func setupHeader() {

@@ -1,5 +1,35 @@
 import UIKit
 
+import UIKit
+
+class WeeklyPagingFlowLayout: UICollectionViewFlowLayout {
+    override func targetContentOffset(
+        forProposedContentOffset proposedContentOffset: CGPoint,
+        withScrollingVelocity velocity: CGPoint
+    ) -> CGPoint {
+        guard let cv = self.collectionView else {
+            return super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
+        }
+        
+        // Calculate page width (which is the collectionView.bounds.width)
+        let pageWidth = cv.bounds.width
+        let currentOffset = cv.contentOffset.x
+        
+        // Calculate the target page index based on current offset and velocity
+        var targetPage: CGFloat = round(currentOffset / pageWidth)
+        
+        // Optionally adjust targetPage based on velocity (if user flicks quickly)
+        if velocity.x > 0.3 {
+            targetPage = floor(currentOffset / pageWidth) + 1
+        } else if velocity.x < -0.3 {
+            targetPage = ceil(currentOffset / pageWidth) - 1
+        }
+        
+        let newOffset = targetPage * pageWidth
+        return CGPoint(x: newOffset, y: proposedContentOffset.y)
+    }
+}
+
 final class CalendarViewController: UIViewController {
     enum Constants {
         static let fontName: String = "AoboshiOne-Regular"
@@ -20,6 +50,24 @@ final class CalendarViewController: UIViewController {
         let currentYear = Calendar.current.component(.year, from: Date())
         return Array((currentYear - 10)...(currentYear + 10))
     }()
+    
+    private lazy var weeksCollectionView: UICollectionView = {
+        let layout = WeeklyPagingFlowLayout() // Use your custom layout here
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.isPagingEnabled = true
+        cv.showsHorizontalScrollIndicator = false
+        cv.backgroundColor = .clear
+
+        cv.dataSource = self
+        cv.delegate = self
+        cv.register(DayCell.self, forCellWithReuseIdentifier: DayCell.Constants.reuseId)
+        return cv
+    }()
+
     
     private let calendarTitle: UILabel = {
         let label = UILabel()
@@ -49,23 +97,9 @@ final class CalendarViewController: UIViewController {
         return label
     }()
     
-    private lazy var weeksCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-                
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.isPagingEnabled = true           // Включаем «пэйджинг»
-        cv.showsHorizontalScrollIndicator = false
-        cv.backgroundColor = .clear
-                
-        cv.dataSource = self
-        cv.delegate = self
-                
-        cv.register(DayCell.self, forCellWithReuseIdentifier: DayCell.Constants.reuseId)
-        return cv
-    }()
+   
+
+
     
     private lazy var daysOfWeekStackView: UIStackView = {
         let stack = UIStackView()
@@ -96,13 +130,41 @@ final class CalendarViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
         setupLayout()
         
+        
         // Делаем метку с месяцем интерактивной
         monthLabel.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(monthYearTapped))
         monthLabel.addGestureRecognizer(tapGesture)
         
+        
         interactor?.fetchCalendar()
+        
+     
     }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if let layout = weeksCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            let spacing: CGFloat = 1.2
+            let numberOfDays = 7
+            let gaps = CGFloat(numberOfDays - 1)
+            let totalSpacing = spacing * gaps
+            
+            let usableWidth = weeksCollectionView.bounds.width - totalSpacing
+//            let cellWidth = usableWidth / CGFloat(numberOfDays)
+            let cellWidth: CGFloat = 20
+            let cellHeight: CGFloat = 68
+            
+            layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
+            layout.minimumLineSpacing = spacing
+            layout.minimumInteritemSpacing = 0
+            
+            layout.invalidateLayout()
+            weeksCollectionView.reloadData()
+        }
+    }
+
+
     
     func displayCalendar(viewModel: CalendarModels.CalendarViewModel) {
         let titleText = viewModel.title
@@ -159,7 +221,7 @@ final class CalendarViewController: UIViewController {
         weeksCollectionView.pinTop(to: daysOfWeekStackView.bottomAnchor, 8)
         weeksCollectionView.pinLeft(to: view.leadingAnchor)
         weeksCollectionView.pinRight(to: view.trailingAnchor)
-        weeksCollectionView.setHeight(60)
+        weeksCollectionView.setHeight(68)
     }
     
     private func configureCloseButton() {
@@ -231,3 +293,4 @@ extension CalendarViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         }
     }
 }
+

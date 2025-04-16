@@ -16,4 +16,8 @@ final class BottomAssembly {
         
         return viewController
     }
+    
+    static func assembly(_ task: Task) {
+        
+    }
 }
