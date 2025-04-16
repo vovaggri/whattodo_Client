@@ -818,6 +818,16 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
             endTime = parsedEndTime
         }
         
+        if (startTime == nil && endTime != nil) || (startTime != nil && endTime == nil) {
+            showError(message: "Both start time and end time must be provided, or none at all.")
+            return
+        }
+        
+        if let start = startTime, let end = endTime, start > end {
+            showError(message: "Start time cannot be later than end time.")
+            return
+        }
+        
         guard let colorText = taskColorTextField.text, !colorText.isEmpty else {
             print("Color is required")
             showError(message: CreateTaskViewController.fieldsError)

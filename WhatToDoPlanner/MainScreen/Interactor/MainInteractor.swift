@@ -4,6 +4,7 @@ import UIKit
 
 protocol MainScreenBusinessLogic {
     func fetchMainScreenData(request: MainModels.Fetch.Request)
+    func loadGoals()
     func navigateToCreateGoal()
 }
 
@@ -44,6 +45,22 @@ final class MainScreenInteractor: MainScreenBusinessLogic {
                 }
             case.failure(let error):
                 DispatchQueue.main.async {
+                    self?.presenter?.showErrorAlert(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    func loadGoals() {
+        worker?.getGoals { [weak self] result in
+            switch result {
+            case.success(let goals):
+                DispatchQueue.main.async {
+                    self?.presenter?.showGoals(with: goals)
+                }
+            case.failure(let error):
+                DispatchQueue.main.async {
+                    self?.presenter?.showGoals(with: [])
                     self?.presenter?.showErrorAlert(error.localizedDescription)
                 }
             }

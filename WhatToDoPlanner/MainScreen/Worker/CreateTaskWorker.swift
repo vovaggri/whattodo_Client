@@ -5,7 +5,7 @@ protocol CreateTaskWorkerProtocol {
 }
 
 final class CreateTaskWorker: CreateTaskWorkerProtocol {
-    private let keychainServer = KeychainService()
+    private let keychainService = KeychainService()
     
     func createTask(with requestData: CreateTaskModels.CreateTaskRequest, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void) {
         let urlText: String = "http://localhost:8000/api/goal/\(gId)/items/"
@@ -20,7 +20,7 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
         // Указываем, что тело запроса в формате JSON
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        if let tokenData = keychainServer.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
+        if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
             request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         

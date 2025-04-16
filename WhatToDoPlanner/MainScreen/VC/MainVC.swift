@@ -10,21 +10,23 @@ final class MainScreenViewController: UIViewController {
     
     // SVIP references
     var interactor: MainScreenBusinessLogic?
-    var presenter: MainScreenPresentationLogic?
     
     // Only the header view
     private let headerView = HeaderView(frame: .zero)
     private let calendarButton: UIButton = UIButton(type: .system)
+    private let bottomAnchorGuide = UIView()
+    private var bottomAnchorGuideConstraint: NSLayoutConstraint?
     private var bottomSheetVC: BottomSheetViewController?
+    private var goals: [Goal] = []
   
     //private let keychainService = KeychainService()
     
     private var categories: [MainModels.Fetch.CategoryViewModel] = []
     
-    private let categoriesCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+    private lazy var categoriesCollectionView: UICollectionView = {
+        let layout = self.createCompositionalLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isPagingEnabled = false
         collectionView.backgroundColor = .clear
         return collectionView
     }()
@@ -34,50 +36,41 @@ final class MainScreenViewController: UIViewController {
         view.backgroundColor = .white
 
         setupHeader()
-        view.addSubview(categoriesCollectionView)
+        
+        view.addSubview(bottomAnchorGuide)
+        configureButtonAnchorGuide()
+        
+        let request = MainModels.Fetch.Request()
         categoriesCollectionView.dataSource = self
         categoriesCollectionView.delegate = self
+        categoriesCollectionView.showsHorizontalScrollIndicator = false
+        categoriesCollectionView.register(CatCell.self, forCellWithReuseIdentifier: "CatCell")
         categoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
+        interactor?.fetchMainScreenData(request: request)
+        view.addSubview(categoriesCollectionView)
 
         setupCollectionViewConstraints()
         
-        let request = MainModels.Fetch.Request()
-        interactor?.fetchMainScreenData(request: request)
-        
-        presentBottomSheet()
+//        presentBottomSheet()
         configureCalendarButton()
-       
-//        if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {
-//            print("Полученный токен: \(token)")
-//            // Здесь можно использовать токен, например, добавить его в заголовок запроса или передать в нужный модуль
-//        } else {
-//            print("Токен не найден или произошла ошибка преобразования")
-//        }
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        interactor?.loadGoals()
+        
         // Если bottomVC не представлен (был dismissed), создаем и презентуем его заново
         if bottomSheetVC?.presentingViewController == nil {
             presentBottomSheet()
         }
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if categories.isEmpty,
-           let layout = categoriesCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            let cellHeight: CGFloat = 135
-            let screenCenterY = view.bounds.midY
-            let collectionViewTopY = categoriesCollectionView.frame.minY
-            let topInset = max(0, screenCenterY - (cellHeight / 2) - collectionViewTopY)
-            layout.sectionInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
-        } else if let layout = categoriesCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
-        }
+        print("Header height:", headerView.frame.height)
+        print("CollectionView frame:", categoriesCollectionView.frame)
     }
     
     // MARK: - MainScreenDisplayLogic
@@ -91,14 +84,58 @@ final class MainScreenViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    func showGoals(with goals: [Goal]) {
+        self.goals = goals
+        categoriesCollectionView.reloadData()
+    }
+    
+    private func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment -> NSCollectionLayoutSection? in
+            // Set the size of the group in absolute or fractional values ​​relative to the width of collectionView.
+            // Group has full height of collectionView
+            let fullHeight: NSCollectionLayoutDimension = .fractionalHeight(1.0)
+            // Left part: big element
+            let bigItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: fullHeight)
+            let bigItem = NSCollectionLayoutItem(layoutSize: bigItemSize)
+            
+            // Right part: two small elements
+            let smallItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.5))
+            let smallItem = NSCollectionLayoutItem(layoutSize: smallItemSize)
+            smallItem.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
+            let smallGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: fullHeight)
+            let smallGroup = NSCollectionLayoutGroup.vertical(layoutSize: smallGroupSize, subitems: Array(repeating: smallItem, count: 2))
+            
+            // Horizonal group with big and small elements
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: fullHeight)
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [bigItem, smallGroup])
+            
+            let section = NSCollectionLayoutSection(group: group)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
+            section.interGroupSpacing = 8
+            section.orthogonalScrollingBehavior = .continuous
+            
+            return section
+        }
+    }
+    
     private func setupCollectionViewConstraints() {
         categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            categoriesCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-            categoriesCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            categoriesCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            categoriesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        categoriesCollectionView.pinTop(to: headerView.bottomAnchor, 20)
+        categoriesCollectionView.pinLeft(to: view.leadingAnchor, 10)
+        categoriesCollectionView.pinRight(to: view.trailingAnchor, 10)
+        categoriesCollectionView.pinBottom(to: bottomAnchorGuide.topAnchor, 35)
+    }
+    
+    private func configureButtonAnchorGuide() {
+        bottomAnchorGuide.translatesAutoresizingMaskIntoConstraints = false
+        bottomAnchorGuide.pinLeft(to: view.leadingAnchor)
+        bottomAnchorGuide.pinRight(to: view.trailingAnchor)
+            
+        let bottomOffset = UIScreen.main.bounds.height * 0.4
+        bottomAnchorGuideConstraint = bottomAnchorGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -bottomOffset)
+        bottomAnchorGuideConstraint?.isActive = true
+            
+        bottomAnchorGuide.setHeight(1)
     }
     
     private func pushCreateTaskVC() {
@@ -119,8 +156,9 @@ final class MainScreenViewController: UIViewController {
     private func setupHeader() {
         view.addSubview(headerView)
         headerView.pinTop(to: view.safeAreaLayoutGuide.topAnchor)
-        headerView.pinLeft(to: view)
-        headerView.pinRight(to: view)
+        headerView.pinLeft(to: view.leadingAnchor)
+        headerView.pinRight(to: view.trailingAnchor)
+        headerView.pinBottom(to: headerView.bottomAnchorView.bottomAnchor, 16)
     }
     
     private func presentBottomSheet() {
@@ -131,7 +169,7 @@ final class MainScreenViewController: UIViewController {
         if #available(iOS 16, *) {
             let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init(Constants.smallIdentifier)) { context in
                 let screenHeight = UIScreen.main.bounds.height
-                return screenHeight * 0.3
+                return screenHeight * 0.4
             }
                     
             if let sheet = bottomVC.sheetPresentationController {
@@ -162,7 +200,7 @@ final class MainScreenViewController: UIViewController {
             guard let self = self else { return }
             
             // 1) Build your CreateNewGoal screen
-            let createGoalVC = CreateGoalAssembly.assemble()
+            let createGoalVC = CreateGoalAssembly.assembly()
             
             // 2) Push it on the navigation stack
             self.navigationController?.pushViewController(createGoalVC, animated: true)
@@ -194,6 +232,7 @@ final class MainScreenViewController: UIViewController {
     }
 }
 
+// MARK: - Extensions for BottomVC
 extension MainScreenViewController: UIAdaptivePresentationControllerDelegate {
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return false
@@ -217,38 +256,91 @@ extension MainScreenViewController: BottomSheetDelegate {
     }
 }
 
+// MARK: - Settings CollectionView
 extension MainScreenViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories.count + 1
+        if goals.isEmpty {
+            return 1
+        } else {
+            return goals.count + 1
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
-            return UICollectionViewCell()
-        }
-        
-        if indexPath.item == 0 {
-            cell.configureAsAddGoal()
+        if goals.isEmpty {
+                // Если целей нет – всегда показываем addCell
+            let addCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
+            addCell.configureAsAddGoal()
+            return addCell
         } else {
-            let category = categories[indexPath.item - 1]
-            cell.configure(with: category)
+            if indexPath.item < goals.count {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CatCell", for: indexPath) as? CatCell else {
+                    return UICollectionViewCell()
+                }
+                let goal = goals[indexPath.item]
+                cell.configure(with: goal)
+                return cell
+            } else {
+                guard let addCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
+                    return UICollectionViewCell()
+                }
+                addCell.configureAsAddGoal()
+                return addCell
+            }
         }
-        
-        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item == 0 {
+        if goals.isEmpty {
             presentCreateGoalScreen()
+        } else {
+            if indexPath.item == goals.count {
+                presentCreateGoalScreen()
+            } else {
+                print("Pressed goal: \(goals[indexPath.item].title)")
+            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView,
                          layout collectionViewLayout: UICollectionViewLayout,
                          sizeForItemAt indexPath: IndexPath) -> CGSize {
-         let totalSpacing = 16 * 3
-         let width = (view.frame.width - CGFloat(totalSpacing)) / 2
-         return CGSize(width: width, height: 100)
+        if goals.isEmpty {
+            return CGSize(width: 180, height: 135)
+        } else if indexPath.row % 3 == 0 {
+            let screenWidth = UIScreen.main.bounds.width
+            let width = screenWidth / 2 - 24
+            let layout = collectionViewLayout as? UICollectionViewFlowLayout
+            let topInset = layout?.sectionInset.top ?? 0
+            let bottomInset = layout?.sectionInset.bottom ?? 0
+            let height = (collectionView.bounds.height - topInset - bottomInset) / 2
+            
+            return CGSize(width: width, height: height)
+        } else if indexPath.row % 2 == 0 {
+            let screenWidth = UIScreen.main.bounds.width
+            let width = screenWidth / 2 - 24
+            let layout = collectionViewLayout as? UICollectionViewFlowLayout
+            let topInset = layout?.sectionInset.top ?? 0
+            let bottomInset = layout?.sectionInset.bottom ?? 0
+            let height = (collectionView.bounds.height - topInset - bottomInset) / 2
+            
+            return CGSize(width: width, height: height)
+        } else {
+            let screenWidth = UIScreen.main.bounds.width
+            let width = screenWidth / 2 - 24
+            let layout = collectionViewLayout as? UICollectionViewFlowLayout
+            let topInset = layout?.sectionInset.top ?? 0
+            let bottomInset = layout?.sectionInset.bottom ?? 0
+            let height = collectionView.bounds.height - topInset - bottomInset
+            
+            return CGSize(width: width, height: height)
+        }
      }
+}
+
+extension MainScreenViewController: UICollectionViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: 0)
+    }
 }
 

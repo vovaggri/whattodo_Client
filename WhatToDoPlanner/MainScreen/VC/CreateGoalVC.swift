@@ -1,10 +1,6 @@
 import UIKit
 
-protocol CreateGoalDisplayLogic: AnyObject {
-    func displayGoalData(viewModel: CreateGoal.Fetch.ViewModel)
-}
-
-final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
+final class CreateGoalViewController: UIViewController {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
@@ -101,7 +97,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
         return lbl
     }()
     
-    private let taskNameTextField: UITextField = {
+    private let goalNameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Enter goal title"
         tf.font = UIFont(name: CreateGoalViewController.fontName, size: 20)
@@ -113,7 +109,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
     }()
     
     private lazy var taskNameStack: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [titleLabel, taskNameTextField])
+        let st = UIStackView(arrangedSubviews: [titleLabel, goalNameTextField])
         st.axis = .vertical
         st.spacing = 4
         return st
@@ -226,7 +222,7 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
         taskColorTextField.rightViewMode = .always
         
         // Set left padding for text fields (so text is not too close to the border)
-        [taskNameTextField, descriptionTextView, taskColorTextField].forEach {
+        [goalNameTextField, descriptionTextView, taskColorTextField].forEach {
             if let tf = $0 as? UITextField {
                 let padding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
                 tf.leftView = padding
@@ -269,6 +265,12 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
         interactor?.fetchGoalData(request: CreateGoal.Fetch.Request())
     }
     
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
     // MARK: - Setup Constraints
     private func setupConstraints() {
         let margin: CGFloat = 16
@@ -304,8 +306,8 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
             // Task Name Stack in Gray Container
             taskNameStack.topAnchor.constraint(equalTo: grayContainerView.topAnchor, constant: margin),
             taskNameStack.centerXAnchor.constraint(equalTo: grayContainerView.centerXAnchor),
-            taskNameTextField.heightAnchor.constraint(equalToConstant: 52),
-            taskNameTextField.widthAnchor.constraint(equalToConstant: 352),
+            goalNameTextField.heightAnchor.constraint(equalToConstant: 52),
+            goalNameTextField.widthAnchor.constraint(equalToConstant: 352),
             titleLabel.heightAnchor.constraint(equalToConstant: 50),
             
             // White Container
@@ -358,7 +360,38 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
     
     @objc private func createGoalButtonTapped() {
         print("Create Goal button tapped")
-        presentGoalDetailScreen()
+        guard let goalName = goalNameTextField.text, !goalName.isEmpty else {
+            showError(message: "Goal name is required.")
+            return
+        }
+        
+        guard let colorText = taskColorTextField.text, !colorText.isEmpty else {
+            showError(message: "Color is required.")
+            return
+        }
+        
+        var color: Int
+        
+        if colorText == "Aqua Blue" {
+            color = ColorIDs.aquaBlue
+        } else if colorText == "Moss Green" {
+            color = ColorIDs.mossGreen
+        } else if colorText == "Marigold" {
+            color = ColorIDs.marigold
+        } else if colorText == "Lilac" {
+            color = ColorIDs.lilac
+        } else if colorText == "Ultra Pink" {
+            color = ColorIDs.ultraPink
+        } else if colorText == "Default White" {
+            color = ColorIDs.defaultWhite
+        } else {
+            print("Unknown color")
+            return
+        }
+        
+        let description = descriptionTextView.text
+        
+        interactor?.uploadGoals(title: goalName, description: description, color: color)
     }
     
     @objc private func colorTapped() {
@@ -373,11 +406,11 @@ final class CreateGoalViewController: UIViewController, CreateGoalDisplayLogic {
         }
     }
     
-    // Navigation to Goal Detail Screen
-    private func presentGoalDetailScreen() {
-        let goalDetailVC = GoalDetailAssembly.assembly()
-        self.navigationController?.pushViewController(goalDetailVC, animated: true)
-    }
+//    // Navigation to Goal Detail Screen
+//    private func presentGoalDetailScreen() {
+//        let goalDetailVC = GoalDetailAssembly.assembly()
+//        self.navigationController?.pushViewController(goalDetailVC, animated: true)
+//    }
     
     // MARK: - Display Logic
     func displayGoalData(viewModel: CreateGoal.Fetch.ViewModel) {
