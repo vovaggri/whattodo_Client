@@ -7,6 +7,7 @@ protocol BottomSheetDelegate: AnyObject {
     func changeDetent(to detent: UISheetPresentationController.Detent.Identifier)
     func didTapAddTaskButton()
     func didTapCalendarButton()
+    func didSelectTask(_ task: Task)
 }
 
 final class BottomSheetViewController: UIViewController {
@@ -40,18 +41,21 @@ final class BottomSheetViewController: UIViewController {
     private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 8    // Отступ между строками
-        layout.minimumInteritemSpacing = 8 // Отступ между ячейками в ряду
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-
         collection.backgroundColor = .clear
         return collection
     }()
+
+ 
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(hex: "F0F1F1")
+        view.backgroundColor = UIColor(hex: "F7F9F9")
         
         if let sheet = self.sheetPresentationController {
             sheet.delegate = self
@@ -63,6 +67,7 @@ final class BottomSheetViewController: UIViewController {
         interactor?.loadTasks()
 //        configureCalendarButton()
     }
+  
     
     func updateSwitcherButton(title: String) {
         presentSwictherButton.setTitle(title, for: .normal)
@@ -219,14 +224,20 @@ extension BottomSheetViewController: UICollectionViewDelegate {
         if !todayTasks.isEmpty {
             let selectedTask = todayTasks[indexPath.row]
             print("Selected: \(selectedTask.title)")
+
+            delegate?.didSelectTask(selectedTask) // Use delegate to notify MainScreen
         }
     }
-}
+    }
+
+
+
 
 extension BottomSheetViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width - 16
-        let height: CGFloat = 158
+        let width: CGFloat = 351
+        let height: CGFloat = 104
+       
         return CGSize(width: width, height: height)
     }
 }

@@ -17,7 +17,7 @@ final class DayCell: UICollectionViewCell {
         super.init(frame: frame)
         configureLabel()
         
-        contentView.layer.cornerRadius = 28
+        contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
     }
     

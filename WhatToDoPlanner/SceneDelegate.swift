@@ -20,6 +20,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         window.makeKeyAndVisible()
     }
+    
+    
+    
+    
+    
+//    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+//        guard let windowScene = (scene as? UIWindowScene) else { return }
+//
+//        let window = UIWindow(windowScene: windowScene)
+//
+//        // Mock task for preview
+//        let mockTask = Task(
+//            id: 1,
+//            title: "Gym Session",
+//            description: "Leg day workout 🦵",
+//            colour: ColorIDs.ultraPink,
+//            endDate: Date(),
+//            done: false,
+//            startTime: Date(),
+//            endTime: Calendar.current.date(byAdding: .hour, value: 1, to: Date()),
+//            goalId: 2
+//        )
+//
+//        let reviewVC = ReviewScreenAssembly.assembly(mockTask)
+//        let nav = UINavigationController(rootViewController: reviewVC)
+//
+//        window.rootViewController = nav
+//        self.window = window
+//        window.makeKeyAndVisible()
+//    }
+
 //        let window = UIWindow(windowScene: windowScene)
 //
 //        let successVC = SuccessScreenConfigurator.configureModule()
