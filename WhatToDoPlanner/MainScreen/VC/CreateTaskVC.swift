@@ -14,11 +14,14 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
     weak var delegate: CreateTaskViewControllerDelegate?
     var interactor: CreateTaskInteractorProtocol?
     
+    private var goals: [Goal] = []
+    private var selectedGoalId: Int = 0
+    
     // For color picker
     private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
     
     // For link picker
-    private let linkOptions = ["Goal 1", "Goal 2", "Goal 3"]
+    private var linkOptions: [String] = ["-"]
     
     // Color map for background updates
     private let colorMap: [String: UIColor] = [
@@ -490,6 +493,8 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        interactor?.loadGoals()
+        
         view.backgroundColor = CreateTaskViewController.lightGrayColor
         grayContainerView.backgroundColor = CreateTaskViewController.lightGrayColor
         
@@ -588,6 +593,16 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
         outsideTap.cancelsTouchesInView = false
         outsideTap.delegate = self  // Устанавливаем делегата и для второго жеста
         view.addGestureRecognizer(outsideTap)
+    }
+    
+    func showGoals(with goals: [Goal]) {
+        self.goals = goals
+        
+        self.linkOptions = ["-"] + goals.map { $0.title }
+        linkPicker.reloadAllComponents()
+        
+        linkTextField.text = "-"
+        selectedGoalId = 0
     }
     
     func showError(message: String) {
@@ -855,14 +870,8 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
         
         let description = descriptionTextView.text
         // TODO: - Correct linkGoals
-        let goalId: Int = 0
-//        let newGoal = Goal(
-//            id: Int.random(in: 1000...9999),
-//            title: taskName,
-//            description: descriptionTextView.text,
-//            tasks: []
-//        )
-//        delegate?.createTaskViewController(self, didCreateGoal: newGoal)
+        let goalId: Int = selectedGoalId
+
         interactor?.uploadTask(title: taskName, date: date, color: color, description: description, startTime: startTime, endTime: endTime, goalId: goalId)
     }
     
@@ -949,10 +958,10 @@ extension CreateTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate
     func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if pickerView == colorPicker {
-            return colorOptions.count
-        } else if pickerView == linkPicker {
+        if pickerView == linkPicker {
             return linkOptions.count
+        } else if pickerView == colorPicker {
+            return colorOptions.count
         }
         return 0
     }
@@ -964,10 +973,11 @@ extension CreateTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate
         let label = (view as? UILabel) ?? UILabel()
         label.textAlignment = .center
         label.font = UIFont(name: CreateTaskViewController.fontName, size: 14)
-        if pickerView == colorPicker {
-            label.text = colorOptions[row]
-        } else if pickerView == linkPicker {
+                
+        if pickerView == linkPicker {
             label.text = linkOptions[row]
+        } else {
+            label.text = colorOptions[row]
         }
         return label
     }
@@ -986,6 +996,7 @@ extension CreateTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate
             }
         } else if pickerView == linkPicker {
             linkTextField.text = linkOptions[row]
+            selectedGoalId = (row == 0 ? 0 : goals[row - 1].id)
         }
     }
 }

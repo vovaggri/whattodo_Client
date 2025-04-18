@@ -1,16 +1,11 @@
 import UIKit
 
-protocol taskCellDelegate: AnyObject {
-    func taskCellDidCompleteTask(_ cell: TaskCell)
-}
-
-final class TaskCell: UICollectionViewCell {
+final class TaskGCell: UICollectionViewCell {
     enum Constants {
-        static let identifier = "TaskCell"
+        static let identifier = "TaskGCell"
         static let fontName: String = "AoboshiOne-Regular"
     }
     
-    weak var delegate: taskCellDelegate?
     private var task: Task?
     
     // MARK: - Subviews
@@ -73,9 +68,6 @@ final class TaskCell: UICollectionViewCell {
         // 1) Vertical bar on the left
         configureVerticalBar()
         
-        // 2) Complete button on the right
-        configureCompleteButton()
-        
         // 3) Title label at the top (and will stretch toward the right)
         configureTitleLabel()
         
@@ -108,17 +100,20 @@ final class TaskCell: UICollectionViewCell {
         titleLabel.text = task.title
         
         // Time logic
-        if let startTime = task.startTime, let endTime = task.endTime, startTime != endTime {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm"
-            formatter.timeZone = TimeZone(abbreviation: "UTC")
-            let localStart = startTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
-            let localEnd = endTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
-            timeLabel.text = "\(formatter.string(from: localStart)) - \(formatter.string(from: localEnd))"
-        } else {
-            timeLabel.text = "Any time today"
-        }
-        
+//        if let startTime = task.startTime, let endTime = task.endTime, startTime != endTime {
+//            let formatter = DateFormatter()
+//            formatter.dateFormat = "HH:mm"
+//            formatter.timeZone = TimeZone(abbreviation: "UTC")
+//            let localStart = startTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
+//            let localEnd = endTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
+//            timeLabel.text = "\(formatter.string(from: localStart)) - \(formatter.string(from: localEnd))"
+//        } else {
+//            timeLabel.text = "Any time today"
+//        }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        let formattedDate = formatter.string(from: task.endDate)
+        timeLabel.text = formattedDate
         // Check if you have a description property
         // ...
         
@@ -144,27 +139,12 @@ final class TaskCell: UICollectionViewCell {
     private func configureVerticalBar() {
         contentView.addSubview(verticalBar)
         verticalBar.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             verticalBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            verticalBar.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            verticalBar.widthAnchor.constraint(equalToConstant: 14),
-            verticalBar.heightAnchor.constraint(equalToConstant: 62)
-        ])
-    }
-    
-    private func configureCompleteButton() {
-        contentView.addSubview(completeButton)
-        completeButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add target
-        completeButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            completeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            completeButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            completeButton.widthAnchor.constraint(equalToConstant: 40),
-            completeButton.heightAnchor.constraint(equalToConstant: 40)
+            verticalBar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            verticalBar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            verticalBar.widthAnchor.constraint(equalToConstant: 14)
         ])
     }
     
@@ -174,58 +154,36 @@ final class TaskCell: UICollectionViewCell {
         
         // Title at the top; pinned between verticalBar on the left and completeButton on the right
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.5),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: verticalBar.trailingAnchor, constant: 11),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: completeButton.leadingAnchor, constant: -8)
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16)
         ])
     }
     
     private func configureTimeIcon() {
-        contentView.addSubview(timeIcon)
-        timeIcon.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            // Placed under the titleLabel
-            timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            // Start to the right of the verticalBar
-            timeIcon.leadingAnchor.constraint(equalTo: verticalBar.trailingAnchor, constant: 8),
-            timeIcon.widthAnchor.constraint(equalToConstant: 16),
-            timeIcon.heightAnchor.constraint(equalToConstant: 16)
-        ])
+      contentView.addSubview(timeIcon)
+      timeIcon.translatesAutoresizingMaskIntoConstraints = false
+
+      NSLayoutConstraint.activate([
+        timeIcon.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+        timeIcon.leadingAnchor.constraint(equalTo: verticalBar.trailingAnchor, constant: 8),
+        timeIcon.widthAnchor.constraint(equalToConstant: 16),
+        timeIcon.heightAnchor.constraint(equalToConstant: 16),
+        timeIcon.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
+      ])
     }
-    
+
     private func configureTimeLabel() {
-        contentView.addSubview(timeLabel)
-        timeLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            // Align center vertically with timeIcon
-            timeLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
-            // Start just to the right of timeIcon
-            timeLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 8),
-            // Don’t overlap the complete button
-            timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: completeButton.leadingAnchor, constant: -8)
-        ])
+      contentView.addSubview(timeLabel)
+      timeLabel.translatesAutoresizingMaskIntoConstraints = false
+
+      NSLayoutConstraint.activate([
+        timeLabel.centerYAnchor.constraint(equalTo: timeIcon.centerYAnchor),
+        timeLabel.leadingAnchor.constraint(equalTo: timeIcon.trailingAnchor, constant: 8),
+        timeLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16),
+        timeLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
+      ])
     }
-    
-    // If you want a descriptionLabel, place it below timeLabel similarly
 
     // MARK: - Actions
-    
-    @objc private func didTapCompleteButton() {
-        guard let task = task else { return }
-        UIView.animate(withDuration: 0.3) {
-            if task.done == false {
-                self.task?.done = true
-                self.completeButton.backgroundColor = .systemYellow
-                self.completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            } else {
-                self.task?.done = false
-                self.completeButton.backgroundColor = UIColor(hex: "D9D9D9", alpha: 0.3)
-                self.completeButton.setImage(nil, for: .normal)
-            }
-        } completion: { _ in
-            self.delegate?.taskCellDidCompleteTask(self)
-        }
-    }
 }

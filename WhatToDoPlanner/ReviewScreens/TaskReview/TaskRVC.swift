@@ -150,9 +150,9 @@ final class ReviewTaskViewController: UIViewController {
     }
 
     private func setupUI() {
-           view.backgroundColor = .white
+        view.backgroundColor = .white
 
-           // MARK: - Top labels
+        // MARK: - Top labels
         
         view.addSubview(closeButton)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -160,8 +160,7 @@ final class ReviewTaskViewController: UIViewController {
         closeButton.pinLeft(to: view, 16)
         closeButton.setWidth(70)
         closeButton.setHeight(70)
-
-        
+        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
            dayLabel.font = UIFont(name: "AoboshiOne-Regular", size: 60)
            dayLabel.textAlignment = .left
@@ -318,7 +317,9 @@ final class ReviewTaskViewController: UIViewController {
         navigationController?.pushViewController(changeTaskVC, animated: true)
     }
     
-  
+    @objc private func closeButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
 }
 
 extension ReviewTaskViewController: ReviewTaskDisplayLogic {

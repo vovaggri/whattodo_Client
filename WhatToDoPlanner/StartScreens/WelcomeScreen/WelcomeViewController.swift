@@ -125,6 +125,11 @@ final class WelcomeViewController: UIViewController  {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+    func returnActiveLoginButton() {
+        loginButton.isEnabled = true
+        loginButton.alpha = 1.0
+    }
 
     // MARK: - Private functions
     private func configureWelcomeLabeles() {
@@ -481,6 +486,9 @@ final class WelcomeViewController: UIViewController  {
     }
     
     @objc private func loginButtonPressed() {
+        loginButton.isEnabled = false
+        loginButton.alpha = 0.5
+        
         interactor?.handleLoginButtonTapped(emailText: emailTextField.text, passwordText: passwordTextField.text)
     }
 }

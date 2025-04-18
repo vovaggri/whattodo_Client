@@ -1,68 +1,14 @@
 import Foundation
 
-protocol CreateTaskWorkerProtocol {
-    func createTask(with requestData: CreateTaskModels.CreateTaskRequest, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void)
-    func getGoals(completion: @escaping (Result<[Goal], Error>) -> Void)
+protocol CreateGTaskWorkerProtocol {
+    func createTask(with requestData: CreateGTask.Fetch.Request, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void)
 }
 
-final class CreateTaskWorker: CreateTaskWorkerProtocol {
+final class CreateGTaskWorker: CreateGTaskWorkerProtocol {
     private let keychainService = KeychainService()
-    private let baseUrl: String = "http://localhost:8000"
     
-    func getGoals(completion: @escaping (Result<[Goal], Error>) -> Void) {
-        if let tokenData = keychainService.getData(forKey: "userToken"),
-           let token = String(data: tokenData, encoding: .utf8) {
-            let urlText = baseUrl + "/api/goal/"
-            guard let url = URL(string: urlText) else {
-                print("Incorrect url")
-                completion(.failure(MainModels.Fetch.MainError.incorrectURL))
-                return
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    print("Error of getting data: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let data = data else {
-                    print("No data on answer")
-                    completion(.success([]))
-                    return
-                }
-                
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("JSON Response: \(jsonString)")
-                    if jsonString == "null" {
-                        print("Empty tasks")
-                        completion(.success([]))
-                        return
-                    }
-                }
-                
-                let decoder = JSONDecoder()
-                // Если сервер возвращает даты в ISO8601 формате:
-                decoder.dateDecodingStrategy = .iso8601
-                
-                do {
-                    let goals = try decoder.decode([Goal].self, from: data)
-                    print("Got tasks: \(goals)")
-                    completion(.success(goals))
-                } catch {
-                    print("Error while decoding data: \(error)")
-                    completion(.failure(error))
-                }
-            }.resume()
-        }
-    }
-    
-    func createTask(with requestData: CreateTaskModels.CreateTaskRequest, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void) {
-        let urlText: String = baseUrl + "/api/goal/\(gId)/items/"
+    func createTask(with requestData: CreateGTask.Fetch.Request, goalId gId: Int, completion: @escaping (Result<Task, any Error>) -> Void) {
+        let urlText: String = "http://localhost:8000/api/goal/\(gId)/items/"
         
         guard let url = URL(string: urlText) else {
             completion(.failure(CreateTaskModels.CreateTaskError.incorrectURL))
@@ -105,7 +51,7 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                let response = try decoder.decode(CreateTaskModels.CreateTaskResponse.self, from: data)
+                let response = try decoder.decode(CreateGTask.Fetch.Response.self, from: data)
                 let newId = response.id
                 
                 // Исправляем startTime и endTime, если год равен 0
@@ -117,7 +63,7 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
                     description: requestData.description,
                     colour: requestData.colour,
                     endDate: requestData.endDate,
-                    done: requestData.done,
+                    done: false,
                     startTime: fixedStartTime,
                     endTime: fixedEndTime,
                     goalId: gId
@@ -145,4 +91,3 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
         return date
     }
 }
-
