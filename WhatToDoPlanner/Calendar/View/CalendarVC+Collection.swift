@@ -60,17 +60,23 @@ extension CalendarViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let weekIndex = indexPath.item / 7
-        let dayIndex = indexPath.item % 7
-        let day = weeks[weekIndex][dayIndex]
-            
-        // Обновляем выбранную дату
-        selectedDate = day.date
-        collectionView.reloadData()
-            
-        // Сообщаем интеректору выбранную дату
-        interactor?.didSelectDay(day.date)
-        interactor?.filterTasks(for: selectedDate, allItems: allTasks, selectedItems: &tasks)
-        tasksCollectionView.reloadData()
+        if collectionView === weeksCollectionView {
+            let weekIndex = indexPath.item / 7
+            let dayIndex = indexPath.item % 7
+            let day = weeks[weekIndex][dayIndex]
+                
+            // Обновляем выбранную дату
+            selectedDate = day.date
+                
+            // Сообщаем интеректору выбранную дату
+            interactor?.didSelectDay(day.date)
+            interactor?.filterTasks(for: selectedDate, allItems: allTasks, selectedItems: &tasks)
+            tasksCollectionView.reloadData()
+        } else if collectionView === tasksCollectionView {
+            let task = tasks[indexPath.item]
+            print("Selected \(task.title)")
+            let taskReviewVC = ReviewScreenAssembly.assembly(task)
+            navigationController?.pushViewController(taskReviewVC, animated: true)
+        }
     }
 }

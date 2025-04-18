@@ -66,6 +66,10 @@ final class ReviewTaskViewController: UIViewController {
         setupUI()
         interactor?.loadTask(request: ReviewTaskModels.Request(task: task))
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
 
     private func name(for colorId: Int) -> String {
         switch colorId {

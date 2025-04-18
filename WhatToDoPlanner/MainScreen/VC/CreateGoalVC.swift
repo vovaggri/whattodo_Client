@@ -129,7 +129,8 @@ final class CreateGoalViewController: UIViewController {
     
     private let descriptionLabel: UILabel = {
         let lbl = UILabel()
-        lbl.text = "Description"
+        lbl.numberOfLines = 2
+        lbl.text = "Description \n(without description AI isn't available)"
         lbl.font = UIFont(name: CreateGoalViewController.fontName, size: 14) ?? UIFont.systemFont(ofSize: 14)
         lbl.textColor = .black
         return lbl

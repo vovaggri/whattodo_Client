@@ -67,7 +67,7 @@ final class CalendarViewController: UIViewController {
         return Array((currentYear - 10)...(currentYear + 10))
     }()
     
-    private lazy var weeksCollectionView: UICollectionView = {
+    lazy var weeksCollectionView: UICollectionView = {
         let layout = WeeklyPagingFlowLayout() // Use your custom layout here
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 1.2
@@ -85,10 +85,10 @@ final class CalendarViewController: UIViewController {
     }()
 
     
-    private let calendarTitle: UILabel = {
+    private let taskManagerTitle: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: Constants.fontName, size: 20)
-        label.text = "Calendar"
+        label.text = "Task Manager"
         label.textAlignment = .center
         label.textColor = .black
         return label
@@ -159,7 +159,7 @@ final class CalendarViewController: UIViewController {
         view.backgroundColor = .white
         
         configureCloseButton()
-        navigationItem.titleView = calendarTitle
+        navigationItem.titleView = taskManagerTitle
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
         setupLayout()
         
@@ -231,7 +231,14 @@ final class CalendarViewController: UIViewController {
         
         // Находим индекс для сегодняшней даты и выделяем ячейку
         if let indexPath = indexPathForDate(selectedDate) {
-            weeksCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            // 1) вычисляем номер «страницы» (недели):
+            let pageIndex = indexPath.item / 7
+            // 2) смещение = ширина экрана * номер страницы
+            let offsetX = CGFloat(pageIndex) * weeksCollectionView.bounds.width
+            // 3) устанавливаем contentOffset без анимации
+            weeksCollectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
+            // 4) только помечаем ячейку как selected, но не скроллим её
+            weeksCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
         }
     }
 
@@ -245,7 +252,7 @@ final class CalendarViewController: UIViewController {
     }
     
     private func setupLayout() {
-        view.addSubview(calendarTitle)
+        view.addSubview(taskManagerTitle)
         view.addSubview(monthLabel)
         view.addSubview(daysOfWeekStackView)
         view.addSubview(weeksCollectionView)
@@ -367,6 +374,9 @@ extension CalendarViewController: taskCellDelegate {
             return
         }
         tasks[indexPath.item].done.toggle()
+        if let allIndex = allTasks.firstIndex(where: {$0.id == tasks[indexPath.item].id} ) {
+            allTasks[allIndex].done = tasks[indexPath.item].done
+        }
         cell.updateCompleteButtonAppearance()
         interactor?.updateTask(tasks[indexPath.item])
     }
