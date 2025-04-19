@@ -38,7 +38,7 @@ final class CatCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with goal: Goal, progress: Double) {
+    func configure(with goal: Goal, progress: Int) {
         let baseColor = goal.getColour()
                 
         // Title

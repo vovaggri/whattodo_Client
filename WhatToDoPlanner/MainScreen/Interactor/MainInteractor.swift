@@ -6,7 +6,6 @@ protocol MainScreenBusinessLogic {
     func fetchMainScreenData(request: MainModels.Fetch.Request)
     func loadGoals()
     func navigateToCreateGoal()
-    func calculateProgress(goal: Goal) -> Double
 }
 
 final class MainScreenInteractor: MainScreenBusinessLogic {
@@ -70,11 +69,5 @@ final class MainScreenInteractor: MainScreenBusinessLogic {
     
     func navigateToCreateGoal() {
         presenter?.navigateToCreateGoal()
-    }
-    
-    func calculateProgress(goal: Goal) -> Double {
-        guard goal.totalTasks > 0 else { return 0.0 }
-        let rawProgress: Double = (Double(goal.completedTasks) / Double(goal.totalTasks)) * 100
-        return round(rawProgress * 10) / 10
     }
 }

@@ -285,7 +285,7 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
                     return UICollectionViewCell()
                 }
                 let goal = goals[indexPath.item]
-                let progress = interactor?.calculateProgress(goal: goal) ?? 0.0
+                let progress = goal.progress
                 cell.configure(with: goal, progress: progress)
                 return cell
             } else {
