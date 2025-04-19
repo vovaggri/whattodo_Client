@@ -111,6 +111,7 @@ final class GoalDetailViewController: UIViewController {
         interactor?.fetchGoalInfo(with: goalId)
         interactor?.loadTasks(with: goalId)
 
+        aiButton.addTarget(self, action: #selector(aiButtonTapped), for: .touchUpInside)
         setupUI()
         setupConstraints()
         configureTaskCollection()
@@ -152,6 +153,12 @@ final class GoalDetailViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    func showProblemAI() {
+        let alert = UIAlertController(title: "AI not available", message: "AI advice is not available for goals without description.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
 //    func showDeleteAlert(with taskId: Int, at indexPath: IndexPath) {
 //        let alert = UIAlertController(title: "Delete task", message: "Are you sure that you want delete this task", preferredStyle: .alert)
 //        
@@ -182,17 +189,6 @@ final class GoalDetailViewController: UIViewController {
 
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
         addTaskButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
-    }
-
-    // MARK: - Actions
-
-    @objc private func closeTapped() {
-        let mainVC = MainAssembly.assembly()
-        navigationController?.setViewControllers([mainVC], animated: true)
-    }
-    @objc private func plusButtonTapped() {
-        let createGTaskVC = CreateGTaskAssembly.assembly(with: goalId ?? 0)
-        navigationController?.pushViewController(createGTaskVC, animated: true)
     }
 
     // MARK: - Constraints
@@ -245,6 +241,26 @@ final class GoalDetailViewController: UIViewController {
         taskGCollectionView.pinLeft(to: taskContainerView.leadingAnchor)
         taskGCollectionView.pinRight(to: taskContainerView.trailingAnchor)
         taskGCollectionView.pinBottom(to: taskContainerView.bottomAnchor, 10)
+    }
+    
+    // MARK: - Actions
+
+    @objc private func closeTapped() {
+        let mainVC = MainAssembly.assembly()
+        navigationController?.setViewControllers([mainVC], animated: true)
+    }
+    
+    @objc private func plusButtonTapped() {
+        let createGTaskVC = CreateGTaskAssembly.assembly(with: goalId ?? 0)
+        navigationController?.pushViewController(createGTaskVC, animated: true)
+    }
+    
+    @objc private func aiButtonTapped() {
+        guard let goal = goal else {
+            showError(message: "Goal not found")
+            return
+        }
+        interactor?.checkGoal(with: goal)
     }
 }
 

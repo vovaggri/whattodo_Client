@@ -2,6 +2,8 @@ protocol GoalDetailPresentationLogic {
     func presentGoalInfo(response: Goal)
     func showErrorAlert(_ message: String?)
     func showTasks(with tasks: [Task])
+    func navigateToProblem()
+    func navigateToAI(with goalId: Int)
 }
 
 final class GoalDetailPresenter: GoalDetailPresentationLogic {
@@ -18,5 +20,14 @@ final class GoalDetailPresenter: GoalDetailPresentationLogic {
     
     func showTasks(with tasks: [Task]) {
         viewController?.showTasks(with: tasks)
+    }
+    
+    func navigateToProblem() {
+        viewController?.showProblemAI()
+    }
+    
+    func navigateToAI(with goalId: Int) {
+        let aiVC = AIAssembly.assembly(with: goalId)
+        viewController?.navigationController?.pushViewController(aiVC, animated: true)
     }
 }

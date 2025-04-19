@@ -48,7 +48,6 @@ final class BottomWorker: BottomWorkerProtocol {
                 }
                 
                 let decoder = JSONDecoder()
-                // Если сервер возвращает даты в ISO8601 формате:
                 decoder.dateDecodingStrategy = .iso8601
                 
                 do {

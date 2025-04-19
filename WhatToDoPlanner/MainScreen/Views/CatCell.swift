@@ -45,7 +45,7 @@ final class CatCell: UICollectionViewCell {
         titleLabel.text = goal.title
                 
         // Progress bar
-        progressView.progress = Float(progress / 100)
+        progressView.progress = Float(progress) / 100.0
         // Lightet than base color
         progressView.progressTintColor = baseColor.adjusted(saturationOffset: 0.20, brightnessOffset: -0.15)
         progressView.trackTintColor = UIColor(hex: "000000", alpha: 0.2)

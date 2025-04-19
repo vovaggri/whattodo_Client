@@ -50,13 +50,33 @@ final class CreateTaskInteractor: CreateTaskInteractorProtocol {
             endTime: fixedEndTime
         )
         
+        let eventModel = CalendarEventModel(
+            title: task.title,
+            description: task.description ?? "",
+            endDate: task.endDate,
+            startTime: task.startTime ?? Calendar.current.startOfDay(for: Date()),
+            endTime: task.endTime ?? Calendar.current.startOfDay(for: Date())
+        )
+        
         worker?.createTask(with: task, goalId: goalId ?? 0) { [weak self] result in
             switch result {
             case.success:
                 print("Self in closure: \(String(describing: self))")
                 print("Done")
-                DispatchQueue.main.async {
-                    self?.presenter?.navigateMainScreen()
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let calendarManager = CalendarManager()
+                    let created = calendarManager.create(eventModel: eventModel)
+                            
+                    DispatchQueue.main.async {
+                        if created {
+                            // перешли на главный экран, раз всё получилось
+                            self?.presenter?.navigateMainScreen()
+                        } else {
+                            // если не получилось сохранить событие — можно показать алерт
+                            self?.presenter?.showErrorAlert("Adding to calendar failed")
+                            self?.presenter?.navigateMainScreen()
+                        }
+                    }
                 }
             case.failure(let error):
                 DispatchQueue.main.async {

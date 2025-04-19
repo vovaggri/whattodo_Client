@@ -4,6 +4,7 @@ protocol GoalDetailBusinessLogic {
     func fetchGoalInfo(with goalId: Int)
     func loadTasks(with goalId: Int)
     func deleteTask(with taskId: Int)
+    func checkGoal(with goal: Goal)
 }
 
 final class GoalDetailInteractor: GoalDetailBusinessLogic {
@@ -63,6 +64,14 @@ final class GoalDetailInteractor: GoalDetailBusinessLogic {
                     self?.presenter?.showErrorAlert(error.localizedDescription)
                 }
             }
+        }
+    }
+    
+    func checkGoal(with goal: Goal) {
+        if goal.description == "" || goal.description == nil {
+            presenter?.navigateToProblem()
+        } else {
+            presenter?.navigateToAI(with: goal.id)
         }
     }
 }

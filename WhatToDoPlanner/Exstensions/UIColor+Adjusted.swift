@@ -1,7 +1,7 @@
 import UIKit
 
 extension UIColor {
-    /// Возвращает цвет, у которого к H/S/B/α добавлены соответствующие дельты (допускаются отрицательные значения).
+    /// Returns a color with the appropriate deltas added to H/S/B/alpha (negative values ​​are allowed).
     func adjusted(hueOffset: CGFloat = 0,
                     saturationOffset: CGFloat = 0,
                     brightnessOffset: CGFloat = 0,
@@ -11,9 +11,8 @@ extension UIColor {
         var b: CGFloat = 0
         var a: CGFloat = 0
             
-        // пытаемся разложить цвет в HSB
+        // Decompose color in HSB
         guard getHue(&h, saturation: &s, brightness: &b, alpha: &a) else {
-            // если не удалось (например, цвет задан в CMYK), возвращаем оригинал
             return self
         }
             
