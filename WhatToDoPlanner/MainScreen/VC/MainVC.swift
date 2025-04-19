@@ -285,7 +285,8 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
                     return UICollectionViewCell()
                 }
                 let goal = goals[indexPath.item]
-                cell.configure(with: goal)
+                let progress = interactor?.calculateProgress(goal: goal) ?? 0.0
+                cell.configure(with: goal, progress: progress)
                 return cell
             } else {
                 guard let addCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {

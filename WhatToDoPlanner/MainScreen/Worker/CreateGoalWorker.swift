@@ -57,7 +57,7 @@ final class CreateGoalWorker: CreateGoalWorkerProtocol {
                 let response = try decoder.decode(CreateGoal.CreateGoalResponse.self, from: data)
                 let newId = response.id
                 let createdGoal = Goal(
-                    id: newId, title: requestData.title, colour: requestData.colour
+                    id: newId, title: requestData.title, colour: requestData.colour, completedTasks: 0, totalTasks: 0
                 )
                 print("Created success")
                 completion(.success(createdGoal))

@@ -22,7 +22,7 @@ final class GoalDetailInteractor: GoalDetailBusinessLogic {
                 print("Self in closure: \(String(describing: self))")
                 print("Done")
                 DispatchQueue.main.async {
-                    let goal: Goal = Goal(id: goalResponse.id, title: goalResponse.title, description: goalResponse.description, colour: goalResponse.colour)
+                    let goal: Goal = Goal(id: goalResponse.id, title: goalResponse.title, description: goalResponse.description, colour: goalResponse.colour, completedTasks: goalResponse.completedTasks, totalTasks: goalResponse.totalTasks)
                     
                     self?.presenter?.presentGoalInfo(response: goal)
                 }
