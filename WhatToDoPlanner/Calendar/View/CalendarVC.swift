@@ -39,8 +39,24 @@ final class CalendarViewController: UIViewController {
     
     // Данные для отображения
     var weeks: [[CalendarModels.CalendarDay]] = []
+    var allTasks: [Task] = []
+    var tasks: [Task] = []
     
     var selectedDate: Date = Date()
+    
+    lazy var tasksCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 16
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.dataSource = self
+        cv.delegate   = self
+        cv.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+        return cv
+    }()
     
     private lazy var monthNames: [String] = {
         return DateFormatter().monthSymbols
@@ -51,11 +67,11 @@ final class CalendarViewController: UIViewController {
         return Array((currentYear - 10)...(currentYear + 10))
     }()
     
-    private lazy var weeksCollectionView: UICollectionView = {
+    lazy var weeksCollectionView: UICollectionView = {
         let layout = WeeklyPagingFlowLayout() // Use your custom layout here
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 1.2
+        layout.minimumInteritemSpacing = 1.2
 
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.isPagingEnabled = true
@@ -69,10 +85,10 @@ final class CalendarViewController: UIViewController {
     }()
 
     
-    private let calendarTitle: UILabel = {
+    private let taskManagerTitle: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: Constants.fontName, size: 20)
-        label.text = "Calendar"
+        label.text = "Task Manager"
         label.textAlignment = .center
         label.textColor = .black
         return label
@@ -121,12 +137,29 @@ final class CalendarViewController: UIViewController {
         return stack
     }()
     
+    // MARK: - UI elements for tasks
+    private let tasksContainerView: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor(hex: "FAFAFA")
+        v.layer.cornerRadius = 25
+        v.layer.masksToBounds = true
+        return v
+    }()
+    
+    private let tasksTitleLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Your tasks"
+        lbl.font = UIFont(name: Constants.fontName, size: 20)
+        lbl.textColor = .black
+        return lbl
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         configureCloseButton()
-        navigationItem.titleView = calendarTitle
+        navigationItem.titleView = taskManagerTitle
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
         setupLayout()
         
@@ -139,29 +172,29 @@ final class CalendarViewController: UIViewController {
         
         interactor?.fetchCalendar()
         
-     
+        interactor?.loadTasks()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if let layout = weeksCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            let spacing: CGFloat = 1.2
-            let numberOfDays = 7
-            let gaps = CGFloat(numberOfDays - 1)
-            let totalSpacing = spacing * gaps
-            
-            let usableWidth = weeksCollectionView.bounds.width - totalSpacing
-//            let cellWidth = usableWidth / CGFloat(numberOfDays)
-            let cellWidth: CGFloat = 20
-            let cellHeight: CGFloat = 68
-            
-            layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
-            layout.minimumLineSpacing = spacing
-            layout.minimumInteritemSpacing = 0
-            
-            layout.invalidateLayout()
-            weeksCollectionView.reloadData()
-        }
+//        if let layout = weeksCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+//            let spacing: CGFloat = 1.2
+//            let numberOfDays = 7
+//            let gaps = CGFloat(numberOfDays - 1)
+//            let totalSpacing = spacing * gaps
+//            
+//            let usableWidth = weeksCollectionView.bounds.width - totalSpacing
+////            let cellWidth = usableWidth / CGFloat(numberOfDays)
+//            let cellWidth: CGFloat = 20
+//            let cellHeight: CGFloat = 68
+//            
+//            layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
+//            layout.minimumLineSpacing = spacing
+//            layout.minimumInteritemSpacing = 0
+//            
+//            layout.invalidateLayout()
+//            weeksCollectionView.reloadData()
+//        }
     }
 
 
@@ -169,6 +202,12 @@ final class CalendarViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    func displayError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     func displayCalendar(viewModel: CalendarModels.CalendarViewModel) {
@@ -192,7 +231,14 @@ final class CalendarViewController: UIViewController {
         
         // Находим индекс для сегодняшней даты и выделяем ячейку
         if let indexPath = indexPathForDate(selectedDate) {
-            weeksCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            // 1) вычисляем номер «страницы» (недели):
+            let pageIndex = indexPath.item / 7
+            // 2) смещение = ширина экрана * номер страницы
+            let offsetX = CGFloat(pageIndex) * weeksCollectionView.bounds.width
+            // 3) устанавливаем contentOffset без анимации
+            weeksCollectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
+            // 4) только помечаем ячейку как selected, но не скроллим её
+            weeksCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
         }
     }
 
@@ -206,10 +252,19 @@ final class CalendarViewController: UIViewController {
     }
     
     private func setupLayout() {
-        view.addSubview(calendarTitle)
+        view.addSubview(taskManagerTitle)
         view.addSubview(monthLabel)
         view.addSubview(daysOfWeekStackView)
         view.addSubview(weeksCollectionView)
+        
+        view.addSubview(tasksContainerView)
+        tasksContainerView.translatesAutoresizingMaskIntoConstraints = false
+
+        tasksContainerView.addSubview(tasksTitleLabel)
+        tasksContainerView.addSubview(tasksCollectionView)
+
+        tasksTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        tasksCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
         monthLabel.translatesAutoresizingMaskIntoConstraints = false
         daysOfWeekStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -227,6 +282,20 @@ final class CalendarViewController: UIViewController {
         weeksCollectionView.pinLeft(to: view.leadingAnchor)
         weeksCollectionView.pinRight(to: view.trailingAnchor)
         weeksCollectionView.setHeight(68)
+        
+        tasksContainerView.pinTop(to: weeksCollectionView.bottomAnchor, 24)
+        tasksContainerView.pinLeft(to: view.leadingAnchor)
+        tasksContainerView.pinRight(to: view.trailingAnchor)
+        tasksContainerView.pinBottom(to: view.bottomAnchor, -10)
+        tasksContainerView.layer.cornerRadius = 40.0
+        
+        tasksTitleLabel.pinTop(to: tasksContainerView.topAnchor, 16)
+        tasksTitleLabel.pinLeft(to: tasksContainerView.leadingAnchor, 16)
+        
+        tasksCollectionView.pinTop(to: tasksTitleLabel.bottomAnchor, 8)
+        tasksCollectionView.pinLeft(to: tasksContainerView.leadingAnchor, 16)
+        tasksCollectionView.pinRight(to: tasksContainerView.trailingAnchor, 16)
+        tasksCollectionView.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor, 16)
     }
     
     private func configureCloseButton() {
@@ -299,3 +368,16 @@ extension CalendarViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
 }
 
+extension CalendarViewController: taskCellDelegate {
+    func taskCellDidCompleteTask(_ cell: TaskCell) {
+        guard let indexPath = tasksCollectionView.indexPath(for: cell) else {
+            return
+        }
+        tasks[indexPath.item].done.toggle()
+        if let allIndex = allTasks.firstIndex(where: {$0.id == tasks[indexPath.item].id} ) {
+            allTasks[allIndex].done = tasks[indexPath.item].done
+        }
+        cell.updateCompleteButtonAppearance()
+        interactor?.updateTask(tasks[indexPath.item])
+    }
+}

@@ -4,6 +4,9 @@ protocol CalendarInteractorProtocol {
     func fetchCalendar()
     func didSelectDay(_ date: Date)
     func updateCalendar(to date: Date)
+    func loadTasks()
+    func filterTasks(for date: Date, allItems allTasks: [Task], selectedItems tasks: inout [Task])
+    func updateTask(_ task: Task)
 }
 
 final class CalendarInteractor: CalendarInteractorProtocol {
@@ -57,6 +60,40 @@ final class CalendarInteractor: CalendarInteractorProtocol {
         presenter?.presentCalendar(title: title, weeks: weeks)
     }
     
+    func loadTasks() {
+        worker?.getTasks() { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case.success(let loaded):
+                    self?.presenter?.presentTasks(with: loaded)
+                case.failure(let error):
+                    self?.presenter?.showAlertError(message: error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    func filterTasks(for date: Date, allItems allTasks: [Task], selectedItems tasks: inout [Task]) {
+        let calendar = Calendar.current
+        tasks = allTasks.filter { calendar.isDate($0.endDate, inSameDayAs: date) }
+    }
+    
+    func updateTask(_ task: Task) {
+        print("update")
+        worker?.updateTask(task) { [weak self] result in
+            switch result {
+            case.success:
+                DispatchQueue.main.async {
+                    print("update task done")
+                }
+            case.failure(let error):
+                DispatchQueue.main.async {
+                    self?.presenter?.showAlertError(message: error.localizedDescription)
+                }
+            }
+        }
+    }
+    
     private func getWeeks(for date: Date) -> (title: String, weeks: [[CalendarModels.CalendarDay]]) {
         var calendar = Calendar(identifier: .gregorian)
         // Если хотим, чтобы неделя начиналась с понедельника:
@@ -91,7 +128,6 @@ final class CalendarInteractor: CalendarInteractorProtocol {
         // 5) Собираем все даты день за днём от startOfFirstWeek до endOfLastWeek
         var daysAll: [CalendarModels.CalendarDay] = []
         var currentDate = startOfFirstWeek
-        let today = Date()
                 
         while currentDate <= endOfLastWeek {
             let dayNumber = calendar.component(.day, from: currentDate)

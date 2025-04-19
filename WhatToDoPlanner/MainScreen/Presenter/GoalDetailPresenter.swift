@@ -1,6 +1,7 @@
 protocol GoalDetailPresentationLogic {
     func presentGoalInfo(response: Goal)
     func showErrorAlert(_ message: String?)
+    func showTasks(with tasks: [Task])
 }
 
 final class GoalDetailPresenter: GoalDetailPresentationLogic {
@@ -13,5 +14,9 @@ final class GoalDetailPresenter: GoalDetailPresentationLogic {
     
     func showErrorAlert(_ message: String?) {
         viewController?.showError(message: message ?? "Error")
+    }
+    
+    func showTasks(with tasks: [Task]) {
+        viewController?.showTasks(with: tasks)
     }
 }

@@ -47,16 +47,20 @@ final class GoalDetailViewController: UIViewController {
     var goal: Goal?
     // MARK: - SVIP
     var interactor: GoalDetailBusinessLogic?
+    private var tasks: [Task] = []
 
     // MARK: - UI Elements
 
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
 
-        // Use SF Symbol arrow
-        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
-        button.setImage(image, for: .normal)
+//        // Use SF Symbol arrow
+//        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+//        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+//        button.setImage(image, for: .normal)
+        button.setTitle("Done", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont(name: "AoboshiOne-Regular", size: 22)
 
         button.tintColor = .black
         button.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
@@ -122,6 +126,18 @@ final class GoalDetailViewController: UIViewController {
         btn.titleLabel?.font = UIFont(name: "AoboshiOne-Regular", size: 24)
         return btn
     }()
+    
+    private var taskGCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.backgroundColor = .clear
+        return collection
+    }()
 
     // MARK: - Lifecycle
 
@@ -134,9 +150,15 @@ final class GoalDetailViewController: UIViewController {
             return
         }
         interactor?.fetchGoalInfo(with: goalId)
+        interactor?.loadTasks(with: goalId)
 
         setupUI()
         setupConstraints()
+        configureTaskCollection()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        interactor?.loadTasks(with: goalId ?? 0)
     }
     
     override func viewDidLayoutSubviews() {
@@ -170,6 +192,28 @@ final class GoalDetailViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+//    func showDeleteAlert(with taskId: Int, at indexPath: IndexPath) {
+//        let alert = UIAlertController(title: "Delete task", message: "Are you sure that you want delete this task", preferredStyle: .alert)
+//        
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//        alert.addAction(cancelAction)
+//        
+//        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+//            guard let self = self else { return }
+//            self.tasks.remove(at: indexPath.row)
+//            self.taskGCollectionView.deleteItems(at: [indexPath])
+//            self.interactor?.deleteTask(with: taskId)
+//        }
+//        alert.addAction(deleteAction)
+//        
+//        present(alert, animated: true)
+//    }
+    
+    func showTasks(with tasks: [Task]) {
+        self.tasks = tasks
+        taskGCollectionView.reloadData()
+    }
 
     private func setupUI() {
         [closeButton, gettingStartedLabel, goalTitleLabel, tasksLabel, taskContainerView, addTaskButton, aiButton].forEach {
@@ -184,10 +228,11 @@ final class GoalDetailViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func closeTapped() {
-        navigationController?.popViewController(animated: true)
+        let mainVC = MainAssembly.assembly()
+        navigationController?.setViewControllers([mainVC], animated: true)
     }
     @objc private func plusButtonTapped() {
-        let createGTaskVC = CreateGTaskAssembly.assembly()
+        let createGTaskVC = CreateGTaskAssembly.assembly(with: goalId ?? 0)
         navigationController?.pushViewController(createGTaskVC, animated: true)
     }
 
@@ -196,7 +241,7 @@ final class GoalDetailViewController: UIViewController {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1),
-            closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             closeButton.widthAnchor.constraint(equalToConstant: 70),
             closeButton.heightAnchor.constraint(equalToConstant: 70),
             gettingStartedLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
@@ -224,5 +269,54 @@ final class GoalDetailViewController: UIViewController {
             aiButton.widthAnchor.constraint(equalToConstant: 78),
             aiButton.heightAnchor.constraint(equalToConstant: 78),
         ])
+    }
+    
+    private func configureTaskCollection() {
+        // Регистрируем нашу кастомную ячейку
+        taskGCollectionView.register(TaskGCell.self, forCellWithReuseIdentifier: TaskGCell.Constants.identifier)
+
+        
+        view.addSubview(taskGCollectionView)
+        taskGCollectionView.dataSource = self
+        taskGCollectionView.delegate = self
+        
+        taskGCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        taskGCollectionView.pinTop(to: addTaskButton.bottomAnchor, 30)
+        taskGCollectionView.pinLeft(to: taskContainerView.leadingAnchor)
+        taskGCollectionView.pinRight(to: taskContainerView.trailingAnchor)
+        taskGCollectionView.pinBottom(to: taskContainerView.bottomAnchor, 10)
+    }
+}
+
+extension GoalDetailViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return tasks.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskGCell.Constants.identifier, for: indexPath) as? TaskGCell else {
+            return UICollectionViewCell()
+        }
+        
+        let task = self.tasks[indexPath.row]
+        cell.configure(with: task)
+        return cell
+    }
+}
+
+extension GoalDetailViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedTask = tasks[indexPath.row]
+        print("Selected \(selectedTask.title)")
+    }
+}
+
+extension GoalDetailViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width - 32
+        return CGSize(width: width, height: 90)
     }
 }

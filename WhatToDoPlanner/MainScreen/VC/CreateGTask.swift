@@ -1,29 +1,15 @@
 import UIKit
 
-// MARK: - Protocols
-
-protocol CreateGTaskDisplayLogic: AnyObject {
-    func displayTaskData(viewModel: CreateGTask.Fetch.ViewModel)
-}
-
-protocol CreateGTaskBusinessLogic {
-    func fetchTaskData(request: CreateGTask.Fetch.Request)
-}
-
-protocol CreateGTaskPresentationLogic {
-    func presentTaskData(response: CreateGTask.Fetch.Response)
-    func navigateToTaskDetail()
-}
-
-
 // MARK: - View Controller
 
-final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic {
+final class CreateGTaskViewController: UIViewController {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
+    static let fieldsError: String = "Not all necessary fields was filled!"
     
     // MARK: - SVIP References
+    var goalId: Int?
     var interactor: CreateGTaskBusinessLogic?
     
     // MARK: - Data for Picker
@@ -502,7 +488,7 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         
         // Button actions
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
-        //createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         // Tap gestures for pickers
         let dateTapGesture = UITapGestureRecognizer(target: self, action: #selector(dateTapped))
@@ -529,9 +515,19 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         let outsideTap = UITapGestureRecognizer(target: self, action: #selector(handleOutsideTap(_:)))
         outsideTap.cancelsTouchesInView = false
         view.addGestureRecognizer(outsideTap)
-        
-        interactor?.fetchTaskData(request: CreateGTask.Fetch.Request())
     }
+    
+    // MARK: - Display Logic
+    func displayTaskData(viewModel: CreateGTask.Fetch.ViewModel) {
+        descriptionTextView.text = viewModel.defaultDescription
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+
     
     // MARK: - Setup Constraints
     private func setupConstraints() {
@@ -751,15 +747,96 @@ final class CreateGTaskViewController: UIViewController, CreateGTaskDisplayLogic
         endTimeTextField.text = formatter.string(from: picker.date)
     }
     
-    // MARK: - Display Logic
-    func displayTaskData(viewModel: CreateGTask.Fetch.ViewModel) {
-        descriptionTextView.text = viewModel.defaultDescription
+    @objc private func createButtonTapped() {
+        guard let taskName = taskNameTextField.text, !taskName.isEmpty else {
+            print("task name is required")
+            showError(message: CreateGTaskViewController.fieldsError)
+            return
+        }
+        
+        guard let dateText = taskDateTextField.text, !dateText.isEmpty else {
+            print("Date is required.")
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE, MMM d, yy"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        guard let date = dateFormatter.date(from: dateText) else {
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        var startTime: Date?
+        if let startTimeText = startTimeTextField.text, !startTimeText.isEmpty {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "hh:mm a"
+                
+            guard let parsedStartTime = timeFormatter.date(from: startTimeText) else {
+                showError(message: "Incorrect format")
+                return
+            }
+            startTime = parsedStartTime
+        }
+        
+        var endTime: Date?
+        if let endTimeText = endTimeTextField.text, !endTimeText.isEmpty {
+            let timeFormatter = DateFormatter()
+            timeFormatter.dateFormat = "hh:mm a"
+            
+            guard let parsedEndTime = timeFormatter.date(from: endTimeText) else {
+                showError(message: "Incorrect format")
+                return
+            }
+            endTime = parsedEndTime
+        }
+        
+        if (startTime == nil && endTime != nil) || (startTime != nil && endTime == nil) {
+            showError(message: "Both start time and end time must be provided, or none at all.")
+            return
+        }
+        
+        if let start = startTime, let end = endTime, start > end {
+            showError(message: "Start time cannot be later than end time.")
+            return
+        }
+        
+        guard let colorText = taskColorTextField.text, !colorText.isEmpty else {
+            print("Color is required")
+            showError(message: CreateTaskViewController.fieldsError)
+            return
+        }
+        
+        var color: Int
+        
+        if colorText == "Aqua Blue" {
+            color = ColorIDs.aquaBlue
+        } else if colorText == "Moss Green" {
+            color = ColorIDs.mossGreen
+        } else if colorText == "Marigold" {
+            color = ColorIDs.marigold
+        } else if colorText == "Lilac" {
+            color = ColorIDs.lilac
+        } else if colorText == "Ultra Pink" {
+            color = ColorIDs.ultraPink
+        } else if colorText == "Default White" {
+            color = ColorIDs.defaultWhite
+        } else {
+            print("Unknown color")
+            return
+        }
+        
+        let description = descriptionTextView.text
+        guard let goalId = goalId else {
+            showError(message: "Does not have goal id.")
+            return
+        }
+        
+        interactor?.fetchTaskData(title: taskName, date: date, color: color, goalId: goalId, description: description, startTime: startTime, endTime: endTime)
     }
-//    @objc private func createButtonTapped() {
-//        // Navigate directly to Task Detail screen
-//        let taskDetailVC = CreateGTaskAssembly.assembly() // Ensure TaskDetailAssembly is implemented
-//        self.navigationController?.pushViewController(taskDetailVC, animated: true)
-//    }
 
 }
 

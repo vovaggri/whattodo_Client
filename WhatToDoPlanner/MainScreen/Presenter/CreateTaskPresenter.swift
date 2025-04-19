@@ -5,6 +5,7 @@
 protocol CreateTaskPresenterProtocol {
     func showErrorAlert(_ message: String?)
     func navigateMainScreen()
+    func showGoals(with goals: [Goal])
 }
 
 final class CreateTaskPresenter: CreateTaskPresenterProtocol {
@@ -16,5 +17,9 @@ final class CreateTaskPresenter: CreateTaskPresenterProtocol {
     
     func navigateMainScreen() {
         createTaskVC?.navigationController?.popViewController(animated: true)
+    }
+    
+    func showGoals(with goals: [Goal]) {
+        createTaskVC?.showGoals(with: goals)
     }
 }

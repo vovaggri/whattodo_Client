@@ -27,11 +27,13 @@ final class WelcomePresenter: WelcomeInteractorOutput {
     }
     
     func navigateToMainScreen() {
+        welcomeVC?.returnActiveLoginButton()
         let mainVC = MainAssembly.assembly()
         welcomeVC?.navigationController?.setViewControllers([mainVC], animated: true)
     }
     
     func showErrorAlert(_ message: String?) {
+        welcomeVC?.returnActiveLoginButton()
         welcomeVC?.showError(message: message ?? "Error")
     }
 }

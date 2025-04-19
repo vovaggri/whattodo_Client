@@ -1,11 +1,20 @@
 import UIKit
 
+protocol CreateGTaskPresentationLogic {
+    func returnToDetailScreen()
+    func showErrorAlert(_ message: String?)
+    func navigateToTaskDetail()
+}
+
 final class CreateGTaskPresenter: CreateGTaskPresentationLogic {
-    weak var viewController: CreateGTaskDisplayLogic?
+    weak var viewController: CreateGTaskViewController?
     
-    func presentTaskData(response: CreateGTask.Fetch.Response) {
-        let viewModel = CreateGTask.Fetch.ViewModel(defaultDescription: response.defaultDescription)
-        viewController?.displayTaskData(viewModel: viewModel)
+    func returnToDetailScreen() {
+        viewController?.navigationController?.popViewController(animated: true)
+    }
+    
+    func showErrorAlert(_ message: String?) {
+        viewController?.showError(message: message ?? "Error")
     }
     
     func navigateToTaskDetail() {

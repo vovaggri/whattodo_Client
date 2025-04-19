@@ -5,6 +5,7 @@
 import Foundation
 
 protocol CreateTaskInteractorProtocol {
+    func loadGoals()
     func uploadTask(title: String, date: Date, color: Int, description: String?, startTime: Date?, endTime: Date?, goalId: Int?)
 }
 
@@ -17,6 +18,22 @@ final class CreateTaskInteractor: CreateTaskInteractorProtocol {
     init(presenter: CreateTaskPresenterProtocol?, worker: CreateTaskWorkerProtocol?) {
         self.presenter = presenter
         self.worker = worker
+    }
+    
+    func loadGoals() {
+        worker?.getGoals { [weak self] result in
+            switch result {
+            case.success(let goals):
+                DispatchQueue.main.async {
+                    self?.presenter?.showGoals(with: goals)
+                }
+            case.failure(let error):
+                DispatchQueue.main.async {
+                    self?.presenter?.showGoals(with: [])
+                    self?.presenter?.showErrorAlert(error.localizedDescription)
+                }
+            }
+        }
     }
     
     func uploadTask(title: String, date: Date, color: Int, description: String?, startTime: Date?, endTime: Date?, goalId: Int?) {
@@ -33,7 +50,7 @@ final class CreateTaskInteractor: CreateTaskInteractorProtocol {
             endTime: fixedEndTime
         )
         
-        worker?.createTask(with: task, goalId: 0) { [weak self] result in
+        worker?.createTask(with: task, goalId: goalId ?? 0) { [weak self] result in
             switch result {
             case.success:
                 print("Self in closure: \(String(describing: self))")
