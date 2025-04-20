@@ -2,7 +2,7 @@ import UIKit
 
 import UIKit
 
-class WeeklyPagingFlowLayout: UICollectionViewFlowLayout {
+final class WeeklyPagingFlowLayout: UICollectionViewFlowLayout {
     override func targetContentOffset(
         forProposedContentOffset proposedContentOffset: CGPoint,
         withScrollingVelocity velocity: CGPoint

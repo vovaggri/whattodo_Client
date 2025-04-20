@@ -1,17 +1,14 @@
 // MARK: - Display Logic
 import UIKit
 
-protocol ReviewTaskDisplayLogic: AnyObject {
-    func displayTask(viewModel: ReviewTaskModels.ViewModel)
-}
-
 // MARK: - View Controller
 
 final class ReviewTaskViewController: UIViewController {
+    static let lightGrayColor = UIColor(red: 247/255, green: 249/255, blue: 249/255, alpha: 1.0)
+    
     var interactor: ReviewTaskBusinessLogic?
 
     private let task: Task
-    static let lightGrayColor = UIColor(red: 247/255, green: 249/255, blue: 249/255, alpha: 1.0)
 
     // UI Elements
     private let dateLabel = UILabel()
@@ -63,12 +60,57 @@ final class ReviewTaskViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        interactor?.getGoal(with: task.goalId ?? 0)
         setupUI()
         interactor?.loadTask(request: ReviewTaskModels.Request(task: task))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    func displayTask(viewModel: ReviewTaskModels.ViewModel) {
+        applyColorTheme(for: task.colour)
+        titleLabel.text = viewModel.title
+        descriptionLabel.text = viewModel.description
+        //goalLabel.text = viewModel.goalName ?? "None"
+        colorLabel.text = name(for: task.colour)
+        
+        if viewModel.startTime == viewModel.endTime {
+            timeLabel.text = "Any time"
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            formatter.timeZone = TimeZone(abbreviation: "UTC")
+            
+            if let startTime = viewModel.startTime, let endTime = viewModel.endTime {
+                let localStart = startTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
+                let localEnd = endTime.addingTimeInterval(TimeInterval(TimeZone.current.secondsFromGMT()))
+                
+                timeLabel.text = "\(formatter.string(from: localStart)) → \(formatter.string(from: localEnd))"
+            } else {
+                timeLabel.text = "Any time"
+            }
+        }
+
+        view.backgroundColor = viewModel.color
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM d"
+        dateLabel.text = formatter.string(from: task.endDate)
+
+        formatter.dateFormat = "EEEE"
+        dayLabel.text = formatter.string(from: task.endDate)  + ","
+    }
+    
+    func displayGoalText(with text: String) {
+        goalLabel.text = text
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
     private func name(for colorId: Int) -> String {
@@ -246,30 +288,52 @@ final class ReviewTaskViewController: UIViewController {
            separator.setHeight(1)
         
         
-           // Goal Label
-           goalLabelTitle.text = "Goal"
-           goalLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-           containerView.addSubview(goalLabelTitle)
-           goalLabelTitle.translatesAutoresizingMaskIntoConstraints = false
-        goalLabelTitle.pinTop(to: separator.bottomAnchor, 24)
-           goalLabelTitle.pinLeft(to: containerView, 24)
-
-           goalLabel.font = UIFont.systemFont(ofSize: 18)
-           containerView.addSubview(goalLabel)
-           goalLabel.translatesAutoresizingMaskIntoConstraints = false
-           goalLabel.pinTop(to: goalLabelTitle.bottomAnchor, 4)
-           goalLabel.pinLeft(to: containerView, 24)
+//           // Goal Label
+//           goalLabelTitle.text = "Goal"
+//           goalLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+//           containerView.addSubview(goalLabelTitle)
+//           goalLabelTitle.translatesAutoresizingMaskIntoConstraints = false
+//            goalLabelTitle.pinTop(to: separator.bottomAnchor, 10)
+//           goalLabelTitle.pinLeft(to: containerView, 24)
+//
+//           goalLabel.font = UIFont.systemFont(ofSize: 18)
+//           containerView.addSubview(goalLabel)
+//           goalLabel.translatesAutoresizingMaskIntoConstraints = false
+//           goalLabel.pinTop(to: goalLabelTitle.bottomAnchor, 14)
+//           goalLabel.pinLeft(to: containerView, 24)
+//        
+//        // goal container
+//        
+//        containerView.addSubview(goalContainer)
+//        goalContainer.setWidth(352)
+//        goalContainer.setHeight(52)
+//        goalContainer.pinLeft(to: view, 20)
+//        goalContainer.pinTop(to: goalLabel.topAnchor, -12)
+//        goalContainer.layer.cornerRadius = 14
+//        goalContainer.layer.masksToBounds = true
+//       goalContainer.translatesAutoresizingMaskIntoConstraints = false
         
-        // goal container
+        goalLabelTitle.text = "Goal"
+        goalLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        containerView.addSubview(goalLabelTitle)
+        goalLabelTitle.translatesAutoresizingMaskIntoConstraints = false
+         goalLabelTitle.pinTop(to: separator.bottomAnchor, 24)
+        goalLabelTitle.pinLeft(to: containerView, 24)
         
         containerView.addSubview(goalContainer)
+        goalContainer.translatesAutoresizingMaskIntoConstraints = false
         goalContainer.setWidth(352)
         goalContainer.setHeight(52)
         goalContainer.pinLeft(to: view, 20)
-        goalContainer.pinTop(to: goalLabel.bottomAnchor, 8)
+        goalContainer.pinTop(to: goalLabelTitle.bottomAnchor, 8)
         goalContainer.layer.cornerRadius = 14
         goalContainer.layer.masksToBounds = true
-       goalContainer.translatesAutoresizingMaskIntoConstraints = false
+        
+        goalLabel.font = UIFont.systemFont(ofSize: 18)
+        containerView.addSubview(goalLabel)
+        goalLabel.translatesAutoresizingMaskIntoConstraints = false
+        goalLabel.pinCenterY(to: goalContainer)
+        goalLabel.pinLeft(to: goalContainer, 16)
 
         // Color Label Title
         colorLabelTitle.text = "Task Color"
@@ -323,24 +387,5 @@ final class ReviewTaskViewController: UIViewController {
     
     @objc private func closeButtonTapped() {
         navigationController?.popViewController(animated: true)
-    }
-}
-
-extension ReviewTaskViewController: ReviewTaskDisplayLogic {
-    func displayTask(viewModel: ReviewTaskModels.ViewModel) {
-        applyColorTheme(for: task.colour)
-        titleLabel.text = viewModel.title
-        descriptionLabel.text = viewModel.description
-        //goalLabel.text = viewModel.goalName ?? "None"
-        colorLabel.text = name(for: task.colour)
-        timeLabel.text = "\(viewModel.startTime ?? "") → \(viewModel.endTime ?? "")"
-        view.backgroundColor = viewModel.color
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM d"
-        dateLabel.text = formatter.string(from: task.endDate)
-
-        formatter.dateFormat = "EEEE"
-        dayLabel.text = formatter.string(from: task.endDate)  + ","
     }
 }

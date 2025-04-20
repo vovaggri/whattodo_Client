@@ -6,7 +6,9 @@ struct Goal: Codable {
     var title: String
     var description: String?
     var colour: Int
-    var progress: Int = 0
+    var progress: Int
+    var completedTasks: Int
+    var totalTasks: Int
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -14,6 +16,8 @@ struct Goal: Codable {
         case description
         case colour
         case progress
+        case completedTasks = "completed_tasks"
+        case totalTasks = "total_tasks"
     }
     
     func getColour() -> UIColor {

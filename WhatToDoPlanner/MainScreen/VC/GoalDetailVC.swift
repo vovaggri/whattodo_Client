@@ -1,46 +1,5 @@
 import UIKit
 
-final class ShimmerView: UIView {
-    private let gradientLayer = CAGradientLayer()
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupGradient()
-    }
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupGradient()
-    }
-    private func setupGradient() {
-        gradientLayer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.white.withAlphaComponent(0.4).cgColor,
-            UIColor.clear.cgColor
-        ]
-        gradientLayer.locations = [0, 0.5, 1]
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
-        layer.addSublayer(gradientLayer)
-    }
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        gradientLayer.frame = self.bounds
-    }
-    func startAnimating() {
-        let animation = CABasicAnimation(keyPath: "transform.translation.x")
-        animation.duration = 1.5
-        animation.fromValue = -bounds.width
-        animation.toValue = bounds.width
-        animation.repeatCount = .infinity
-        gradientLayer.add(animation, forKey: "shimmerAnimation")
-    }
-
-    func stopAnimating() {
-        gradientLayer.removeAllAnimations()
-    }
-}
-
-
-
 // MARK: - View Controller
 final class GoalDetailViewController: UIViewController {
     var goalId: Int?
@@ -152,6 +111,7 @@ final class GoalDetailViewController: UIViewController {
         interactor?.fetchGoalInfo(with: goalId)
         interactor?.loadTasks(with: goalId)
 
+        aiButton.addTarget(self, action: #selector(aiButtonTapped), for: .touchUpInside)
         setupUI()
         setupConstraints()
         configureTaskCollection()
@@ -182,13 +142,19 @@ final class GoalDetailViewController: UIViewController {
     func displayGoalInfo(viewModel: GoalDetail.Info.ViewModel, goalResponse: Goal) {
         goal = goalResponse
         goalTitleLabel.text = viewModel.title
-        goalTitleLabel.textColor = goal?.getColour()
+        goalTitleLabel.textColor = goal?.getColour().adjusted(saturationOffset: 0.20, brightnessOffset: -0.15)
         taskContainerView.backgroundColor = goal?.getColour()
-        addTaskButton.backgroundColor = goal?.getColour()
+        addTaskButton.backgroundColor = goal?.getColour().adjusted(saturationOffset: 0.20, brightnessOffset: -0.15)
     }
     
     func showError(message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    func showProblemAI() {
+        let alert = UIAlertController(title: "AI not available", message: "AI advice is not available for goals without description.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
@@ -223,17 +189,6 @@ final class GoalDetailViewController: UIViewController {
 
         closeButton.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
         addTaskButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
-    }
-
-    // MARK: - Actions
-
-    @objc private func closeTapped() {
-        let mainVC = MainAssembly.assembly()
-        navigationController?.setViewControllers([mainVC], animated: true)
-    }
-    @objc private func plusButtonTapped() {
-        let createGTaskVC = CreateGTaskAssembly.assembly(with: goalId ?? 0)
-        navigationController?.pushViewController(createGTaskVC, animated: true)
     }
 
     // MARK: - Constraints
@@ -286,6 +241,26 @@ final class GoalDetailViewController: UIViewController {
         taskGCollectionView.pinLeft(to: taskContainerView.leadingAnchor)
         taskGCollectionView.pinRight(to: taskContainerView.trailingAnchor)
         taskGCollectionView.pinBottom(to: taskContainerView.bottomAnchor, 10)
+    }
+    
+    // MARK: - Actions
+
+    @objc private func closeTapped() {
+        let mainVC = MainAssembly.assembly()
+        navigationController?.setViewControllers([mainVC], animated: true)
+    }
+    
+    @objc private func plusButtonTapped() {
+        let createGTaskVC = CreateGTaskAssembly.assembly(with: goalId ?? 0)
+        navigationController?.pushViewController(createGTaskVC, animated: true)
+    }
+    
+    @objc private func aiButtonTapped() {
+        guard let goal = goal else {
+            showError(message: "Goal not found")
+            return
+        }
+        interactor?.checkGoal(with: goal)
     }
 }
 

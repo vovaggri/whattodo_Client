@@ -15,6 +15,8 @@ enum GoalDetail {
         var description: String?
         var colour: Int
         var progress: Int
+        var completedTasks: Int
+        var totalTasks: Int
         
         enum CodingKeys: String, CodingKey {
             case id
@@ -22,6 +24,8 @@ enum GoalDetail {
             case description
             case colour
             case progress
+            case completedTasks = "completed_tasks"
+            case totalTasks = "total_tasks"
         }
     }
 }
