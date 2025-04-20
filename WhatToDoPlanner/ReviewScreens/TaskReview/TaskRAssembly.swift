@@ -5,7 +5,8 @@ import UIKit
 enum ReviewScreenAssembly {
     static func assembly(_ task: Task) -> UIViewController {
         let presenter = ReviewTaskPresenter()
-        let interactor = ReviewTaskInteractor(presenter: presenter)
+        let worker = ReviewTaskWorker()
+        let interactor = ReviewTaskInteractor(presenter: presenter, worker: worker)
         let viewController = ReviewTaskViewController(task: task)
         presenter.viewController = viewController
         viewController.interactor = interactor
