@@ -157,6 +157,16 @@ final class MainScreenViewController: UIViewController {
             self?.navigationController?.pushViewController(reviewVC, animated: true)
         }
     }
+    func didSelectGoal(_ goal: Goal){
+        bottomSheetVC?.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            let goalVC = GoalReviewAssembly.assembly(goal)
+            navigationController?.pushViewController(goalVC, animated: true)
+        }
+
+    }
+        
+    
 
     
     // MARK: - Setup Header
@@ -306,6 +316,7 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
                 presentCreateGoalScreen()
             } else {
                 print("Pressed goal: \(goals[indexPath.item].title)")
+                didSelectGoal(goals[indexPath.item])
             }
         }
     }

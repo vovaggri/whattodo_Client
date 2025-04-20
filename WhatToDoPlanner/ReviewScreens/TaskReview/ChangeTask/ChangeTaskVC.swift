@@ -792,6 +792,7 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         guard let taskName = taskNameTextField.text, !taskName.isEmpty else {
             print("Task name is required.")
             showError(message: changeTaskViewController.fieldsError)
+            
             return
         }
         
