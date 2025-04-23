@@ -7,7 +7,7 @@ protocol MainWorkerProtocol {
 
 final class MainWorker: MainWorkerProtocol {
     private let keychainService = KeychainService()
-    private var baseUrl: String = "http://localhost:8000"
+    private var baseUrl: String = Server.url
     
     func getUser(completion: @escaping (Result<MainModels.Fetch.UserResponse, Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),

@@ -8,7 +8,7 @@ protocol GoalDetailWorkerProtocol {
 
 final class GoalDetailWorker: GoalDetailWorkerProtocol {
     private let keychainService = KeychainService()
-    private let baseUrlText: String = "http://localhost:8000"
+    private let baseUrlText: String = Server.url
     
     func loadGoal(with goalId: Int, completion: @escaping (Result<GoalDetail.GoalResponse, any Error>) -> Void) {
         let urlText = baseUrlText + "/api/goal/\(goalId)"
@@ -67,7 +67,7 @@ final class GoalDetailWorker: GoalDetailWorkerProtocol {
            let token = String(data: tokenData, encoding: .utf8) {
             print("token: \(token)")
             
-            let urlText = baseUrlText + "/api/goal/\(goalId)/items/"
+            let urlText = baseUrlText + "/api/goal/\(goalId)/tasks/"
             guard let url = URL(string: urlText) else {
                 print("Incorrect URL")
                 completion(.failure(NSError(domain: "GoalDetail", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -123,7 +123,7 @@ final class GoalDetailWorker: GoalDetailWorkerProtocol {
     func removeTask(with taskId: Int, completion: @escaping (Result<Void, any Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),
            let token = String(data: tokenData, encoding: .utf8) {
-            let urlText = baseUrlText + "/api/goal/0/items/\(taskId)"
+            let urlText = baseUrlText + "/api/goal/0/tasks/\(taskId)"
             guard let url = URL(string: urlText) else {
                 print("Incorrect URL")
                 completion(.failure(NSError(domain: "GoalDetail", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))

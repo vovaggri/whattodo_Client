@@ -8,7 +8,7 @@ final class CreateGTaskWorker: CreateGTaskWorkerProtocol {
     private let keychainService = KeychainService()
     
     func createTask(with requestData: CreateGTask.Fetch.Request, goalId gId: Int, completion: @escaping (Result<Task, any Error>) -> Void) {
-        let urlText: String = "http://localhost:8000/api/goal/\(gId)/items/"
+        let urlText: String = Server.url + "/api/goal/\(gId)/tasks/"
         
         guard let url = URL(string: urlText) else {
             completion(.failure(CreateTaskModels.CreateTaskError.incorrectURL))

@@ -7,7 +7,7 @@ protocol AIWorkerProtocol {
 
 final class AIWorker: AIWorkerProtocol {
     private let keychainService = KeychainService()
-    private let baseUrlText: String = "http://localhost:8000"
+    private let baseUrlText: String = Server.url
     
     func loadGoal(with goalId: Int, completion: @escaping (Result<GoalDetail.GoalResponse, any Error>) -> Void) {
         let urlText = baseUrlText + "/api/goal/\(goalId)"
@@ -71,7 +71,7 @@ final class AIWorker: AIWorkerProtocol {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        // Указываем, что тело запроса в формате JSON
+        // JSON Request
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if let tokenData = keychainService.getData(forKey: "userToken"), let token = String(data: tokenData, encoding: .utf8) {

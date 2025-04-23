@@ -7,7 +7,7 @@ protocol CreateTaskWorkerProtocol {
 
 final class CreateTaskWorker: CreateTaskWorkerProtocol {
     private let keychainService = KeychainService()
-    private let baseUrl: String = "http://localhost:8000"
+    private let baseUrl: String = Server.url
     
     func getGoals(completion: @escaping (Result<[Goal], Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),
@@ -62,7 +62,7 @@ final class CreateTaskWorker: CreateTaskWorkerProtocol {
     }
     
     func createTask(with requestData: CreateTaskModels.CreateTaskRequest, goalId gId: Int, completion: @escaping (Result<Task, Error>) -> Void) {
-        let urlText: String = baseUrl + "/api/goal/\(gId)/items/"
+        let urlText: String = baseUrl + "/api/goal/\(gId)/tasks/"
         
         guard let url = URL(string: urlText) else {
             completion(.failure(CreateTaskModels.CreateTaskError.incorrectURL))
