@@ -13,10 +13,12 @@ final class CatCell: UICollectionViewCell {
     private let progressLabel = UILabel()
     private let progressView = UIProgressView(progressViewStyle: .default)
     private let tasksLeftLabel = UILabel()
+    static let reuseIdentifier = "CatCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupAppearance()
     }
     
     override func layoutSubviews() {
@@ -40,7 +42,7 @@ final class CatCell: UICollectionViewCell {
     
     func configure(with goal: Goal, progress: Int) {
         let baseColor = goal.getColour()
-                
+        layer.shadowColor = baseColor.cgColor
         // Title
         titleLabel.text = goal.title
                 
@@ -58,6 +60,19 @@ final class CatCell: UICollectionViewCell {
                 
         contentView.backgroundColor = baseColor
     }
+    private func setupAppearance() {
+          // round the corners of the content view
+          contentView.layer.cornerRadius = 34
+          contentView.layer.masksToBounds = true
+          
+          // if you ever want a shadow behind that rounded card:
+          layer.shadowColor   = UIColor.black.cgColor
+          layer.shadowOpacity = 0.4
+          layer.shadowOffset  = CGSize(width: 0, height: 4)
+          layer.shadowRadius  = 4
+       
+          layer.masksToBounds = false
+      }
     
     private func setupUI() {
         contentView.layer.cornerRadius = 16
@@ -68,15 +83,25 @@ final class CatCell: UICollectionViewCell {
             contentView.addSubview($0)
         }
                 
-        titleLabel.font = UIFont(name: Constants.fontName, size: 24)
+        titleLabel.font = UIFont(name: Constants.fontName, size: 35)
+    //    titleLabel.textColor = UIColor
         titleLabel.numberOfLines = 1
+        // 1) Allow the titleLabel to shrink if it doesn't fit
+               titleLabel.numberOfLines = 1
+               titleLabel.adjustsFontSizeToFitWidth = true
+  
                 
         progressLabel.font = UIFont(name: Constants.fontName, size: 15)
         tasksLeftLabel.font = UIFont(name: Constants.fontName, size: 14)
         
-        titleLabel.textAlignment = .left
+        titleLabel.textAlignment = .right
         titleLabel.pinCenterY(to: contentView.centerYAnchor, -30)
-        titleLabel.pinRight(to: contentView.trailingAnchor, 15)
+     //   titleLabel.pinLeft(to: contentView.leadingAnchor, Constants.horizontalPadding)
+        titleLabel.pinRight(to: contentView.leadingAnchor, -165)
+        titleLabel.widthAnchor
+            .constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.7)
+            .isActive = true
+                
         
         progressView.pinTop(to: titleLabel.bottomAnchor, Constants.interItemSpacing)
         progressView.pinLeft(to: contentView.leadingAnchor, 24)

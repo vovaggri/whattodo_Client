@@ -7,15 +7,15 @@ final class ReviewTaskViewController: UIViewController {
     static let lightGrayColor = UIColor(red: 247/255, green: 249/255, blue: 249/255, alpha: 1.0)
     
     var interactor: ReviewTaskBusinessLogic?
-
+    
     private let task: Task
-
+    
     // UI Elements
     private let dateLabel = UILabel()
     private let dayLabel = UILabel()
     private let timeLabel = UILabel()
     private let editButton = UIButton(type: .system)
-
+    
     private let containerView = UIView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
@@ -25,19 +25,19 @@ final class ReviewTaskViewController: UIViewController {
     private let colorLabelTitle = UILabel()
     private let colorLabel = UILabel()
     private let goalContainer = UIView()
-
+    
     private let colorContainer = UIView()
     private let colorDotView = UIView()
-
+    
     
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
-
+        
         // Use SF Symbol arrow
         let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: config)
         button.setImage(image, for: .normal)
-
+        
         button.tintColor = .black
         button.backgroundColor = .white
         button.layer.cornerRadius = 35
@@ -48,16 +48,16 @@ final class ReviewTaskViewController: UIViewController {
         button.clipsToBounds = false
         return button
     }()
-
+    
     init(task: Task) {
         self.task = task
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         interactor?.getGoal(with: task.goalId ?? 0)
@@ -92,13 +92,13 @@ final class ReviewTaskViewController: UIViewController {
                 timeLabel.text = "Any time"
             }
         }
-
+        
         view.backgroundColor = viewModel.color
-
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM d"
         dateLabel.text = formatter.string(from: task.endDate)
-
+        
         formatter.dateFormat = "EEEE"
         dayLabel.text = formatter.string(from: task.endDate)  + ","
     }
@@ -112,7 +112,7 @@ final class ReviewTaskViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
-
+    
     private func name(for colorId: Int) -> String {
         switch colorId {
         case ColorIDs.aquaBlue: return "Aqua Blue"
@@ -124,7 +124,7 @@ final class ReviewTaskViewController: UIViewController {
         default: return "Unknown"
         }
     }
-
+    
     private func applyColorTheme(for colorId: Int) {
         let labelColor: UIColor
         let timeAlpha: CGFloat
@@ -132,7 +132,7 @@ final class ReviewTaskViewController: UIViewController {
         let goalcontainercolor: UIColor
         let colorcontainer: UIColor
         let colordot: UIColor
-
+        
         switch colorId {
         case ColorIDs.ultraPink:
             labelColor = UIColor(hex: "514F4F") ?? .black
@@ -140,7 +140,7 @@ final class ReviewTaskViewController: UIViewController {
             buttonColor = UIColor(hex: "EA9AF1") ?? .black
             goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colordot = UIColor(hex: "EA9AF1") ?? .black
-        colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
         case ColorIDs.aquaBlue:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.7
@@ -184,7 +184,7 @@ final class ReviewTaskViewController: UIViewController {
             colorcontainer = .black
             colordot = .black
         }
-
+        
         dayLabel.textColor = labelColor
         dateLabel.textColor = labelColor
         timeLabel.textColor = labelColor.withAlphaComponent(timeAlpha)
@@ -194,10 +194,10 @@ final class ReviewTaskViewController: UIViewController {
         colorContainer.backgroundColor = colorcontainer
         colorDotView.backgroundColor = colordot
     }
-
+    
     private func setupUI() {
         view.backgroundColor = .white
-
+        
         // MARK: - Top labels
         
         view.addSubview(closeButton)
@@ -208,41 +208,41 @@ final class ReviewTaskViewController: UIViewController {
         closeButton.setHeight(70)
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
-           dayLabel.font = UIFont(name: "AoboshiOne-Regular", size: 60)
-           dayLabel.textAlignment = .left
-           view.addSubview(dayLabel)
-           dayLabel.translatesAutoresizingMaskIntoConstraints = false
+        dayLabel.font = UIFont(name: "AoboshiOne-Regular", size: 60)
+        dayLabel.textAlignment = .left
+        view.addSubview(dayLabel)
+        dayLabel.translatesAutoresizingMaskIntoConstraints = false
         dayLabel.pinTop(to: closeButton.bottomAnchor, 8)
-           dayLabel.pinLeft(to: view, 30)
-
-           dateLabel.font = UIFont(name: "AoboshiOne-Regular", size: 58)
-           dateLabel.textAlignment = .left
-           view.addSubview(dateLabel)
-           dateLabel.translatesAutoresizingMaskIntoConstraints = false
-           dateLabel.pinTop(to: dayLabel.bottomAnchor, 5)
-           dateLabel.pinLeft(to: view, 30)
-
-           timeLabel.font = UIFont.systemFont(ofSize: 24)
-           timeLabel.textAlignment = .center
-           timeLabel.textColor = .darkGray
-           view.addSubview(timeLabel)
-           timeLabel.translatesAutoresizingMaskIntoConstraints = false
-           timeLabel.pinTop(to: dateLabel.bottomAnchor, 16)
-           timeLabel.pinLeft(to: view, 30)
-
-
-
-           // MARK: - White Container
-           containerView.backgroundColor = .white
-           containerView.layer.cornerRadius = 32
-           containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-           view.addSubview(containerView)
-           containerView.translatesAutoresizingMaskIntoConstraints = false
-           containerView.pinTop(to: timeLabel.bottomAnchor, 70)
-           containerView.pinLeft(to: view)
-           containerView.pinRight(to: view)
-           containerView.pinBottom(to: view)
-
+        dayLabel.pinLeft(to: view, 30)
+        
+        dateLabel.font = UIFont(name: "AoboshiOne-Regular", size: 58)
+        dateLabel.textAlignment = .left
+        view.addSubview(dateLabel)
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.pinTop(to: dayLabel.bottomAnchor, 5)
+        dateLabel.pinLeft(to: view, 30)
+        
+        timeLabel.font = UIFont.systemFont(ofSize: 24)
+        timeLabel.textAlignment = .center
+        timeLabel.textColor = .darkGray
+        view.addSubview(timeLabel)
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        timeLabel.pinTop(to: dateLabel.bottomAnchor, 16)
+        timeLabel.pinLeft(to: view, 30)
+        
+        
+        
+        // MARK: - White Container
+        containerView.backgroundColor = .white
+        containerView.layer.cornerRadius = 32
+        containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.addSubview(containerView)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.pinTop(to: timeLabel.bottomAnchor, 70)
+        containerView.pinLeft(to: view)
+        containerView.pinRight(to: view)
+        containerView.pinBottom(to: view)
+        
         // MARK: - Edit Button
         let config = UIImage.SymbolConfiguration(pointSize: 21, weight: .regular) // You can adjust size & weight
         let pencilImage = UIImage(systemName: "pencil", withConfiguration: config)
@@ -250,7 +250,7 @@ final class ReviewTaskViewController: UIViewController {
         editButton.tintColor = .white
         editButton.backgroundColor = UIColor.black.withAlphaComponent(0.2)
         editButton.layer.cornerRadius = 44
-       
+        
         view.addSubview(editButton)
         editButton.translatesAutoresizingMaskIntoConstraints = false
         editButton.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 316)
@@ -259,65 +259,65 @@ final class ReviewTaskViewController: UIViewController {
         editButton.setHeight(88)
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         
-           // Title Label
-           titleLabel.font = UIFont(name: "AoboshiOne-Regular", size: 36)
-           titleLabel.numberOfLines = 0
-           containerView.addSubview(titleLabel)
-           titleLabel.translatesAutoresizingMaskIntoConstraints = false
-           titleLabel.pinTop(to: containerView.topAnchor, 32)
-           titleLabel.pinLeft(to: containerView, 24)
-           titleLabel.pinRight(to: containerView, 24)
-
-           // Description Label
-           descriptionLabel.font = UIFont.systemFont(ofSize: 16)
-           descriptionLabel.numberOfLines = 0
-           descriptionLabel.textAlignment = .center
-           descriptionLabel.textColor = .darkGray
-           containerView.addSubview(descriptionLabel)
-           descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-           descriptionLabel.pinTop(to: titleLabel.bottomAnchor, 12)
-           descriptionLabel.pinCenterX(to: view.centerXAnchor)
-
-           // Separator
-           separator.backgroundColor = .lightGray
-           containerView.addSubview(separator)
-           separator.translatesAutoresizingMaskIntoConstraints = false
-           separator.pinTop(to: descriptionLabel.bottomAnchor, 24)
-           separator.pinLeft(to: containerView, 24)
-           separator.pinRight(to: containerView, 24)
-           separator.setHeight(1)
+        // Title Label
+        titleLabel.font = UIFont(name: "AoboshiOne-Regular", size: 36)
+        titleLabel.numberOfLines = 0
+        containerView.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.pinTop(to: containerView.topAnchor, 32)
+        titleLabel.pinLeft(to: containerView, 24)
+        titleLabel.pinRight(to: containerView, 24)
+        
+        // Description Label
+        descriptionLabel.font = UIFont.systemFont(ofSize: 16)
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.textColor = .darkGray
+        containerView.addSubview(descriptionLabel)
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.pinTop(to: titleLabel.bottomAnchor, 12)
+        descriptionLabel.pinCenterX(to: view.centerXAnchor)
+        
+        // Separator
+        separator.backgroundColor = .lightGray
+        containerView.addSubview(separator)
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.pinTop(to: descriptionLabel.bottomAnchor, 24)
+        separator.pinLeft(to: containerView, 24)
+        separator.pinRight(to: containerView, 24)
+        separator.setHeight(1)
         
         
-//           // Goal Label
-//           goalLabelTitle.text = "Goal"
-//           goalLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-//           containerView.addSubview(goalLabelTitle)
-//           goalLabelTitle.translatesAutoresizingMaskIntoConstraints = false
-//            goalLabelTitle.pinTop(to: separator.bottomAnchor, 10)
-//           goalLabelTitle.pinLeft(to: containerView, 24)
-//
-//           goalLabel.font = UIFont.systemFont(ofSize: 18)
-//           containerView.addSubview(goalLabel)
-//           goalLabel.translatesAutoresizingMaskIntoConstraints = false
-//           goalLabel.pinTop(to: goalLabelTitle.bottomAnchor, 14)
-//           goalLabel.pinLeft(to: containerView, 24)
-//        
-//        // goal container
-//        
-//        containerView.addSubview(goalContainer)
-//        goalContainer.setWidth(352)
-//        goalContainer.setHeight(52)
-//        goalContainer.pinLeft(to: view, 20)
-//        goalContainer.pinTop(to: goalLabel.topAnchor, -12)
-//        goalContainer.layer.cornerRadius = 14
-//        goalContainer.layer.masksToBounds = true
-//       goalContainer.translatesAutoresizingMaskIntoConstraints = false
+        //           // Goal Label
+        //           goalLabelTitle.text = "Goal"
+        //           goalLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        //           containerView.addSubview(goalLabelTitle)
+        //           goalLabelTitle.translatesAutoresizingMaskIntoConstraints = false
+        //            goalLabelTitle.pinTop(to: separator.bottomAnchor, 10)
+        //           goalLabelTitle.pinLeft(to: containerView, 24)
+        //
+        //           goalLabel.font = UIFont.systemFont(ofSize: 18)
+        //           containerView.addSubview(goalLabel)
+        //           goalLabel.translatesAutoresizingMaskIntoConstraints = false
+        //           goalLabel.pinTop(to: goalLabelTitle.bottomAnchor, 14)
+        //           goalLabel.pinLeft(to: containerView, 24)
+        //
+        //        // goal container
+        //
+        //        containerView.addSubview(goalContainer)
+        //        goalContainer.setWidth(352)
+        //        goalContainer.setHeight(52)
+        //        goalContainer.pinLeft(to: view, 20)
+        //        goalContainer.pinTop(to: goalLabel.topAnchor, -12)
+        //        goalContainer.layer.cornerRadius = 14
+        //        goalContainer.layer.masksToBounds = true
+        //       goalContainer.translatesAutoresizingMaskIntoConstraints = false
         
         goalLabelTitle.text = "Goal"
         goalLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         containerView.addSubview(goalLabelTitle)
         goalLabelTitle.translatesAutoresizingMaskIntoConstraints = false
-         goalLabelTitle.pinTop(to: separator.bottomAnchor, 24)
+        goalLabelTitle.pinTop(to: separator.bottomAnchor, 24)
         goalLabelTitle.pinLeft(to: containerView, 24)
         
         containerView.addSubview(goalContainer)
@@ -334,7 +334,7 @@ final class ReviewTaskViewController: UIViewController {
         goalLabel.translatesAutoresizingMaskIntoConstraints = false
         goalLabel.pinCenterY(to: goalContainer)
         goalLabel.pinLeft(to: goalContainer, 16)
-
+        
         // Color Label Title
         colorLabelTitle.text = "Task Color"
         colorLabelTitle.font = UIFont.systemFont(ofSize: 14, weight: .medium)
@@ -342,7 +342,7 @@ final class ReviewTaskViewController: UIViewController {
         colorLabelTitle.translatesAutoresizingMaskIntoConstraints = false
         colorLabelTitle.pinTop(to: goalContainer.bottomAnchor, 24)
         colorLabelTitle.pinLeft(to: containerView, 24)
-
+        
         // Task Color Container
         containerView.addSubview(colorContainer)
         colorContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -352,34 +352,34 @@ final class ReviewTaskViewController: UIViewController {
         colorContainer.pinTop(to: colorLabelTitle.bottomAnchor, 8)
         colorContainer.layer.cornerRadius = 14
         colorContainer.layer.masksToBounds = true
-
+        
         // Task Color Label (INSIDE the container)
         colorLabel.font = UIFont.systemFont(ofSize: 18)
         colorContainer.addSubview(colorLabel) // ✅ only here
         colorLabel.translatesAutoresizingMaskIntoConstraints = false
-//        colorLabel.pinCenterX(to: colorContainer)
-//        colorLabel.pinCenterY(to: colorContainer)
+        //        colorLabel.pinCenterX(to: colorContainer)
+        //        colorLabel.pinCenterY(to: colorContainer)
         colorLabel.pinCenterY(to: colorContainer)
         colorLabel.pinLeft(to: colorContainer, 16)
-
+        
         // Add color dot view
         colorDotView.translatesAutoresizingMaskIntoConstraints = false
         colorDotView.backgroundColor = UIColor.systemPink // or whatever color you need
         colorDotView.layer.cornerRadius = 10 // make it round
         colorDotView.layer.masksToBounds = true
-
+        
         colorContainer.addSubview(colorDotView)
-
+        
         // Pin it to the right side inside the container
         colorDotView.pinRight(to: colorContainer, 16) // 16pt from the right
         colorDotView.pinCenterY(to: colorContainer)   // vertically centered
         colorDotView.setWidth(20)
         colorDotView.setHeight(20)
-
-
-
-       }
-
+        
+        
+        
+    }
+    
     @objc private func editButtonTapped() {
         let changeTaskVC = ChangeTaskAssembly.assembly()
         navigationController?.pushViewController(changeTaskVC, animated: true)
@@ -388,4 +388,5 @@ final class ReviewTaskViewController: UIViewController {
     @objc private func closeButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
+    
 }

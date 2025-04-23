@@ -23,6 +23,16 @@ final class MainScreenViewController: UIViewController {
     
     private var categories: [MainModels.Fetch.CategoryViewModel] = []
     
+    private let pageControl: UIPageControl = {
+        let pc = UIPageControl()
+        pc.currentPageIndicatorTintColor = .black
+        pc.pageIndicatorTintColor        = .lightGray
+        pc.hidesForSinglePage           = true
+        pc.translatesAutoresizingMaskIntoConstraints = false
+        return pc
+    }()
+
+    
     private lazy var categoriesCollectionView: UICollectionView = {
         let layout = self.createCompositionalLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -34,11 +44,37 @@ final class MainScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        categoriesCollectionView.isPagingEnabled = false
+        categoriesCollectionView.delegate = self
 
         setupHeader()
         
+        
         view.addSubview(bottomAnchorGuide)
         configureButtonAnchorGuide()
+        // 1) Configure your collection view
+          categoriesCollectionView.dataSource = self
+        categoriesCollectionView.delegate   = self
+          categoriesCollectionView.isPagingEnabled = true
+        categoriesCollectionView.showsHorizontalScrollIndicator = false
+
+          // 2) Register your custom cells
+          categoriesCollectionView.register(CatCell.self,
+                                            forCellWithReuseIdentifier: CatCell.reuseIdentifier)
+          categoriesCollectionView.register(CategoryCell.self,
+                                            forCellWithReuseIdentifier: CategoryCell.reuseIdentifier)
+
+          // 3) Kick off your fetch
+          interactor?.fetchMainScreenData(request: MainModels.Fetch.Request())
+
+          // 4) Finally, add it to the view hierarchy and set up constraints
+          view.addSubview(categoriesCollectionView)
+          setupCollectionViewConstraints()
+        view.addSubview(pageControl)
+           pageControl.pinTop(to: categoriesCollectionView.bottomAnchor, 8)
+           pageControl.pinCenterX(to: view.centerXAnchor)
+
+
         
         let request = MainModels.Fetch.Request()
         categoriesCollectionView.dataSource = self
@@ -50,6 +86,9 @@ final class MainScreenViewController: UIViewController {
         view.addSubview(categoriesCollectionView)
 
         setupCollectionViewConstraints()
+        view.addSubview(pageControl)
+        pageControl.pinTop(to: categoriesCollectionView.bottomAnchor, 8)
+        pageControl.pinCenterX(to: view.centerXAnchor)
         
 //        presentBottomSheet()
         configureCalendarButton()
@@ -87,36 +126,76 @@ final class MainScreenViewController: UIViewController {
     func showGoals(with goals: [Goal]) {
         self.goals = goals
         categoriesCollectionView.reloadData()
+
+        // one “page” is one compositional group = 3 items (big + 2 small)
+        let pages = Int( ceil(Double(goals.count + 1) / 3.0) )
+        pageControl.numberOfPages = max(pages, 1)
+        pageControl.currentPage   = 0
     }
+
     
     private func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
-        return UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment -> NSCollectionLayoutSection? in
-            // Set the size of the group in absolute or fractional values ​​relative to the width of collectionView.
-            // Group has full height of collectionView
-            let fullHeight: NSCollectionLayoutDimension = .fractionalHeight(1.0)
-            // Left part: big element
-            let bigItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: fullHeight)
-            let bigItem = NSCollectionLayoutItem(layoutSize: bigItemSize)
-            
-            // Right part: two small elements
-            let smallItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.5))
-            let smallItem = NSCollectionLayoutItem(layoutSize: smallItemSize)
-            smallItem.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
-            let smallGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: fullHeight)
-            let smallGroup = NSCollectionLayoutGroup.vertical(layoutSize: smallGroupSize, subitems: Array(repeating: smallItem, count: 2))
-            
-            // Horizonal group with big and small elements
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: fullHeight)
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [bigItem, smallGroup])
-            
-            let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
-            section.interGroupSpacing = 8
-            section.orthogonalScrollingBehavior = .continuous
-            
-            return section
-        }
-    }
+      return UICollectionViewCompositionalLayout { [weak self] sectionIndex, env in
+        guard let self = self else { return nil }
+        let fullHeight = NSCollectionLayoutDimension.fractionalHeight(1.0)
+
+        // 1) Big left item
+        let bigItem = NSCollectionLayoutItem(
+          layoutSize: .init(widthDimension: .fractionalWidth(0.5),
+                            heightDimension: fullHeight)
+        )
+        bigItem.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+
+        // 2) Two small right items
+        let smallItem = NSCollectionLayoutItem(
+          layoutSize: .init(widthDimension: .fractionalWidth(1.0),
+                            heightDimension: .fractionalHeight(0.5))
+        )
+        smallItem.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+        let smallGroup = NSCollectionLayoutGroup.vertical(
+          layoutSize: .init(widthDimension: .fractionalWidth(0.5),
+                            heightDimension: fullHeight),
+          subitems: [smallItem, smallItem]
+        )
+
+        // 3) Combine into one group
+        let group = NSCollectionLayoutGroup.horizontal(
+          layoutSize: .init(widthDimension: .fractionalWidth(1.0),
+                            heightDimension: fullHeight),
+          subitems: [bigItem, smallGroup]
+        )
+
+        // 4) Section
+          let section = NSCollectionLayoutSection(group: group)
+             section.contentInsets = .init(top: 8, leading: 10, bottom: 8, trailing: 10)
+             section.interGroupSpacing = 8
+             section.orthogonalScrollingBehavior = .groupPagingCentered
+
+             section.visibleItemsInvalidationHandler = { _, offset, environment in
+               // 1) Grab the number of pages
+               let pages = self.pageControl.numberOfPages
+               guard pages > 0 else { return }
+
+               // 2) The “page width” is exactly the width of one group on screen:
+               let pageWidth = environment.container.effectiveContentSize.width
+               guard pageWidth > 0 else { return }
+
+               // 3) Compute which page we’re on
+               let rawPage = offset.x / pageWidth
+               let current = Int(round(rawPage))
+
+               // 4) Clamp & assign
+               let clamped = min(max(current, 0), pages - 1)
+               DispatchQueue.main.async {
+                 self.pageControl.currentPage = clamped
+               }
+             }
+
+             return section
+           }
+         }
+
+
     
     private func setupCollectionViewConstraints() {
         categoriesCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -157,6 +236,16 @@ final class MainScreenViewController: UIViewController {
             self?.navigationController?.pushViewController(reviewVC, animated: true)
         }
     }
+    func didSelectGoal(_ goal: Goal){
+        bottomSheetVC?.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            let goalVC = GoalReviewAssembly.assembly(goal)
+            navigationController?.pushViewController(goalVC, animated: true)
+        }
+
+    }
+        
+    
 
     
     // MARK: - Setup Header
@@ -176,7 +265,7 @@ final class MainScreenViewController: UIViewController {
         if #available(iOS 16, *) {
             let smallDetent = UISheetPresentationController.Detent.custom(identifier: .init(Constants.smallIdentifier)) { context in
                 let screenHeight = UIScreen.main.bounds.height
-                return screenHeight * 0.4
+                return screenHeight * 0.355
             }
                     
             if let sheet = bottomVC.sheetPresentationController {
@@ -213,6 +302,18 @@ final class MainScreenViewController: UIViewController {
             self.navigationController?.pushViewController(createGoalVC, animated: true)
         }
     }
+    private func makeFlowLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection          = .horizontal
+        layout.minimumLineSpacing       = 8
+        layout.minimumInteritemSpacing  = 8
+        // equal 20‑point margins on left & right
+        layout.sectionInset            = UIEdgeInsets(top: 8,
+                                                     left: 20,
+                                                     bottom: 8,
+                                                     right: 20)
+        return layout
+      }
 
     private func configureCalendarButton() {
         view.addSubview(calendarButton)
@@ -226,9 +327,9 @@ final class MainScreenViewController: UIViewController {
         calendarButton.setImage(UIImage(systemName: Constants.calendarButtonName), for: .normal)
         calendarButton.tintColor = .white
         
-        calendarButton.setHeight(50)
-        calendarButton.setWidth(50)
-        calendarButton.layer.cornerRadius = 25
+        calendarButton.setHeight(80)
+        calendarButton.setWidth(80)
+        calendarButton.layer.cornerRadius = 38
         
         calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
     }
@@ -273,31 +374,38 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // Если целей нет – показываем только ячейку “Добавить цель”
         if goals.isEmpty {
-                // Если целей нет – всегда показываем addCell
-            let addCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as! CategoryCell
+            let addCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CategoryCell.reuseIdentifier,
+                for: indexPath
+            ) as! CategoryCell
             addCell.configureAsAddGoal()
             return addCell
-        } else {
-            if indexPath.item < goals.count {
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CatCell", for: indexPath) as? CatCell else {
-                    return UICollectionViewCell()
-                }
-                let goal = goals[indexPath.item]
-                let progress = goal.progress
-                cell.configure(with: goal, progress: progress)
-                return cell
-            } else {
-                guard let addCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
-                    return UICollectionViewCell()
-                }
-                addCell.configureAsAddGoal()
-                return addCell
-            }
         }
+        
+        // Если индекс меньше количества целей — показываем цель
+        if indexPath.item < goals.count {
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CatCell.reuseIdentifier,
+                for: indexPath
+            ) as! CatCell
+            let goal = goals[indexPath.item]
+            cell.configure(with: goal, progress: goal.progress)
+            return cell
+        }
+        
+        // В остальных случаях — ячейка “Добавить цель”
+        let addCell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CategoryCell.reuseIdentifier,
+            for: indexPath
+        ) as! CategoryCell
+        addCell.configureAsAddGoal()
+        return addCell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if goals.isEmpty {
             presentCreateGoalScreen()
@@ -306,6 +414,7 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
                 presentCreateGoalScreen()
             } else {
                 print("Pressed goal: \(goals[indexPath.item].title)")
+                didSelectGoal(goals[indexPath.item])
             }
         }
     }
@@ -317,7 +426,7 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
             return CGSize(width: 180, height: 135)
         } else if indexPath.row % 3 == 0 {
             let screenWidth = UIScreen.main.bounds.width
-            let width = screenWidth / 2 - 24
+            let width = screenWidth / 2 - 19
             let layout = collectionViewLayout as? UICollectionViewFlowLayout
             let topInset = layout?.sectionInset.top ?? 0
             let bottomInset = layout?.sectionInset.bottom ?? 0
@@ -326,7 +435,7 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
             return CGSize(width: width, height: height)
         } else if indexPath.row % 2 == 0 {
             let screenWidth = UIScreen.main.bounds.width
-            let width = screenWidth / 2 - 24
+            let width = screenWidth / 2 - 19
             let layout = collectionViewLayout as? UICollectionViewFlowLayout
             let topInset = layout?.sectionInset.top ?? 0
             let bottomInset = layout?.sectionInset.bottom ?? 0
@@ -341,14 +450,51 @@ extension MainScreenViewController: UICollectionViewDataSource, UICollectionView
             let bottomInset = layout?.sectionInset.bottom ?? 0
             let height = collectionView.bounds.height - topInset - bottomInset
             
+            
             return CGSize(width: width, height: height)
         }
      }
+    
+    func collectionView(_ cv: UICollectionView,
+                        layout layout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        guard let flow = layout as? UICollectionViewFlowLayout else {
+            return .zero
+        }
+        // 1) your cell width (must exactly match what you return in sizeForItemAt)
+        let cellWidth = (cv.bounds.width / 2) - 24
+
+        // 2) how many cells in this section?
+        let count: CGFloat = goals.isEmpty ? 1 : CGFloat(goals.count + 1)
+
+        // 3) total content width (cells + spacing)
+        let totalCellWidth = count * cellWidth
+        let totalSpacing   = max(count - 1, 0) * flow.minimumInteritemSpacing
+
+        // 4) leftover space / 2 = horizontal inset
+        let horizontalPadding = max((cv.bounds.width - (totalCellWidth + totalSpacing)) / 2, 0)
+
+        return UIEdgeInsets(top:    flow.sectionInset.top,
+                            left:   horizontalPadding,
+                            bottom: flow.sectionInset.bottom,
+                            right:  horizontalPadding)
+    }
 }
 
-extension MainScreenViewController: UICollectionViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: 0)
-    }
+
+
+//xtension MainScreenViewController: UICollectionViewDelegate {
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: 0)
+//    }
+extension MainScreenViewController: UIScrollViewDelegate {
+  func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    guard scrollView == categoriesCollectionView else { return }
+    let pageWidth = scrollView.bounds.width
+    guard pageWidth > 0 else { return }
+    // contentOffset.x will be a multiple of pageWidth
+    let page = Int(scrollView.contentOffset.x / pageWidth)
+    pageControl.currentPage = min(max(page, 0), pageControl.numberOfPages - 1)
+  }
 }
 
