@@ -6,10 +6,13 @@ final class CategoryCell: UICollectionViewCell {
     private let progressLabel = UILabel()
     private let progressView = UIProgressView(progressViewStyle: .default)
     private let tasksLeftLabel = UILabel()
+    static let reuseIdentifier = "CategoryCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        contentView.layer.cornerRadius = 34
+           contentView.layer.masksToBounds = true
     }
     
     required init?(coder: NSCoder) {
@@ -38,6 +41,7 @@ final class CategoryCell: UICollectionViewCell {
         titleLabel.numberOfLines = 2
         titleLabel.font = UIFont(name: MainScreenViewController.Constants.fontName, size: 16)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.6)
+       
         
         // Set background color.
         contentView.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
