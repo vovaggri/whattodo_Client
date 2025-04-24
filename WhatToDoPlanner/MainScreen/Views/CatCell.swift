@@ -5,7 +5,7 @@ final class CatCell: UICollectionViewCell {
         static let fontName: String = "AoboshiOne-Regular"
         static let horizontalPadding: CGFloat = 12
         static let verticalPadding: CGFloat = 12
-        static let interItemSpacing: CGFloat = 24
+        static let interItemSpacing: CGFloat = 14
         static let progressHeight: CGFloat = 9
     }
     
@@ -83,15 +83,16 @@ final class CatCell: UICollectionViewCell {
             contentView.addSubview($0)
         }
                 
+        
         titleLabel.font = UIFont(name: Constants.fontName, size: 35)
-    //    titleLabel.textColor = UIColor
-        titleLabel.numberOfLines = 1
-        // 1) Allow the titleLabel to shrink if it doesn't fit
-               titleLabel.numberOfLines = 1
-               titleLabel.adjustsFontSizeToFitWidth = true
+            titleLabel.numberOfLines = 1
+            titleLabel.adjustsFontSizeToFitWidth = true
+    
+            // give it 60% opacity
+            titleLabel.textColor = UIColor.label.withAlphaComponent(0.76)
   
                 
-        progressLabel.font = UIFont(name: Constants.fontName, size: 15)
+        progressLabel.font = UIFont(name: Constants.fontName, size: 11)
         tasksLeftLabel.font = UIFont(name: Constants.fontName, size: 14)
         
         titleLabel.textAlignment = .right
@@ -110,8 +111,11 @@ final class CatCell: UICollectionViewCell {
         
         progressLabel.pinBottom(to: progressView.topAnchor, 5)
         progressLabel.pinLeft(to: progressView)
+       progressLabel.textColor = UIColor.label.withAlphaComponent(0.85)
         
-        tasksLeftLabel.pinTop(to: progressView.bottomAnchor, 12)
+        tasksLeftLabel.pinTop(to: progressView.bottomAnchor, 3)
         tasksLeftLabel.pinRight(to: progressView.trailingAnchor)
+        tasksLeftLabel.font = UIFont(name: Constants.fontName, size: 14)
+          tasksLeftLabel.textColor = UIColor.label.withAlphaComponent(0.5)
     }
 }

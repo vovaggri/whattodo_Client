@@ -17,6 +17,7 @@ final class GoalReviewViewController: UIViewController {
     private let messageLabel = UILabel()
     private let editButton = UIButton(type: .system)
     private let aiButton = UIButton(type: .system)
+  //  private let buttonColor : UIColor
     
     // Font constant
     static let fontName = "AoboshiOne-Regular"
@@ -54,7 +55,86 @@ final class GoalReviewViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         interactor.loadGoal()
+        editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
     }
+    private func applyColorTheme(for colorId: Int) {
+        let labelColor: UIColor
+        let timeAlpha: CGFloat
+        let buttonColor: UIColor
+        let goalContainerColor: UIColor
+        let colorContainerColor: UIColor
+        let colorDotColor: UIColor
+
+        switch colorId {
+        case ColorIDs.ultraPink:
+            labelColor          = UIColor(hex: "514F4F") ?? .black
+            timeAlpha           = 0.7
+            buttonColor         = UIColor(hex: "EA9AF1") ?? .black
+            goalContainerColor  = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorContainerColor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorDotColor       = UIColor(hex: "EA9AF1") ?? .black
+
+        case ColorIDs.aquaBlue:
+            labelColor          = UIColor(hex: "514F4F") ?? .black
+            timeAlpha           = 0.7
+            buttonColor         = UIColor(hex: "89BACD") ?? .black
+            goalContainerColor  = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            colorContainerColor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorDotColor       = UIColor(hex: "89BACD") ?? .black
+
+        case ColorIDs.mossGreen:
+            labelColor          = UIColor(hex: "514F4F") ?? .black
+            timeAlpha           = 0.7
+            buttonColor         = UIColor(hex: "94CA85") ?? .black
+            goalContainerColor  = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            colorContainerColor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorDotColor       = UIColor(hex: "94CA85") ?? .black
+
+        case ColorIDs.lilac:
+            labelColor          = UIColor(hex: "514F4F") ?? .black
+            timeAlpha           = 0.7
+            buttonColor         = UIColor(hex: "8587CA") ?? .black
+            goalContainerColor  = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            colorContainerColor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorDotColor       = UIColor(hex: "8587CA") ?? .black
+
+        case ColorIDs.marigold:
+            labelColor          = UIColor(hex: "514F4F") ?? .black
+            timeAlpha           = 0.7
+            buttonColor         = UIColor(hex: "D6C69E") ?? .black
+            goalContainerColor  = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            colorContainerColor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorDotColor       = UIColor(hex: "D6C69E") ?? .black
+
+        case ColorIDs.defaultWhite:
+            labelColor          = UIColor(hex: "514F4F") ?? .black
+            timeAlpha           = 0.5
+            buttonColor         = UIColor.white
+            goalContainerColor  = UIColor(hex: "F7F9F9") ?? .white
+            colorContainerColor = UIColor(hex: "F7F9F9", alpha: 0.1) ?? .white
+            colorDotColor       = UIColor.white
+
+        default:
+            labelColor          = .black
+            timeAlpha           = 0.7
+            buttonColor         = .black
+            goalContainerColor  = .black
+            colorContainerColor = .black
+            colorDotColor       = .black
+        }
+
+        // Apply to your labels / container views
+      
+
+       // goalContainer.backgroundColor  = goalContainerColor
+    //    colorContainer.backgroundColor = colorContainerColor
+        colorDotView.backgroundColor   = colorDotColor
+
+        // Finally theme the edit button:
+        editButton.backgroundColor = buttonColor.withAlphaComponent(0.8)
+        editButton.tintColor       = .white
+    }
+
     
     // MARK: - UI Setup
     private func setupUI() {
@@ -93,7 +173,7 @@ final class GoalReviewViewController: UIViewController {
         aiButton.titleLabel?.font = UIFont(name: Self.fontName, size: 18)
         aiButton.setTitleColor(.white, for: .normal)
         aiButton.backgroundColor = .black
-        aiButton.layer.cornerRadius = 28
+        aiButton.layer.cornerRadius = 72/2
         
         
         // Inside color container: name and dot
@@ -107,8 +187,10 @@ final class GoalReviewViewController: UIViewController {
         let pencilImage = UIImage(systemName: "pencil", withConfiguration: config)
         editButton.setImage(pencilImage, for: .normal)
         editButton.tintColor = .white
-        editButton.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+       // editButton.backgroundColor = UIColor.black.withAlphaComponent(0.2)
         editButton.layer.cornerRadius = 44
+        editButton.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        editButton.tintColor       = .white
        
         view.addSubview(editButton)
         editButton.translatesAutoresizingMaskIntoConstraints = false
@@ -138,6 +220,7 @@ final class GoalReviewViewController: UIViewController {
         messageLabel.text = "There are currently no tasks for this goal :("
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
+        messageLabel.textColor = UIColor.black.withAlphaComponent(0.7)
         
         // Layout top elements
       //  titleLabel.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 24)
@@ -163,9 +246,10 @@ final class GoalReviewViewController: UIViewController {
         colorNameLabel.pinLeft(to: colorContainer, 16)
         
         colorDotView.pinCenterY(to: colorContainer)
-        colorDotView.setWidth(16)
-        colorDotView.setHeight(16)
+        colorDotView.setWidth(20)
+        colorDotView.setHeight(20)
         colorDotView.pinRight(to: colorContainer, 16)
+        colorDotView.layer.cornerRadius = 10
         
         // Layout bottom tasks container
         containerView.pinTop(to: colorContainer.bottomAnchor, 124)
@@ -181,8 +265,8 @@ final class GoalReviewViewController: UIViewController {
              tasksTitleLabel.pinLeft(to: containerView, 16)
         
         // Layout AI button bottom right
-              aiButton.setWidth(70)
-              aiButton.setHeight(70)
+              aiButton.setWidth(72)
+              aiButton.setHeight(72)
               aiButton.pinRight(to: view, 24)
               aiButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor, 24)
           
@@ -193,8 +277,13 @@ final class GoalReviewViewController: UIViewController {
     // MARK: - Display
     func displayGoal(viewModel: GoalReviewModels.ViewModel) {
         view.backgroundColor = viewModel.color
-        titleLabel.text = viewModel.title
-        colorNameLabel.text = name(for: goal.colour)
+
+        // 2) theme everything else
+        applyColorTheme(for: goal.colour)
+
+        // 3) your existing updates
+        titleLabel.text        = viewModel.title
+        colorNameLabel.text    = name(for: goal.colour)
         colorDotView.backgroundColor = viewModel.color
     }
     
@@ -214,5 +303,10 @@ final class GoalReviewViewController: UIViewController {
         case ColorIDs.defaultWhite: return "Default White"
         default: return "Unknown"
         }
+    }
+    
+    @objc private func editButtonTapped() {
+        let changeTaskVC = CreateNewGoalAssembly.makeModule()
+        navigationController?.pushViewController(changeTaskVC, animated: true)
     }
 }
