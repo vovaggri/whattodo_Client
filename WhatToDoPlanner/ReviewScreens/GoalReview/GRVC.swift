@@ -225,8 +225,7 @@ final class GoalReviewViewController: UIViewController {
     
     @objc private func backButtonTapped() {
         // Navigate directly to Task Detail screen
-        let mainDetailVC = MainAssembly.assembly() // Ensure TaskDetailAssembly is implemented
-        self.navigationController?.pushViewController(mainDetailVC, animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc private func aiButtonTapped() {

@@ -1,6 +1,6 @@
 import UIKit
 
-final class CreateGoalViewController: UIViewController {
+final class CreateGoalViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
@@ -272,6 +272,11 @@ final class CreateGoalViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    // MARK: - Display Logic
+    func displayGoalData(viewModel: CreateGoal.Fetch.ViewModel) {
+        descriptionTextView.text = viewModel.defaultDescription
+    }
+    
     // MARK: - Setup Constraints
     private func setupConstraints() {
         let margin: CGFloat = 16
@@ -405,6 +410,7 @@ final class CreateGoalViewController: UIViewController {
             !taskColorTextField.frame.contains(location) {
             colorPickerContainer.isHidden = true
         }
+        view.endEditing(true)
     }
     
 //    // Navigation to Goal Detail Screen
@@ -412,11 +418,6 @@ final class CreateGoalViewController: UIViewController {
 //        let goalDetailVC = GoalDetailAssembly.assembly()
 //        self.navigationController?.pushViewController(goalDetailVC, animated: true)
 //    }
-    
-    // MARK: - Display Logic
-    func displayGoalData(viewModel: CreateGoal.Fetch.ViewModel) {
-        descriptionTextView.text = viewModel.defaultDescription
-    }
 }
 
 // MARK: - UIPickerView DataSource & Delegate
