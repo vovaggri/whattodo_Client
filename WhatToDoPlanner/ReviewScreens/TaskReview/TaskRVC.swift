@@ -165,10 +165,10 @@ final class ReviewTaskViewController: UIViewController {
         case ColorIDs.marigold:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.7
-            buttonColor = UIColor(hex: "F1D693") ?? .black
+            buttonColor = UIColor(hex: "D6C69E") ?? .black
             goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
             colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
-            colordot = UIColor(hex: "F1D693") ?? .black
+            colordot = UIColor(hex: "D6C69E") ?? .black
         case ColorIDs.defaultWhite:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.5
@@ -189,7 +189,7 @@ final class ReviewTaskViewController: UIViewController {
         dateLabel.textColor = labelColor
         timeLabel.textColor = labelColor.withAlphaComponent(timeAlpha)
         editButton.tintColor = .white
-        editButton.backgroundColor = buttonColor
+        editButton.backgroundColor = buttonColor.withAlphaComponent(0.8)
         goalContainer.backgroundColor = goalcontainercolor
         colorContainer.backgroundColor = colorcontainer
         colorDotView.backgroundColor = colordot

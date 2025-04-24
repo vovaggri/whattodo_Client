@@ -140,13 +140,13 @@ final class BottomSheetViewController: UIViewController {
         addTaskButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor)
         addTaskButton.pinCenterX(to: view.centerXAnchor)
         
-        addTaskButton.backgroundColor = .black
+        addTaskButton.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         addTaskButton.setImage(UIImage(systemName: Constants.addButtonName), for: .normal)
         addTaskButton.tintColor = .white
         
-        addTaskButton.setHeight(50)
-        addTaskButton.setWidth(50)
-        addTaskButton.layer.cornerRadius = 25
+        addTaskButton.setHeight(70)
+        addTaskButton.setWidth(70)
+        addTaskButton.layer.cornerRadius = 33
         
         addTaskButton.addTarget(self, action: #selector(addTaskPressed), for: .touchUpInside)
     }

@@ -101,8 +101,8 @@ final class CreateGoalViewController: UIViewController, UIGestureRecognizerDeleg
         let tf = UITextField()
         tf.placeholder = "Enter goal title"
         tf.font = UIFont(name: CreateGoalViewController.fontName, size: 20)
-        tf.borderStyle = .roundedRect
-        tf.layer.cornerRadius = 23
+       // tf.borderStyle = .roundedRect
+        tf.layer.cornerRadius = 14
         tf.layer.masksToBounds = true
         tf.backgroundColor = .white
         return tf
@@ -167,7 +167,7 @@ final class CreateGoalViewController: UIViewController, UIGestureRecognizerDeleg
         tf.placeholder = "Pick a color"
         tf.font = UIFont(name: CreateGoalViewController.fontName, size: 20)
         tf.borderStyle = .roundedRect
-        tf.layer.cornerRadius = 23
+        tf.layer.cornerRadius = 14
         tf.layer.masksToBounds = true
         tf.borderStyle = .none
         tf.layer.borderWidth = 0

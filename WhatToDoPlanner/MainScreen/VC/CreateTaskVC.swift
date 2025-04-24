@@ -169,7 +169,7 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
     }()
     private lazy var calendarIconView: UIView = {
         // Make the container 28 wide and 52 tall (matching your text field height)
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 20))
         let iconSize: CGFloat = 18
         // Center the icon within the container
         let offsetX = (container.bounds.width - iconSize) / 2
@@ -687,7 +687,8 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
             // Description
             descriptionStack.topAnchor.constraint(equalTo: whiteContainerView.topAnchor, constant: 12),
             descriptionStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
-            descriptionTextView.heightAnchor.constraint(equalToConstant: 70),
+            descriptionStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
+            descriptionTextView.heightAnchor.constraint(equalToConstant: 100),
             descriptionTextView.widthAnchor.constraint(equalToConstant: 352),
             
             // Link
@@ -700,6 +701,7 @@ final class CreateTaskViewController: UIViewController, UIGestureRecognizerDeleg
             timeStack.topAnchor.constraint(equalTo: linkStack.bottomAnchor, constant: margin),
             timeStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
             timeStack.trailingAnchor.constraint(equalTo: whiteContainerView.trailingAnchor, constant: -margin),
+            timeStack.heightAnchor.constraint(equalToConstant: 60.0),
             endTimeLabel.widthAnchor.constraint(equalToConstant: 160),
             startTimeLabel.widthAnchor.constraint(equalToConstant: 160),
             startTimeTextField.widthAnchor.constraint(equalToConstant: 160),

@@ -72,7 +72,7 @@ final class GoalDetailViewController: UIViewController {
 
         btn.backgroundColor = UIColor(red: 179/255, green: 207/255, blue: 221/255, alpha: 0.9)
         btn.titleLabel?.font = UIFont.systemFont(ofSize: 43, weight: .bold)
-        btn.layer.cornerRadius = 78 / 2
+        btn.layer.cornerRadius = 88 / 2
         return btn
     }()
 
@@ -81,7 +81,7 @@ final class GoalDetailViewController: UIViewController {
         btn.setTitle("AI", for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.backgroundColor = UIColor(white: 0.15, alpha: 1)
-        btn.layer.cornerRadius = 48 / 2
+        btn.layer.cornerRadius = 78 / 2
         btn.titleLabel?.font = UIFont(name: "AoboshiOne-Regular", size: 24)
         return btn
     }()
@@ -127,18 +127,36 @@ final class GoalDetailViewController: UIViewController {
 
 
         // Add shimmer only once
-        if aiButton.subviews.contains(where: { $0 is ShimmerView }) { return }
-
+//        if let shimmer = aiButton.subviews.compactMap({ $0 as? ShimmerView }).first {
+//            shimmer.frame = aiButton.bounds        // keep it full size
+//            shimmer.startAnimating()               // restart its CADisplayLink
+//        } else {
+//            // first time: insert it below the title label
+//            let shimmer = ShimmerView(frame: aiButton.bounds)
+//            shimmer.isUserInteractionEnabled = false
+//            shimmer.layer.cornerRadius = aiButton.layer.cornerRadius
+//            shimmer.clipsToBounds = true
+//            shimmer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//            aiButton.insertSubview(shimmer, belowSubview: aiButton.titleLabel!)
+//            shimmer.startAnimating()
+//        }
+        
+       
+        guard aiButton.subviews.contains(where: { $0 is ShimmerView }) == false else { return }
         let shimmer = ShimmerView(frame: aiButton.bounds)
         shimmer.isUserInteractionEnabled = false
         shimmer.layer.cornerRadius = aiButton.layer.cornerRadius
         shimmer.clipsToBounds = true
         shimmer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
         aiButton.insertSubview(shimmer, belowSubview: aiButton.titleLabel!)
-        shimmer.startAnimating()
     }
-    
+    override func viewDidAppear(_ animated: Bool) {
+      super.viewDidAppear(animated)
+      aiButton.subviews
+        .compactMap { $0 as? ShimmerView }
+        .forEach { $0.startAnimating() }
+    }
+
     func displayGoalInfo(viewModel: GoalDetail.Info.ViewModel, goalResponse: Goal) {
         goal = goalResponse
         goalTitleLabel.text = viewModel.title
@@ -211,13 +229,14 @@ final class GoalDetailViewController: UIViewController {
 
             addTaskButton.topAnchor.constraint(equalTo: tasksLabel.centerYAnchor, constant: 20.6),
             addTaskButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            addTaskButton.widthAnchor.constraint(equalToConstant: 78),
-            addTaskButton.heightAnchor.constraint(equalToConstant: 78),
+            addTaskButton.widthAnchor.constraint(equalToConstant: 88),
+            addTaskButton.heightAnchor.constraint(equalToConstant: 88),
 
             taskContainerView.topAnchor.constraint(equalTo: tasksLabel.bottomAnchor, constant: 24),
-            taskContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            taskContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            taskContainerView.heightAnchor.constraint(equalToConstant: 300),
+           // taskContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+          //  taskContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            taskContainerView.heightAnchor.constraint(equalToConstant: 800),
+            taskContainerView.widthAnchor.constraint(equalToConstant: 400),
 
             aiButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
             aiButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),

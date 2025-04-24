@@ -330,6 +330,7 @@ final class MainScreenViewController: UIViewController {
         calendarButton.setHeight(80)
         calendarButton.setWidth(80)
         calendarButton.layer.cornerRadius = 38
+     calendarButton.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         
         calendarButton.addTarget(self, action: #selector(calendarPressed), for: .touchUpInside)
     }
