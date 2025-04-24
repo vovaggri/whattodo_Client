@@ -145,28 +145,28 @@ final class ReviewTaskViewController: UIViewController {
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.7
             buttonColor = UIColor(hex: "89BACD") ?? .black
-            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colordot = UIColor(hex: "89BACD") ?? .black
         case ColorIDs.mossGreen:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.7
             buttonColor = UIColor(hex: "94CA85") ?? .black
-            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colordot = UIColor(hex: "94CA85") ?? .black
         case ColorIDs.lilac:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.7
             buttonColor = UIColor(hex: "8587CA") ?? .black
-            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colordot = UIColor(hex: "8587CA") ?? .black
         case ColorIDs.marigold:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.7
             buttonColor = UIColor(hex: "D6C69E") ?? .black
-            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.2) ?? .black
+            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colordot = UIColor(hex: "D6C69E") ?? .black
         case ColorIDs.defaultWhite:

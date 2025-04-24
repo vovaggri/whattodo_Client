@@ -16,14 +16,14 @@ final class PinCodeViewController: UIViewController {
         
         static let titleLabelSize: CGFloat = 40
         
-        static let firstTitleLabelTop: Double = 154
+        static let firstTitleLabelTop: Double = 140
         static let titleLabelLeft: Double = 21
         
         static let secondTitleLabelTop: Double = 60
         
         static let codeFieldSize: CGFloat = 50
         static let codeFieldSpacing: CGFloat = 15
-        static let codeFieldTop: CGFloat = 156
+        static let codeFieldTop: CGFloat = 186
         static let codeFieldRadius: CGFloat = 14
         
         static let confirmButtonTitle: String = "Confirm"

@@ -20,7 +20,7 @@ final class WelcomeViewController: UIViewController  {
         
         static let fontWelcomeSize: CGFloat = 40
         
-        static let firstLabelTop: Double = 108
+        static let firstLabelTop: Double = 140
         
         static let secondLabelTop: Double = 60
         static let thirdLabelTop: Double = 60
