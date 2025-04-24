@@ -28,8 +28,13 @@ final class ReviewTaskViewController: UIViewController {
     
     private let colorContainer = UIView()
     private let colorDotView = UIView()
+    private let deleteContainer = UIView()
+    private let deleteIcon = UIImageView(image: UIImage(systemName: "trash"))
+    private let deleteLabel = UILabel()
     
-    
+    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
+
+    // Trash icon
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
         
@@ -376,6 +381,43 @@ final class ReviewTaskViewController: UIViewController {
         colorDotView.setWidth(20)
         colorDotView.setHeight(20)
         
+        // DELETE CONTAINER
+        containerView.addSubview(deleteContainer)
+        deleteContainer.translatesAutoresizingMaskIntoConstraints = false
+        deleteContainer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+        deleteContainer.layer.cornerRadius = 14
+        deleteContainer.layer.masksToBounds = true
+
+        deleteContainer.pinTop(to: colorContainer.bottomAnchor, 24)
+        deleteContainer.pinLeft(to: view, 20)
+        deleteContainer.setWidth(352)
+        deleteContainer.setHeight(52)
+
+        // Trash icon
+        deleteContainer.addSubview(deleteIcon)
+        deleteIcon.translatesAutoresizingMaskIntoConstraints = false
+        deleteIcon.tintColor = deleteColor
+
+        // Label
+        
+        
+        deleteIcon.contentMode = .scaleAspectFit
+
+        deleteIcon.pinLeft(to: deleteContainer, 16)
+        deleteIcon.pinCenterY(to: deleteContainer)
+        deleteIcon.setWidth(20)
+        deleteIcon.setHeight(20)
+
+        // Label
+        deleteContainer.addSubview(deleteLabel)
+        deleteLabel.translatesAutoresizingMaskIntoConstraints = false
+        deleteLabel.text = "Delete Task"
+        deleteLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        deleteLabel.textColor = deleteColor
+
+        deleteLabel.pinLeft(to: deleteIcon.trailingAnchor, 16)
+        deleteLabel.pinCenterY(to: deleteContainer)
+
         
         
     }
