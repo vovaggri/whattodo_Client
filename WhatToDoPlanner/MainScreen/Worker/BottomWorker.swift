@@ -7,14 +7,14 @@ protocol BottomWorkerProtocol {
 
 final class BottomWorker: BottomWorkerProtocol {
     private let keychainService = KeychainService()
-    private let baseUrlText: String = "http://localhost:8000"
+    private let baseUrlText: String = Server.url
     
     func getTasks(completion: @escaping (Result<[Task], Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),
            let token = String(data: tokenData, encoding: .utf8) {
             print("token: \(token)")
             
-            let urlText = baseUrlText + "/api/goal/0/items/"
+            let urlText = baseUrlText + "/api/goal/0/tasks/"
             guard let url = URL(string: urlText) else {
                 print("Incorrect URL")
                 completion(.failure(NSError(domain: "BottomError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -69,7 +69,7 @@ final class BottomWorker: BottomWorkerProtocol {
     func updateTask(_ task: Task, completion: @escaping (Result<Void, any Error>) -> Void) {
         if let tokenData = keychainService.getData(forKey: "userToken"),
            let token = String(data: tokenData, encoding: .utf8) {
-            let urlText = baseUrlText + "/api/goal/\(task.goalId ?? 0)/items/\(task.id)"
+            let urlText = baseUrlText + "/api/goal/\(task.goalId ?? 0)/tasks/\(task.id)"
             guard let url = URL(string: urlText) else {
                 print("Incorrect URL")
                 completion(.failure(NSError(domain: "BottomError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))

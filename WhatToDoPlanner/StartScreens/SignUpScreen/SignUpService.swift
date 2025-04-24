@@ -12,7 +12,7 @@ protocol SignUpServiceProtocol {
 }
 
 final class SignUpService: SignUpServiceProtocol {
-    private let baseURL = "http://localhost:8000"
+    private let baseURL = Server.url
     
     func signUp(user: SignUpModels.User, completion: @escaping (Result<Void, any Error>) -> Void) {
         print("SignUp was called")

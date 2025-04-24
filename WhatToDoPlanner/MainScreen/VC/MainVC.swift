@@ -133,6 +133,21 @@ final class MainScreenViewController: UIViewController {
         pageControl.currentPage   = 0
     }
 
+    func didSelectTask(_ task: Task) {
+        bottomSheetVC?.dismiss(animated: true) { [weak self] in
+            let reviewVC = ReviewScreenAssembly.assembly(task)
+            self?.navigationController?.pushViewController(reviewVC, animated: true)
+        }
+    }
+    
+    func didSelectGoal(_ goal: Goal){
+        bottomSheetVC?.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            let goalVC = GoalReviewAssembly.assembly(goal)
+            navigationController?.pushViewController(goalVC, animated: true)
+        }
+
+    }
     
     private func createCompositionalLayout() -> UICollectionViewCompositionalLayout {
       return UICollectionViewCompositionalLayout { [weak self] sectionIndex, env in
@@ -230,23 +245,6 @@ final class MainScreenViewController: UIViewController {
             self?.navigationController?.pushViewController(calendarVC, animated: true)
         }
     }
-    func didSelectTask(_ task: Task) {
-        bottomSheetVC?.dismiss(animated: true) { [weak self] in
-            let reviewVC = ReviewScreenAssembly.assembly(task)
-            self?.navigationController?.pushViewController(reviewVC, animated: true)
-        }
-    }
-    func didSelectGoal(_ goal: Goal){
-        bottomSheetVC?.dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            let goalVC = GoalReviewAssembly.assembly(goal)
-            navigationController?.pushViewController(goalVC, animated: true)
-        }
-
-    }
-        
-    
-
     
     // MARK: - Setup Header
     private func setupHeader() {
@@ -255,6 +253,8 @@ final class MainScreenViewController: UIViewController {
         headerView.pinLeft(to: view.leadingAnchor)
         headerView.pinRight(to: view.trailingAnchor)
         headerView.pinBottom(to: headerView.bottomAnchorView.bottomAnchor, 16)
+        
+        headerView.delegate = self
     }
     
     private func presentBottomSheet() {
@@ -497,5 +497,14 @@ extension MainScreenViewController: UIScrollViewDelegate {
     let page = Int(scrollView.contentOffset.x / pageWidth)
     pageControl.currentPage = min(max(page, 0), pageControl.numberOfPages - 1)
   }
+}
+
+extension MainScreenViewController: HeaderViewDelegate {
+    func headerViewDidTapGreeting(_ headerView: HeaderView) {
+        bottomSheetVC?.dismiss(animated: true) { [weak self] in
+            let settingsVC = SettingsAssembly.assembly()
+            self?.navigationController?.pushViewController(settingsVC, animated: true)
+        }
+    }
 }
 

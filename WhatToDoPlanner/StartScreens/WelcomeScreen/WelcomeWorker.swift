@@ -5,7 +5,7 @@ protocol WelcomeWorkerProtocol {
 }
 
 final class WelcomeWorker: WelcomeWorkerProtocol {
-    private let baseURL: String = "http://localhost:8000"
+    private let baseURL: String = Server.url
     private let keychainService = KeychainService()
     
     func signIn(user: WelcomeModels.User, completion: @escaping (Result<Void, Error>) -> Void) {

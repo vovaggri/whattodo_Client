@@ -1,9 +1,15 @@
 import UIKit
 
+protocol HeaderViewDelegate: AnyObject {
+    func headerViewDidTapGreeting(_ headerView: HeaderView)
+}
+
 final class HeaderView: UIView {
     enum Constants {
         static let fontName: String = "AoboshiOne-Regular"
     }
+    
+    weak var delegate: HeaderViewDelegate?
     
     var bottomAnchorView: UIView {
         return line2Label
@@ -86,12 +92,44 @@ final class HeaderView: UIView {
         settingsButton.setHeight(mode: .equal, 24)
         
         greetingLabel.font = UIFont(name: Constants.fontName, size: 20)
+        
+        // Tap Gesture
+        greetingLabel.isUserInteractionEnabled = true
+        let tapGR = UITapGestureRecognizer(target: self, action: #selector(grettingTapped))
+        greetingLabel.addGestureRecognizer(tapGR)
     }
 
     
     func displayHeader(greeting: String, avatar: UIImage?) {
-        greetingLabel.text = greeting
         avatarImageView.image = avatar
+
+        let font = greetingLabel.font ?? UIFont(name: Constants.fontName, size: 20) ?? .systemFont(ofSize: 20)
+        let color = greetingLabel.textColor ?? .black
+
+        let text = greeting + " "
+        let attributed = NSMutableAttributedString(string: text, attributes: [
+            .font: font,
+            .foregroundColor: color
+        ])
+
+        let attachment = NSTextAttachment()
+        if let image = UIImage(systemName: "chevron.compact.forward") {
+            attachment.image = image
+
+            let ratio = image.size.width / image.size.height
+            let height = font.capHeight
+            let width = height * ratio
+            let yOffset = (font.descender + font.ascender - height) / 2
+            attachment.bounds = CGRect(x: 0, y: yOffset, width: width, height: height)
+        }
+        
+        attributed.append(NSAttributedString(attachment: attachment))
+        greetingLabel.attributedText = attributed
+        avatarImageView.image = avatar
+    }
+    
+    @objc private func grettingTapped() {
+        delegate?.headerViewDidTapGreeting(self)
     }
 }
 extension NSLayoutConstraint {

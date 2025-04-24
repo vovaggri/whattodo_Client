@@ -1,11 +1,10 @@
 import Foundation
 
-protocol MainWorkerProtocol {
+protocol SettingsWorkerProtocol {
     func getUser(completion: @escaping (Result<MainModels.Fetch.UserResponse, Error>) -> Void)
-    func getGoals(completion: @escaping (Result<[Goal], Error>) -> Void)
 }
 
-final class MainWorker: MainWorkerProtocol {
+final class SettingsWorker: SettingsWorkerProtocol {
     private let keychainService = KeychainService()
     private var baseUrl: String = Server.url
     
@@ -63,58 +62,6 @@ final class MainWorker: MainWorkerProtocol {
         } else {
             print("Cannot take keychain")
             completion(.failure(MainModels.Fetch.MainError.noKeychain))
-        }
-    }
-    
-    func getGoals(completion: @escaping (Result<[Goal], Error>) -> Void) {
-        if let tokenData = keychainService.getData(forKey: "userToken"),
-           let token = String(data: tokenData, encoding: .utf8) {
-            let urlText = baseUrl + "/api/goal/"
-            guard let url = URL(string: urlText) else {
-                print("Incorrect url")
-                completion(.failure(MainModels.Fetch.MainError.incorrectURL))
-                return
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    print("Error of getting data: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let data = data else {
-                    print("No data on answer")
-                    completion(.success([]))
-                    return
-                }
-                
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("JSON Response: \(jsonString)")
-                    if jsonString == "null" {
-                        print("Empty tasks")
-                        completion(.success([]))
-                        return
-                    }
-                }
-                
-                let decoder = JSONDecoder()
-                // Если сервер возвращает даты в ISO8601 формате:
-                decoder.dateDecodingStrategy = .iso8601
-                
-                do {
-                    let goals = try decoder.decode([Goal].self, from: data)
-                    print("Got tasks: \(goals)")
-                    completion(.success(goals))
-                } catch {
-                    print("Error while decoding data: \(error)")
-                    completion(.failure(error))
-                }
-            }.resume()
         }
     }
 }

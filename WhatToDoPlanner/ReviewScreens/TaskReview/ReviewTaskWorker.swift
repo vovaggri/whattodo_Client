@@ -6,7 +6,7 @@ protocol ReviewTaskWorkerProtocol {
 
 final class ReviewTaskWorker: ReviewTaskWorkerProtocol {
     private let keychainService = KeychainService()
-    private let baseUrlText: String = "http://localhost:8000"
+    private let baseUrlText: String = Server.url
     
     func loadGoal(with goalId: Int, completion: @escaping (Result<ReviewTaskModels.GoalResponse, any Error>) -> Void) {
         let urlText = baseUrlText + "/api/goal/\(goalId)"

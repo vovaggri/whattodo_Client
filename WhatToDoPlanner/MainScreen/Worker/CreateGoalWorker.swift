@@ -8,7 +8,7 @@ final class CreateGoalWorker: CreateGoalWorkerProtocol {
     private let keychainService = KeychainService()
     
     func createGoal(with requestData: CreateGoal.CreateGoalRequest, completion: @escaping (Result<Goal, any Error>) -> Void) {
-        let urlText: String = "http://localhost:8000/api/goal/"
+        let urlText: String = Server.url + "/api/goal/"
         
         guard let url = URL(string: urlText) else {
             completion(.failure(CreateGoal.CreateGoalError.incorrectURL))

@@ -3,7 +3,7 @@ import UIKit
 // MARK: - ViewController (GoalReviewViewController.swift)
 final class GoalReviewViewController: UIViewController {
     // MARK: SVIP references
-    var interactor: GoalReviewInteractor!
+    var interactor: GoalReviewBusinessLogic?
     private let goal: Goal
     
     // MARK: UI Elements
@@ -53,9 +53,35 @@ final class GoalReviewViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        aiButton.addTarget(self, action: #selector(aiButtonTapped), for: .touchUpInside)
         setupUI()
-        interactor.loadGoal()
+        interactor?.loadGoal()
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+    }
+    
+    // MARK: - Display
+    func displayGoal(viewModel: GoalReviewModels.ViewModel) {
+        view.backgroundColor = viewModel.color
+
+        // 2) theme everything else
+        applyColorTheme(for: goal.colour)
+
+        // 3) your existing updates
+        titleLabel.text        = viewModel.title
+        colorNameLabel.text    = name(for: goal.colour)
+        colorDotView.backgroundColor = viewModel.color
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    func showProblemAI() {
+        let alert = UIAlertController(title: "AI not available", message: "AI advice is not available for goals without description.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     private func applyColorTheme(for colorId: Int) {
         let labelColor: UIColor
@@ -274,25 +300,6 @@ final class GoalReviewViewController: UIViewController {
       
     }
     
-    // MARK: - Display
-    func displayGoal(viewModel: GoalReviewModels.ViewModel) {
-        view.backgroundColor = viewModel.color
-
-        // 2) theme everything else
-        applyColorTheme(for: goal.colour)
-
-        // 3) your existing updates
-        titleLabel.text        = viewModel.title
-        colorNameLabel.text    = name(for: goal.colour)
-        colorDotView.backgroundColor = viewModel.color
-    }
-    
-    @objc private func backButtonTapped() {
-        // Navigate directly to Task Detail screen
-        let mainDetailVC = MainAssembly.assembly() // Ensure TaskDetailAssembly is implemented
-        self.navigationController?.pushViewController(mainDetailVC, animated: true)
-    }
-    
     private func name(for colorID: Int) -> String {
         switch colorID {
         case ColorIDs.aquaBlue: return "Aqua Blue"
@@ -305,8 +312,16 @@ final class GoalReviewViewController: UIViewController {
         }
     }
     
-    @objc private func editButtonTapped() {
-        let changeTaskVC = CreateNewGoalAssembly.makeModule()
-        navigationController?.pushViewController(changeTaskVC, animated: true)
+    @objc private func backButtonTapped() {
+        // Navigate directly to Task Detail screen
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func aiButtonTapped() {
+        interactor?.checkGoal(with: goal)
+    }
+     @objc private func editButtonTapped() {
+       let changeTaskVC = CreateNewGoalAssembly.makeModule()
+       navigationController?.pushViewController(changeTaskVC, animated: true)
     }
 }

@@ -5,7 +5,7 @@ protocol ConfirmWorkerProtocol {
 }
 
 final class ConfirmWorker: ConfirmWorkerProtocol {
-    private let urlText: String = "http://localhost:8000/auth/verify-code"
+    private let urlText: String = Server.url + "/auth/verify-code"
     private let keychainService = KeychainService()
     
     func sendCode(_ user: ConfirmScreen.UserConfirmRequest, completion: @escaping (Result<Void, Error>) -> Void) {
