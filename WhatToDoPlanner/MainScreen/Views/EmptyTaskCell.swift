@@ -4,13 +4,13 @@ final class EmptyTaskCell: UICollectionViewCell {
     enum Constants {
         static let identifier = "EmptyTaskCell"
         static let fontName: String = "AoboshiOne-Regular"
-        static let titleText: String = "No tasks for today"
+        static let titleText: String = "No tasks for today :("
     }
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: Constants.fontName, size: 20)
-        label.textColor = .black
+        label.font = UIFont(name: Constants.fontName, size: 17)
+        label.textColor = UIColor.black.withAlphaComponent(0.5)
         return label
     }()
     
@@ -38,5 +38,6 @@ final class EmptyTaskCell: UICollectionViewCell {
         
         titleLabel.pinCenterX(to: contentView)
         titleLabel.pinCenterY(to: contentView)
+ 
     }
 }

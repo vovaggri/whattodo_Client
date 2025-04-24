@@ -49,16 +49,26 @@ final class CreateGTaskViewController: UIViewController {
     }()
     
     private lazy var colorRightView: UIView = {
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 24))
-        colorDot.center = CGPoint(x: 8, y: 12)
-        container.addSubview(colorDot)
-        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
-        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
-        arrow.contentMode = .scaleAspectFit
-        arrow.frame = CGRect(x: 20, y: 4, width: 16, height: 16)
-        container.addSubview(arrow)
-        return container
+      let container = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 24))
+      let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+      arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+      arrow.contentMode = .scaleAspectFit
+      arrow.translatesAutoresizingMaskIntoConstraints = false
+      container.addSubview(arrow)
+
+      NSLayoutConstraint.activate([
+        // make it 20×20
+        arrow.widthAnchor.constraint(equalToConstant: 20),
+        arrow.heightAnchor.constraint(equalToConstant: 20),
+        // vertically centered
+        arrow.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+        // inset 5pt from the right
+        arrow.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10)
+      ])
+
+      return container
     }()
+
     
     // Top Bar
     private let topBarView: UIView = {
@@ -158,13 +168,20 @@ final class CreateGTaskViewController: UIViewController {
         return tf
     }()
     private lazy var calendarIconView: UIView = {
-        // Make the container 28 wide and 52 tall (matching your text field height)
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 52))
-        let iconSize: CGFloat = 18
-        // Center the icon within the container
-        let offsetX = (container.bounds.width - iconSize) / 2
-        let offsetY = (container.bounds.height - iconSize) / 2
-        let imageView = UIImageView(frame: CGRect(x: offsetX, y: offsetY, width: iconSize, height: iconSize))
+        // make the container wider so the icon has room to move left
+        let containerWidth: CGFloat = 50
+        let containerHeight: CGFloat = 20
+        let container = UIView(frame: CGRect(x: 0, y: 0,
+                                             width: containerWidth,
+                                             height: containerHeight))
+        // center the 16×16 icon vertically, but give it an 8-point left inset
+        let imageSize: CGFloat = 16
+        let inset: CGFloat = 5
+        let imageY = (containerHeight - imageSize) / 2
+        let imageView = UIImageView(frame: CGRect(x: inset,
+                                                  y: imageY,
+                                                  width: imageSize,
+                                                  height: imageSize))
         imageView.image = UIImage(systemName: "calendar")
         imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
         imageView.contentMode = .scaleAspectFit
@@ -213,17 +230,22 @@ final class CreateGTaskViewController: UIViewController {
         
         return tf
     }()
+    // 1) Start-time icon
     private lazy var startTimeIconView: UIView = {
-        // narrower container
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
-        let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
-        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
-        imageView.contentMode = .scaleAspectFit
-        imageView.frame =  CGRect(x: 30, y: 5, width: 20, height: 20)
-        container.addSubview(imageView)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 24))
+        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+        arrow.contentMode = .scaleAspectFit
+        arrow.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(arrow)
+        NSLayoutConstraint.activate([
+            arrow.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            arrow.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10),
+            arrow.widthAnchor.constraint(equalToConstant: 20),
+            arrow.heightAnchor.constraint(equalToConstant: 20),
+        ])
         return container
     }()
-
     private lazy var startTimeStack: UIStackView = {
         let st = UIStackView(arrangedSubviews: [startTimeLabel, startTimeTextField])
         st.axis = .vertical
@@ -267,12 +289,18 @@ final class CreateGTaskViewController: UIViewController {
     }()
 
     private lazy var endTimeIconView: UIView = {
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
-        let imageView = UIImageView(image: UIImage(systemName: "chevron.down"))
-        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
-        imageView.contentMode = .scaleAspectFit
-        imageView.frame = CGRect(x: 30, y: 5, width: 20, height: 20)
-        container.addSubview(imageView)
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 24))
+        let arrow = UIImageView(image: UIImage(systemName: "chevron.down"))
+        arrow.tintColor = UIColor.black.withAlphaComponent(0.33)
+        arrow.contentMode = .scaleAspectFit
+        arrow.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(arrow)
+        NSLayoutConstraint.activate([
+            arrow.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            arrow.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -10),
+            arrow.widthAnchor.constraint(equalToConstant: 20),
+            arrow.heightAnchor.constraint(equalToConstant: 20),
+        ])
         return container
     }()
     private lazy var endTimeStack: UIStackView = {
@@ -543,6 +571,20 @@ final class CreateGTaskViewController: UIViewController {
             colorPickerContainer, colorPicker
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
+        taskDateTextField.rightView = calendarIconView
+        taskDateTextField.rightViewMode = .always
+//        startTimeLabel.rightView = container
+//         tf.rightViewMode = .always
+        startTimeTextField.rightView     = startTimeIconView
+        startTimeTextField.rightViewMode = .always
+
+        endTimeTextField.rightView     = endTimeIconView
+        endTimeTextField.rightViewMode = .always
+        
+        taskColorTextField.rightView     = colorRightView
+        taskColorTextField.rightViewMode = .always
+
+        
         NSLayoutConstraint.activate([
             // Top Bar
             topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -579,6 +621,7 @@ final class CreateGTaskViewController: UIViewController {
        dateLabel.widthAnchor.constraint(equalToConstant: 352),
            
             
+          
             
             // White Container
             whiteContainerView.topAnchor.constraint(equalTo: grayContainerView.bottomAnchor, constant: 16),
@@ -605,6 +648,8 @@ final class CreateGTaskViewController: UIViewController {
             startTimeTextField.heightAnchor.constraint(equalToConstant: 44),
             endTimeTextField.heightAnchor.constraint(equalToConstant: 44),
             timeStack.heightAnchor.constraint(equalToConstant: 70),
+            
+            
             
             // Task Color Stack in White Container
             // Task Color
