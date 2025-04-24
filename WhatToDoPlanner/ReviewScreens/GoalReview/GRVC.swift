@@ -19,6 +19,13 @@ final class GoalReviewViewController: UIViewController {
     private let aiButton = UIButton(type: .system)
   //  private let buttonColor : UIColor
     
+    private let deleteContainer = UIView()
+    private let deleteIcon = UIImageView(image: UIImage(systemName: "trash"))
+    private let deleteLabel = UILabel()
+    
+    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
+    
+    
     // Font constant
     static let fontName = "AoboshiOne-Regular"
     
@@ -185,7 +192,7 @@ final class GoalReviewViewController: UIViewController {
        
         
         // Color title
-        colorTitleLabel.font = UIFont(name: Self.fontName, size: 18)
+        colorTitleLabel.font = UIFont(name: Self.fontName, size: 14)
         colorTitleLabel.text = "Goal Color"
         colorTitleLabel.textAlignment = .left
         
@@ -253,29 +260,71 @@ final class GoalReviewViewController: UIViewController {
         titleLabel.pinTop(to: closeButton.bottomAnchor, 12)
         titleLabel.pinLeft(to: view, 16)
         titleLabel.pinRight(to: view, 16)
-        titleLabel.setHeight(77)
+        titleLabel.setHeight(67)
         titleLabel.setWidth(223)
         
-        colorTitleLabel.pinTop(to: titleLabel.bottomAnchor, 24)
+        colorTitleLabel.pinTop(to: titleLabel.bottomAnchor, 12)
         colorTitleLabel.pinLeft(to: view, 16)
-        colorTitleLabel.setHeight(30)
-        colorTitleLabel.setWidth(223)
+        colorTitleLabel.setHeight(32)
+        colorTitleLabel.setWidth(352)
         
         // Color container below color title
         colorContainer.pinTop(to: colorTitleLabel.bottomAnchor, 8)
         colorContainer.pinLeft(to: view, 16)
-        colorContainer.pinRight(to: view, 16)
+        colorContainer.setWidth(352)
         colorContainer.setHeight(52)
+
         
         // Layout inside colorContainer
         colorNameLabel.pinCenterY(to: colorContainer)
         colorNameLabel.pinLeft(to: colorContainer, 16)
+        colorNameLabel.setHeight(52)
+        colorNameLabel.setWidth(352)
         
         colorDotView.pinCenterY(to: colorContainer)
         colorDotView.setWidth(20)
         colorDotView.setHeight(20)
         colorDotView.pinRight(to: colorContainer, 16)
         colorDotView.layer.cornerRadius = 10
+        
+        // DELETE CONTAINER
+        view.addSubview(deleteContainer)
+        deleteContainer.translatesAutoresizingMaskIntoConstraints = false
+        deleteContainer.backgroundColor = .white
+        deleteContainer.layer.cornerRadius = 14
+        deleteContainer.layer.masksToBounds = true
+
+        deleteContainer.pinTop(to: colorContainer.bottomAnchor, 22)
+        deleteContainer.pinLeft(to: view, 16)
+        deleteContainer.setWidth(352)
+        deleteContainer.setHeight(52)
+
+        // Trash icon
+        deleteContainer.addSubview(deleteIcon)
+        deleteIcon.translatesAutoresizingMaskIntoConstraints = false
+        deleteIcon.tintColor = deleteColor
+
+        // Label
+        
+        
+        deleteIcon.contentMode = .scaleAspectFit
+
+        deleteIcon.pinLeft(to: deleteContainer, 16)
+        deleteIcon.pinCenterY(to: deleteContainer)
+        deleteIcon.setWidth(20)
+        deleteIcon.setHeight(20)
+
+        // Label
+        deleteContainer.addSubview(deleteLabel)
+        deleteLabel.translatesAutoresizingMaskIntoConstraints = false
+        deleteLabel.text = "Delete Goal"
+        deleteLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        deleteLabel.textColor = deleteColor
+
+        deleteLabel.pinLeft(to: deleteIcon.trailingAnchor, 16)
+        deleteLabel.pinCenterY(to: deleteContainer)
+
+        
         
         // Layout bottom tasks container
         containerView.pinTop(to: colorContainer.bottomAnchor, 124)

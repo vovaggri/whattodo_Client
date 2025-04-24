@@ -5,6 +5,8 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
   var interactor: CreateNewGoalBusinessLogic?
   
   // MARK: UI
+    
+    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
   
   // Temp storage of “entered” text:
     private func createIconView(image: UIImage) -> UIView {
