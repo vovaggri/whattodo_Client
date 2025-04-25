@@ -6,7 +6,7 @@ final class EmptyTaskCell: UICollectionViewCell {
         static let fontName: String = "AoboshiOne-Regular"
         static let titleTextToday: String = "No tasks for today :("
         static let titleTextRG: String = "There are currently no tasks for this goal :("
-        static let titleTextCalendar: String = "No tasks or didn't selected day"
+        static let titleTextCalendar: String = "No tasks for this day"
     }
     
     private let titleLabel: UILabel = {

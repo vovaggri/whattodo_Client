@@ -59,6 +59,11 @@ final class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.hidesBackButton = true
+        navigationItem.hidesBackButton = true
+        navigationItem.title = ""
+        navigationItem.leftBarButtonItem  = nil
+        navigationItem.rightBarButtonItem = nil
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
             tapGesture.cancelsTouchesInView = false
@@ -71,7 +76,7 @@ final class SignUpViewController: UIViewController {
     // Subscribing to Keyboard Notifications
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -80,7 +85,7 @@ final class SignUpViewController: UIViewController {
     // Unubscribing to Keyboard Notifications
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -142,7 +147,7 @@ final class SignUpViewController: UIViewController {
 
         // Add constraints
         NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             backButton.widthAnchor.constraint(equalToConstant: 73),
             backButton.heightAnchor.constraint(equalToConstant: 73)
@@ -161,8 +166,11 @@ final class SignUpViewController: UIViewController {
         // Make sure the backButton is added before this (or use safeArea)
         NSLayoutConstraint.activate([
             // Try anchoring it to the bottom of the backButton instead of safe area
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 21)
+           // titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 7),
+            //titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 75)
+            titleLabel
+                .pinTop(to: view.safeAreaLayoutGuide.topAnchor, 40),
+            titleLabel.pinCenterX(to: view)
         ])
     }
     private let firstNameHighlightView: UIView = {
@@ -263,6 +271,46 @@ final class SignUpViewController: UIViewController {
         textField.leftView = leftPaddingView
         textField.leftViewMode = .always
     }
+    
+    private func isValidPassword(_ password: String) -> Bool {
+        // at least one uppercase
+        let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
+        // at least one digit
+        let hasDigit     = password.rangeOfCharacter(from: .decimalDigits)   != nil
+        return hasUppercase && hasDigit
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true)
+    }
+    @objc private func didTapSignUpButton() {
+        // make sure password isn’t empty
+        guard let pwd = passwordTextField.text, !pwd.isEmpty else {
+            showAlert(title: "Missing Password",
+                      message: "Please enter a password.")
+            return
+        }
+
+        // validate password
+        guard isValidPassword(pwd) else {
+            showAlert(title: "Invalid Password",
+                      message: "Password must include at least one uppercase letter and one number.")
+            return
+        }
+
+        // if valid, proceed
+        interactor?.didTapSignUp(
+            firstName: firstNameTextField.text,
+            lastName:  lastNameTextField.text,
+            email:     emailTextField.text,
+            password:  pwd
+        )
+    }
+
     @objc private func textFieldDidBeginEditing(_ sender: UITextField) {
         // Identify which highlight to show
         let highlightView = highlightViewFor(sender)
@@ -372,14 +420,14 @@ final class SignUpViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
 
-    @objc private func didTapSignUpButton() {
-        interactor?.didTapSignUp(
-            firstName: firstNameTextField.text,
-            lastName: lastNameTextField.text,
-            email: emailTextField.text,
-            password: passwordTextField.text
-        )
-    }
+//    @objc private func didTapSignUpButton() {
+//        interactor?.didTapSignUp(
+//            firstName: firstNameTextField.text,
+//            lastName: lastNameTextField.text,
+//            email: emailTextField.text,
+//            password: passwordTextField.text
+//        )
+//    }
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)

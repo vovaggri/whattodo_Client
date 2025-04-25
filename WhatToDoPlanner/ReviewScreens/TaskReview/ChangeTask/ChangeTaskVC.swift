@@ -108,7 +108,7 @@ final class ChangeTaskViewController: UIViewController, UIGestureRecognizerDeleg
     
     private let screenTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Edit Task"
+        label.text = "Change Task"
         label.font = UIFont(name: ChangeTaskViewController.fontName, size: 24)
             ?? UIFont.boldSystemFont(ofSize: 18)
         label.textColor = .black
@@ -712,14 +712,16 @@ final class ChangeTaskViewController: UIViewController, UIGestureRecognizerDeleg
             // Description
             descriptionStack.topAnchor.constraint(equalTo: whiteContainerView.topAnchor, constant: 12),
             descriptionStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
-            descriptionTextView.heightAnchor.constraint(equalToConstant: 70),
+            descriptionTextView.heightAnchor.constraint(equalToConstant: 120),
             descriptionTextView.widthAnchor.constraint(equalToConstant: 352),
+            descriptionLabel.heightAnchor.constraint(equalToConstant: 22),
             
             
             // Time
             timeStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: margin),
             timeStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
             timeStack.trailingAnchor.constraint(equalTo: whiteContainerView.trailingAnchor, constant: -margin),
+            timeStack.heightAnchor.constraint(equalToConstant: 60),
             endTimeLabel.widthAnchor.constraint(equalToConstant: 160),
             startTimeLabel.widthAnchor.constraint(equalToConstant: 160),
             startTimeTextField.widthAnchor.constraint(equalToConstant: 160),
@@ -732,7 +734,7 @@ final class ChangeTaskViewController: UIViewController, UIGestureRecognizerDeleg
             colorStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
             taskColorTextField.heightAnchor.constraint(equalToConstant: 52),
             taskColorTextField.widthAnchor.constraint(equalToConstant: 352),
-            
+            taskColorLabel.heightAnchor.constraint(equalToConstant: 22),
             // change button
             changeButton.topAnchor.constraint(equalTo: colorStack.bottomAnchor, constant: 24),
             changeButton.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),

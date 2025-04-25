@@ -43,19 +43,13 @@ final class ChangeGoalViewController: UIViewController {
         return view
     }()
     
-    private let backButton: UIButton = {
+    private let closeButton: UIButton = {
         let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
-        button.setImage(image, for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 35
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.05
-        button.layer.shadowOffset = CGSize(width: 0, height: 1)
-        button.layer.shadowRadius = 2
-        button.clipsToBounds = false
+        // use xmark, scaled up
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .regular)
+        let xImage = UIImage(systemName: "xmark", withConfiguration: config)
+        button.setImage(xImage, for: .normal)
+        button.tintColor = UIColor.black.withAlphaComponent(0.33)
         return button
     }()
 
@@ -192,24 +186,24 @@ final class ChangeGoalViewController: UIViewController {
         return v
     }()
     
-    private let closeButton: UIButton = {
-            let button = UIButton(type: .system)
-
-            // Use SF Symbol arrow
-            let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-            let image = UIImage(systemName: "chevron.left", withConfiguration: config)
-            button.setImage(image, for: .normal)
-
-            button.tintColor = .black
-            button.backgroundColor = .white
-            button.layer.cornerRadius = 35
-            button.layer.shadowColor = UIColor.black.cgColor
-            button.layer.shadowOpacity = 0.05
-            button.layer.shadowOffset = CGSize(width: 0, height: 1)
-            button.layer.shadowRadius = 2
-            button.clipsToBounds = false
-            return button
-        }()
+//    private let closeButton: UIButton = {
+//            let button = UIButton(type: .system)
+//
+//            // Use SF Symbol arrow
+//            let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+//            let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+//            button.setImage(image, for: .normal)
+//
+//            button.tintColor = .black
+//            button.backgroundColor = .white
+//            button.layer.cornerRadius = 35
+//            button.layer.shadowColor = UIColor.black.cgColor
+//            button.layer.shadowOpacity = 0.05
+//            button.layer.shadowOffset = CGSize(width: 0, height: 1)
+//            button.layer.shadowRadius = 2
+//            button.clipsToBounds = false
+//            return button
+//        }()
     
     private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
     private let colorMap: [String: UIColor] = [
@@ -254,7 +248,7 @@ final class ChangeGoalViewController: UIViewController {
       // Add subviews
       view.addSubview(topBarView)
       view.addSubview(closeButton)
-      topBarView.addSubview(backButton)
+      topBarView.addSubview(closeButton)
       topBarView.addSubview(screenTitleLabel)
       
       view.addSubview(grayContainerView)
@@ -285,7 +279,7 @@ final class ChangeGoalViewController: UIViewController {
       
       // Button actions
       closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
-      backButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+     // backButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
       changeGoalButton.addTarget(self, action: #selector(changeGoalButtonTapped), for: .touchUpInside)
       populateFields()
 //      createGoalButton.addTarget(self, action: #selector(createGoalButtonTapped), for: .touchUpInside)
@@ -345,7 +339,7 @@ final class ChangeGoalViewController: UIViewController {
       let margin: CGFloat = 16
       
       [
-          topBarView, backButton, screenTitleLabel,
+          topBarView, closeButton, screenTitleLabel,
           grayContainerView, taskNameStack,
           whiteContainerView, descriptionStack, colorStack, changeGoalButton,
           colorPickerContainer,
@@ -359,12 +353,13 @@ final class ChangeGoalViewController: UIViewController {
           topBarView.heightAnchor.constraint(equalToConstant: 100),
           
          
-              backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-              backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-              backButton.widthAnchor.constraint(equalToConstant: 73),
-              backButton.heightAnchor.constraint(equalToConstant: 73),
+              closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+              closeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+              closeButton.widthAnchor.constraint(equalToConstant: 40),
+              closeButton.heightAnchor.constraint(equalToConstant: 40),
           
-          screenTitleLabel.centerYAnchor.constraint(equalTo:backButton.centerYAnchor),
+          
+          screenTitleLabel.centerYAnchor.constraint(equalTo:closeButton.centerYAnchor),
           screenTitleLabel.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor),
           
           // Gray Container
