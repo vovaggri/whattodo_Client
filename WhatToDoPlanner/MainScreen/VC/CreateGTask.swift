@@ -12,10 +12,10 @@ final class CreateGTaskViewController: UIViewController, UIGestureRecognizerDele
     
     // MARK: - Properties
     weak var delegate: CreateGTaskViewControllerDelegate?
-    var interactor: CreateGTaskInteractor?
+    var interactor: CreateGTaskBusinessLogic?
     
     private var goals: [Goal] = []
-    private var selectedGoalId: Int = 0
+    private var selectedGoalId: Int
     
     // For color picker
     private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
@@ -460,6 +460,15 @@ final class CreateGTaskViewController: UIViewController, UIGestureRecognizerDele
     }()
     
     // MARK: - Lifecycle
+    init(selectedGoalId: Int) {
+        self.selectedGoalId = selectedGoalId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -832,7 +841,7 @@ final class CreateGTaskViewController: UIViewController, UIGestureRecognizerDele
         // TODO: - Correct linkGoals
         let goalId: Int = selectedGoalId
 
-//        interactor?.uploadTask(title: taskName, date: date, color: color, description: description, startTime: startTime, endTime: endTime, goalId: goalId)
+        interactor?.fetchTaskData(title: taskName, date: date, color: color, goalId: goalId, description: description, startTime: startTime, endTime: endTime)
     }
     
     @objc private func dateTapped() {
