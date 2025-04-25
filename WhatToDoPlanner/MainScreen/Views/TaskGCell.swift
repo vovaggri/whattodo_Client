@@ -125,9 +125,9 @@ final class TaskGCell: UICollectionViewCell {
         guard let task = task else { return }
         
         if task.done {
-            completeButton.backgroundColor = .systemYellow
+            completeButton.backgroundColor = UIColor(hex: "#DAECF3")
             completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            completeButton.tintColor = .white
+            completeButton.tintColor = UIColor(hex: "#3E3E3E")
         } else {
             completeButton.backgroundColor = UIColor(hex: "D9D9D9", alpha: 0.3)
             completeButton.setImage(nil, for: .normal)

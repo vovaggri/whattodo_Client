@@ -41,10 +41,11 @@ final class CategoryCell: UICollectionViewCell {
         titleLabel.numberOfLines = 2
         titleLabel.font = UIFont(name: MainScreenViewController.Constants.fontName, size: 16)
         titleLabel.textColor = UIColor.black.withAlphaComponent(0.6)
+      //  self.backgroundColor = UIColor(hex: "#DAECF3")
        
         
         // Set background color.
-        contentView.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+        contentView.backgroundColor = UIColor(red: 0xDA/255.0, green: 0xEC/255.0, blue: 0xF3/255.0, alpha: 1.0)
         
         // Remove any previous constraints on titleLabel (if necessary)
         titleLabel.removeFromSuperview()

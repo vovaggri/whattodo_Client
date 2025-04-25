@@ -209,6 +209,7 @@ final class CreateGTaskViewController: UIViewController {
         tf.placeholder = "10:45 AM"
         tf.font = UIFont(name: fontName, size: 20)
         tf.borderStyle = .none
+        tf.textColor = .black // or any color you prefer
         tf.layer.cornerRadius = 14
         tf.backgroundColor = CreateTaskViewController.lightGrayColor
         tf.layer.borderWidth = 0
@@ -346,7 +347,7 @@ final class CreateGTaskViewController: UIViewController {
         tf.font = UIFont(name: fontName, size: 20)
         tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = lightGrayColor
+        tf.backgroundColor = CreateTaskViewController.lightGrayColor
         // no border
         tf.layer.borderWidth = 0
         tf.layer.borderColor = UIColor.clear.cgColor
@@ -466,7 +467,7 @@ final class CreateGTaskViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+     
         view.backgroundColor = CreateGTaskViewController.lightGrayColor
         grayContainerView.backgroundColor = CreateGTaskViewController.lightGrayColor
         
@@ -570,6 +571,13 @@ final class CreateGTaskViewController: UIViewController {
             endTimePickerContainer, endTimePicker,
             colorPickerContainer, colorPicker
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        
+        taskColorTextField.isUserInteractionEnabled = true
+        taskColorTextField.isEnabled = true
+        
+       startTimeTextField.isUserInteractionEnabled = true
+        startTimeTextField.isEnabled = true
+       
         
         taskDateTextField.rightView = calendarIconView
         taskDateTextField.rightViewMode = .always
@@ -702,7 +710,7 @@ final class CreateGTaskViewController: UIViewController {
             endTimePicker.trailingAnchor.constraint(equalTo: endTimePickerContainer.trailingAnchor),
             endTimePicker.bottomAnchor.constraint(equalTo: endTimePickerContainer.bottomAnchor),
             
-            
+        
             // Color Picker Container
             colorPickerContainer.topAnchor.constraint(equalTo: taskColorTextField.bottomAnchor, constant: 4),
             colorPickerContainer.leadingAnchor.constraint(equalTo: taskColorTextField.leadingAnchor),

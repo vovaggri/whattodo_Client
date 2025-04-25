@@ -9,6 +9,7 @@ final class GoalDetailViewController: UIViewController {
     private var tasks: [Task] = []
 
     // MARK: - UI Elements
+    
 
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)

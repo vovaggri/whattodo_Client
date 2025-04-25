@@ -177,9 +177,9 @@ final class ReviewTaskViewController: UIViewController {
         case ColorIDs.defaultWhite:
             labelColor = UIColor(hex: "514F4F") ?? .black
             timeAlpha = 0.5
-            buttonColor = UIColor(hex: "FFFFFF") ?? .black
-            goalcontainercolor = UIColor(hex: "F7F9F9") ?? .black
-            colorcontainer = UIColor(hex: "F7F9F9", alpha: 0.1) ?? .black
+            buttonColor = UIColor(hex: "888C8C") ?? .black
+            goalcontainercolor = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
+            colorcontainer = UIColor(hex: "514F4F", alpha: 0.1) ?? .black
             colordot = UIColor(hex: "FFFFFF") ?? .black
         default:
             labelColor = .black

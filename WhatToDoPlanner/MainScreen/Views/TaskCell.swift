@@ -25,7 +25,7 @@ final class TaskCell: UICollectionViewCell {
     private let completeButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor(hex: "D9D9D9", alpha: 0.3)
-        button.layer.cornerRadius = 22
+        button.layer.cornerRadius = 43/2
         button.clipsToBounds = true
         button.setImage(nil, for: .normal)
         return button
@@ -130,9 +130,9 @@ final class TaskCell: UICollectionViewCell {
         guard let task = task else { return }
         
         if task.done {
-            completeButton.backgroundColor = .systemYellow
+            completeButton.backgroundColor = UIColor(hex: "#DAECF3")
             completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            completeButton.tintColor = .white
+            completeButton.tintColor = UIColor(hex: "#3E3E3E")
         } else {
             completeButton.backgroundColor = UIColor(hex: "D9D9D9", alpha: 0.3)
             completeButton.setImage(nil, for: .normal)
@@ -163,8 +163,8 @@ final class TaskCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             completeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             completeButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            completeButton.widthAnchor.constraint(equalToConstant: 40),
-            completeButton.heightAnchor.constraint(equalToConstant: 40)
+            completeButton.widthAnchor.constraint(equalToConstant: 43),
+            completeButton.heightAnchor.constraint(equalToConstant: 43)
         ])
     }
     
@@ -217,7 +217,7 @@ final class TaskCell: UICollectionViewCell {
         UIView.animate(withDuration: 0.3) {
             if task.done == false {
                 self.task?.done = true
-                self.completeButton.backgroundColor = .systemYellow
+                self.completeButton.backgroundColor = UIColor(hex: "#DAECF3")
                 self.completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
             } else {
                 self.task?.done = false

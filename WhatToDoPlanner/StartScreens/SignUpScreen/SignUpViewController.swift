@@ -35,7 +35,25 @@ final class SignUpViewController: UIViewController {
     private let emailTextField: UITextField = UITextField()
     private let passwordTextField: UITextField = UITextField()
     private var signUpButton: UIButton = UIButton(type: .system)
-    private var backButton = UIButton(type: .system)
+    private var backButton: UIButton = {
+        let button = UIButton(type: .system)
+        
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        
+        button.tintColor = .black
+        button.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        button.layer.cornerRadius = 35
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.05
+        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+        button.layer.shadowRadius = 2
+        button.clipsToBounds = false
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -100,14 +118,35 @@ final class SignUpViewController: UIViewController {
         
     }
     
+    
     private func configureBackButton() {
         view.addSubview(backButton)
-        backButton.setImage(UIImage(systemName: "arrow.left"), for: .normal) // Use custom image
-        backButton.setTitle("", for: .normal) // Remove text
-        backButton.tintColor = UIColor(hex: "000000", alpha: 0.4) // Change the color if needed
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+
+        // Set SF Symbol and style
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+        backButton.setImage(image, for: .normal)
+        backButton.setTitle("", for: .normal)
+        
+        backButton.tintColor = .black
+        backButton.backgroundColor = UIColor(red: 248/255, green: 248/255, blue: 248/255, alpha: 1.0)
+        backButton.layer.cornerRadius = 35
+        backButton.layer.shadowColor = UIColor.black.cgColor
+        backButton.layer.shadowOpacity = 0.05
+        backButton.layer.shadowOffset = CGSize(width: 0, height: 1)
+        backButton.layer.shadowRadius = 2
+        backButton.clipsToBounds = false
+
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        // Add constraints
+        NSLayoutConstraint.activate([
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            backButton.widthAnchor.constraint(equalToConstant: 73),
+            backButton.heightAnchor.constraint(equalToConstant: 73)
+        ])
     }
 
     private func configureTitleLabel() {
