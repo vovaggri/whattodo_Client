@@ -54,6 +54,13 @@ final class SignUpViewController: UIViewController {
         return button
     }()
 
+    private var passwordVisibilityButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = UIColor(hex: "000000", alpha: 0.5) // Полупрозрачный черный
+        button.addTarget(nil, action: #selector(togglePasswordVisibility), for: .touchUpInside)
+        return button
+    }()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -120,7 +127,7 @@ final class SignUpViewController: UIViewController {
             }
         }
 
-        
+        configurePasswordField()
     }
     
     
@@ -380,6 +387,15 @@ final class SignUpViewController: UIViewController {
             signUpButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
     }
+    
+    private func configurePasswordField() {
+        let eyeContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 44, height: 24)) // ширина больше, чем кнопка
+        passwordVisibilityButton.frame = CGRect(x: 8, y: 0, width: 24, height: 24) // кнопка чуть сдвинута влево
+        eyeContainerView.addSubview(passwordVisibilityButton)
+
+        passwordTextField.rightView = eyeContainerView
+        passwordTextField.rightViewMode = .always
+    }
 
     @objc func keyboardWillShow(notification: NSNotification) {
         // Hiding title lable
@@ -431,5 +447,11 @@ final class SignUpViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    @objc private func togglePasswordVisibility() {
+        passwordTextField.isSecureTextEntry.toggle()
+        let imageName = passwordTextField.isSecureTextEntry ? "eye.slash" : "eye"
+        passwordVisibilityButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
 }
