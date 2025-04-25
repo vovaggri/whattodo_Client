@@ -3,6 +3,7 @@ import UIKit
 protocol ReviewTaskBusinessLogic {
     func loadTask(request: ReviewTaskModels.Request)
     func getGoal(with goalId: Int)
+    func deleteTask(with task: Task)
 }
 
 final class ReviewTaskInteractor: ReviewTaskBusinessLogic {
@@ -39,6 +40,21 @@ final class ReviewTaskInteractor: ReviewTaskBusinessLogic {
                     DispatchQueue.main.async {
                         self?.presenter?.showErrorAlert(error.localizedDescription)
                     }
+                }
+            }
+        }
+    }
+    
+    func deleteTask(with task: Task) {
+        worker?.deleteTask(with: task) { [weak self] result in
+            switch result {
+            case.success:
+                DispatchQueue.main.async {
+                    self?.presenter?.navigateToMainScreen()
+                }
+            case.failure(let error):
+                DispatchQueue.main.async {
+                    self?.presenter?.showErrorAlert(error.localizedDescription)
                 }
             }
         }

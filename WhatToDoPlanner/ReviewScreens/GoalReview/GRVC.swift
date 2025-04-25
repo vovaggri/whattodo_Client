@@ -2,9 +2,14 @@ import UIKit
 
 // MARK: - ViewController (GoalReviewViewController.swift)
 final class GoalReviewViewController: UIViewController {
+    // Font constant
+    static let fontName = "AoboshiOne-Regular"
+    
     // MARK: SVIP references
     var interactor: GoalReviewBusinessLogic?
+    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
     private let goal: Goal
+    private var tasks: [Task] = []
     
     // MARK: UI Elements
     private let titleLabel = UILabel()
@@ -14,7 +19,6 @@ final class GoalReviewViewController: UIViewController {
     private let colorDotView = UIView()
     private let containerView = UIView()
     private let tasksTitleLabel = UILabel()
-    private let messageLabel = UILabel()
     private let editButton = UIButton(type: .system)
     private let aiButton = UIButton(type: .system)
   //  private let buttonColor : UIColor
@@ -23,11 +27,21 @@ final class GoalReviewViewController: UIViewController {
     private let deleteIcon = UIImageView(image: UIImage(systemName: "trash"))
     private let deleteLabel = UILabel()
     
-    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
-    
-    
-    // Font constant
-    static let fontName = "AoboshiOne-Regular"
+    // New: Collection view for tasks
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 16, bottom: 16, right: 16)
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
+        cv.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+        cv.dataSource = self
+        cv.delegate = self
+        return cv
+    }()
     
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
@@ -64,6 +78,7 @@ final class GoalReviewViewController: UIViewController {
         setupUI()
         interactor?.loadGoal()
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+        interactor?.loadTasks(with: goal.id)
     }
     
     // MARK: - Display
@@ -90,6 +105,12 @@ final class GoalReviewViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+    func showTasks(with tasks: [Task]) {
+        self.tasks = tasks
+        collectionView.reloadData()
+    }
+    
     private func applyColorTheme(for colorId: Int) {
         let labelColor: UIColor
         let timeAlpha: CGFloat
@@ -247,14 +268,6 @@ final class GoalReviewViewController: UIViewController {
                 tasksTitleLabel.textAlignment = .left
                 
         
-        // Message label inside container
-        containerView.addSubview(messageLabel)
-        messageLabel.font = UIFont(name: Self.fontName, size: 18)
-        messageLabel.text = "There are currently no tasks for this goal :("
-        messageLabel.textAlignment = .center
-        messageLabel.numberOfLines = 0
-        messageLabel.textColor = UIColor.black.withAlphaComponent(0.7)
-        
         // Layout top elements
       //  titleLabel.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 24)
         titleLabel.pinTop(to: closeButton.bottomAnchor, 12)
@@ -293,6 +306,11 @@ final class GoalReviewViewController: UIViewController {
         deleteContainer.backgroundColor = .white
         deleteContainer.layer.cornerRadius = 14
         deleteContainer.layer.masksToBounds = true
+        
+        // включаем тап для контейнера
+        deleteContainer.isUserInteractionEnabled = true
+        let deleteTap = UITapGestureRecognizer(target: self, action: #selector(deleteContainerTapped))
+        deleteContainer.addGestureRecognizer(deleteTap)
 
         deleteContainer.pinTop(to: colorContainer.bottomAnchor, 22)
         deleteContainer.pinLeft(to: view, 16)
@@ -333,9 +351,6 @@ final class GoalReviewViewController: UIViewController {
         containerView.pinBottom(to: view)
         
         // Layout message inside container
-        messageLabel.pinCenterY(to: containerView)
-        messageLabel.pinLeft(to: containerView, 16)
-        messageLabel.pinRight(to: containerView, 16)
         tasksTitleLabel.pinTop(to: containerView, 24)
              tasksTitleLabel.pinLeft(to: containerView, 16)
         
@@ -345,7 +360,13 @@ final class GoalReviewViewController: UIViewController {
               aiButton.pinRight(to: view, 24)
               aiButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor, 24)
           
-        
+        // Add collection view
+        containerView.addSubview(collectionView)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.pinTop(to: tasksTitleLabel.bottomAnchor, 30)
+        collectionView.pinLeft(to: containerView)
+        collectionView.pinRight(to: containerView)
+        collectionView.pinBottom(to: containerView)
       
     }
     
@@ -370,7 +391,70 @@ final class GoalReviewViewController: UIViewController {
         interactor?.checkGoal(with: goal)
     }
      @objc private func editButtonTapped() {
-       let changeTaskVC = CreateNewGoalAssembly.makeModule()
-       navigationController?.pushViewController(changeTaskVC, animated: true)
+         let changeTaskVC = ChangeGoalAssembly.makeModule(goal)
+         navigationController?.pushViewController(changeTaskVC, animated: true)
+    }
+    
+    @objc private func deleteContainerTapped() {
+        let alert = UIAlertController(
+          title: "Delete goal",
+          message: "Are you sure that you want delete this goal?",
+          preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(
+          title: "Delete",
+          style: .destructive,
+          handler: { [weak self] _ in
+              guard let goal = self?.goal else {
+                  return
+              }
+              self?.interactor?.deleteGoal(with: goal)
+          }
+        ))
+        present(alert, animated: true)
+    }
+}
+
+// MARK: - UICollectionView
+extension GoalReviewViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return tasks.isEmpty ? 1 : tasks.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if tasks.isEmpty {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
+                return UICollectionViewCell()
+            }
+            cell.configureReviewGoal()
+            return cell
+        } else {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
+                return UICollectionViewCell()
+            }
+            let task = tasks[indexPath.row]
+            cell.configureReview(with: task)
+            cell.delegate = self
+            return cell
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.bounds.width - 32, height: 104)
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !tasks.isEmpty else { return }
+        let selectedTask = tasks[indexPath.row]
+        // Navigate to task detail or notify interactor
+        interactor?.didSelectTask(selectedTask)
+    }
+}
+
+// MARK: - TaskCell Delegate
+extension GoalReviewViewController: taskCellDelegate {
+    func taskCellDidCompleteTask(_ cell: TaskCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        tasks[indexPath.row].done.toggle()
+        cell.updateCompleteButtonAppearance()
+        interactor?.updateTask(tasks[indexPath.row])
     }
 }

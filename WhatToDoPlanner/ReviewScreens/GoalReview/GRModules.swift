@@ -15,5 +15,11 @@ enum GoalReviewModels {
         let success: Bool
     }
     
-   
+    struct DeleteResponse: Decodable {
+        let status: String
+        
+        enum CodingKeys: String, CodingKey {
+            case status
+        }
+    }
 }

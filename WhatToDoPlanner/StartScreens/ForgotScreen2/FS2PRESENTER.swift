@@ -11,6 +11,7 @@ final class ChangePasswordPresenter: ChangePasswordPresentationLogic {
     }
 
     func presentError(message: String) {
+        viewController?.returnContinueButton()
         viewController?.showError(message: message)
     }
 }

@@ -1,25 +1,19 @@
 import UIKit
 
-final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayLogic {
+final class ChangeGoalViewController: UIViewController {
   
-  var interactor: CreateNewGoalBusinessLogic?
+    var interactor: ChangeGoalBusinessLogic?
+    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
+    private let originalGoal: Goal
+    private var goal: Goal
   
   // MARK: UI
-    
-    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
-  
-  // Temp storage of “entered” text:
-    private func createIconView(image: UIImage) -> UIView {
-        let container = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        let imageView = UIImageView(image: image)
-        imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
-        imageView.contentMode = .scaleAspectFit
-        let iconSize: CGFloat = 18
-        let offset = (container.bounds.width - iconSize) / 2
-        imageView.frame = CGRect(x: offset, y: offset, width: iconSize, height: iconSize)
-        container.addSubview(imageView)
-        return container
-    }
+
+    private let colorPicker: UIPickerView = {
+        let p = UIPickerView()
+        p.translatesAutoresizingMaskIntoConstraints = false
+        return p
+    }()
     
     // MARK: - Color Dot and Right View for Color Field
     private let colorDot: UIView = {
@@ -138,15 +132,15 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
         return st
     }()
     
-    private let taskColorLabel: UILabel = {
+    private let goalColorLabel: UILabel = {
         let lbl = UILabel()
-        lbl.text = "Task Color"
+        lbl.text = "Goal Color"
         lbl.font = UIFont(name: CreateGoalViewController.fontName, size: 14) ?? UIFont.systemFont(ofSize: 14)
         lbl.textColor = .black
         return lbl
     }()
     
-    private let taskColorTextField: UITextField = {
+    private let goalColorTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Pick a color"
         tf.font = UIFont(name: CreateGoalViewController.fontName, size: 20)
@@ -162,13 +156,13 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
     }()
     
     private lazy var colorStack: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [taskColorLabel, taskColorTextField])
+        let st = UIStackView(arrangedSubviews: [goalColorLabel, goalColorTextField])
         st.axis = .vertical
         st.spacing = 4
         return st
     }()
     
-    private let createGoalButton: UIButton = {
+    private let changeGoalButton: UIButton = {
         let b = UIButton(type: .system)
         b.setTitle("Change Goal", for: .normal)
         b.titleLabel?.font = UIFont(name: CreateGoalViewController.fontName, size: 20) ?? UIFont.boldSystemFont(ofSize: 20)
@@ -188,7 +182,27 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
         v.isHidden = true
         return v
     }()
-  
+    
+    private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
+    private let colorMap: [String: UIColor] = [
+        "Marigold":      UIColor(red: 242/255, green: 233/255, blue: 212/255, alpha: 1.0),
+        "Aqua Blue":     UIColor(red: 218/255, green: 236/255, blue: 243/255, alpha: 1.0),
+        "Moss Green":    UIColor(red: 232/255, green: 249/255, blue: 228/255, alpha: 1.0),
+        "Lilac":         UIColor(red: 223/255, green: 223/255, blue: 244/255, alpha: 1.0),
+        "Ultra Pink":    UIColor(red: 252/255, green: 231/255, blue: 255/255, alpha: 1.0),
+        "Default White": UIColor(red: 247/255, green: 249/255, blue: 249/255, alpha: 1.0)
+    ]
+    
+    init(goal: Goal) {
+        self.goal = goal
+        self.originalGoal = goal
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
   override func viewDidLoad() {
     super.viewDidLoad()
       view.backgroundColor = CreateGoalViewController.lightGrayColor
@@ -197,11 +211,11 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
       navigationItem.hidesBackButton = true
       
       // Set custom right view for taskColorTextField (color dot + arrow)
-      taskColorTextField.rightView = colorRightView
-      taskColorTextField.rightViewMode = .always
+      goalColorTextField.rightView = colorRightView
+      goalColorTextField.rightViewMode = .always
       
       // Set left padding for text fields (so text is not too close to the border)
-      [goalNameTextField, descriptionTextView, taskColorTextField].forEach {
+      [goalNameTextField, descriptionTextView, goalColorTextField].forEach {
           if let tf = $0 as? UITextField {
               let padding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
               tf.leftView = padding
@@ -220,21 +234,81 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
       view.addSubview(whiteContainerView)
       whiteContainerView.addSubview(descriptionStack)
       whiteContainerView.addSubview(colorStack)
-      whiteContainerView.addSubview(createGoalButton)
+      whiteContainerView.addSubview(changeGoalButton)
       
       view.addSubview(colorPickerContainer)
-    //  colorPickerContainer.addSubview(colorPicker)
+      colorPickerContainer.addSubview(colorPicker)
       
       setupConstraints()
+      let colorTap = UITapGestureRecognizer(target: self, action: #selector(colorTapped))
+      goalColorTextField.addGestureRecognizer(colorTap)
+      goalColorTextField.isUserInteractionEnabled = true
+      
+        colorPicker.delegate   = self
+        colorPicker.dataSource = self
+
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        toolbar.setItems([
+          UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+          UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissPicker))
+        ], animated: false)
       
       // Button actions
-//      closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+      closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+      changeGoalButton.addTarget(self, action: #selector(changeGoalButtonTapped), for: .touchUpInside)
+      populateFields()
 //      createGoalButton.addTarget(self, action: #selector(createGoalButtonTapped), for: .touchUpInside)
 //      
 //      let colorTapGesture = UITapGestureRecognizer(target: self, action: #selector(colorTapped))
 //      taskColorTextField.addGestureRecognizer(colorTapGesture)
 //    interactor?.loadScreen(request: .init())
   }
+    
+    func displayCreate(viewModel: ChangeGoalModels.Create.ViewModel) {
+      let alert = UIAlertController(
+        title: viewModel.alertTitle,
+        message: viewModel.alertMessage,
+        preferredStyle: .alert
+      )
+      alert.addAction(.init(title: "OK", style: .default))
+      present(alert, animated: true)
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func populateFields() {
+        // 1) title
+        goalNameTextField.text = goal.title
+
+        // 2) description
+        descriptionTextView.text = goal.description ?? ""
+
+        // 3) colour
+        let uiColor = goal.getColour()
+        colorDot.backgroundColor = uiColor
+
+        let colorName: String
+        switch goal.colour {
+        case ColorIDs.aquaBlue: colorName = "Aqua Blue"
+        case ColorIDs.mossGreen: colorName = "Moss Green"
+        case ColorIDs.marigold: colorName = "Marigold"
+        case ColorIDs.lilac: colorName = "Lilac"
+        case ColorIDs.ultraPink: colorName = "Ultra Pink"
+        case ColorIDs.defaultWhite: colorName = "Default White"
+        default: colorName = ""
+        }
+        goalColorTextField.text = colorName
+
+        colorDot.backgroundColor = uiColor
+        view.backgroundColor = uiColor
+        grayContainerView.backgroundColor = uiColor
+        topBarView.backgroundColor = uiColor
+    }
   
   private func setupConstraints() {
     // close “x”
@@ -243,7 +317,7 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
       [
           topBarView, closeButton, screenTitleLabel,
           grayContainerView, taskNameStack,
-          whiteContainerView, descriptionStack, colorStack, createGoalButton,
+          whiteContainerView, descriptionStack, colorStack, changeGoalButton,
           colorPickerContainer,
       ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
       
@@ -293,76 +367,131 @@ final class CreateNewGoalViewController: UIViewController, CreateNewGoalDisplayL
           // Color Stack in White Container
           colorStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: margin),
           colorStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
-          taskColorTextField.heightAnchor.constraint(equalToConstant: 52),
-          taskColorTextField.widthAnchor.constraint(equalToConstant: 352),
-          taskColorLabel.heightAnchor.constraint(equalToConstant: 52),
-          taskColorLabel.widthAnchor.constraint(equalToConstant: 352),
+          goalColorTextField.heightAnchor.constraint(equalToConstant: 52),
+          goalColorTextField.widthAnchor.constraint(equalToConstant: 352),
+          goalColorLabel.heightAnchor.constraint(equalToConstant: 52),
+          goalColorLabel.widthAnchor.constraint(equalToConstant: 352),
           
           // Create Button in White Container
-          createGoalButton.topAnchor.constraint(equalTo: colorStack.bottomAnchor, constant: margin),
-          createGoalButton.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
-          createGoalButton.widthAnchor.constraint(equalToConstant: 352),
-          createGoalButton.heightAnchor.constraint(equalToConstant: 50),
-          createGoalButton.bottomAnchor.constraint(equalTo: whiteContainerView.safeAreaLayoutGuide.bottomAnchor, constant: -margin),
+          changeGoalButton.topAnchor.constraint(equalTo: colorStack.bottomAnchor, constant: margin),
+          changeGoalButton.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
+          changeGoalButton.widthAnchor.constraint(equalToConstant: 352),
+          changeGoalButton.heightAnchor.constraint(equalToConstant: 50),
+          changeGoalButton.bottomAnchor.constraint(equalTo: whiteContainerView.safeAreaLayoutGuide.bottomAnchor, constant: -margin),
           
           // Color Picker Container (appears below Task Color field)
-          colorPickerContainer.topAnchor.constraint(equalTo: taskColorTextField.bottomAnchor, constant: 4),
-          colorPickerContainer.centerXAnchor.constraint(equalTo: taskColorTextField.centerXAnchor),
+          colorPickerContainer.topAnchor.constraint(equalTo: goalColorTextField.bottomAnchor, constant: 4),
+          colorPickerContainer.centerXAnchor.constraint(equalTo: goalColorTextField.centerXAnchor),
           colorPickerContainer.widthAnchor.constraint(equalToConstant: 352),
           colorPickerContainer.heightAnchor.constraint(equalToConstant: 75),
           
-//          colorPicker.topAnchor.constraint(equalTo: colorPickerContainer.topAnchor),
-//          colorPicker.leadingAnchor.constraint(equalTo: colorPickerContainer.leadingAnchor),
-//          colorPicker.trailingAnchor.constraint(equalTo: colorPickerContainer.trailingAnchor),
-//          colorPicker.bottomAnchor.constraint(equalTo: colorPickerContainer.bottomAnchor),
+          colorPicker.topAnchor.constraint(equalTo: colorPickerContainer.topAnchor),
+          colorPicker.leadingAnchor.constraint(equalTo: colorPickerContainer.leadingAnchor),
+          colorPicker.trailingAnchor.constraint(equalTo: colorPickerContainer.trailingAnchor),
+          colorPicker.bottomAnchor.constraint(equalTo: colorPickerContainer.bottomAnchor),
       ])
-     
   }
+    
+    // Temp storage of “entered” text:
+      private func createIconView(image: UIImage) -> UIView {
+          let container = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+          let imageView = UIImageView(image: image)
+          imageView.tintColor = UIColor.black.withAlphaComponent(0.33)
+          imageView.contentMode = .scaleAspectFit
+          let iconSize: CGFloat = 18
+          let offset = (container.bounds.width - iconSize) / 2
+          imageView.frame = CGRect(x: offset, y: offset, width: iconSize, height: iconSize)
+          container.addSubview(imageView)
+          return container
+      }
   
   // MARK: DisplayLogic
     @objc private func closeButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
   
-  func displayCreate(viewModel: CreateNewGoalModels.Create.ViewModel) {
-    let alert = UIAlertController(
-      title: viewModel.alertTitle,
-      message: viewModel.alertMessage,
-      preferredStyle: .alert
-    )
-    alert.addAction(.init(title: "OK", style: .default))
-    present(alert, animated: true)
-  }
-  
   // MARK: Actions
   @objc private func dismissSelf() {
     dismiss(animated: true)
   }
-  
-
-  
-
-  
-  
-  /// tiny helper for text entry
-  private func presentTextInput(
-    title: String,
-    initial: String,
-    completion: @escaping (String)->Void
-  ) {
-    let ac = UIAlertController(
-      title: title,
-      message: nil,
-      preferredStyle: .alert
-    )
-    ac.addTextField { tf in
-      tf.text = initial
+    
+    @objc private func dismissPicker() {
+      goalColorTextField.resignFirstResponder()
     }
-    ac.addAction(.init(title:"Cancel", style:.cancel))
-    ac.addAction(.init(title:"OK", style:.default) { _ in
-      completion(ac.textFields?.first?.text ?? "")
-    })
-    present(ac, animated:true)
+    
+    @objc private func colorTapped() {
+        colorPickerContainer.isHidden.toggle()
+    }
+
+    @objc private func changeGoalButtonTapped() {
+        print("Create Goal button tapped")
+        guard let goalName = goalNameTextField.text, !goalName.isEmpty else {
+            showError(message: "Goal name is required.")
+            return
+        }
+        goal.title = goalName
+        
+        guard let colorText = goalColorTextField.text, !colorText.isEmpty else {
+            showError(message: "Color is required.")
+            return
+        }
+        
+        var color: Int
+        
+        if colorText == "Aqua Blue" {
+            color = ColorIDs.aquaBlue
+        } else if colorText == "Moss Green" {
+            color = ColorIDs.mossGreen
+        } else if colorText == "Marigold" {
+            color = ColorIDs.marigold
+        } else if colorText == "Lilac" {
+            color = ColorIDs.lilac
+        } else if colorText == "Ultra Pink" {
+            color = ColorIDs.ultraPink
+        } else if colorText == "Default White" {
+            color = ColorIDs.defaultWhite
+        } else {
+            print("Unknown color")
+            return
+        }
+        goal.colour = color
+        
+        let description = descriptionTextView.text
+        goal.description = description
+        
+        if goal == originalGoal {
+            showError(message: "Goal wasn't been edited")
+            return
+        }
+        
+        interactor?.changeGoal(id: goal.id,title: goalName, description: description ?? "", color: color)
+    }
+}
+
+extension ChangeGoalViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+  func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
+  func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    return colorOptions.count
+  }
+  func pickerView(_ pickerView: UIPickerView,
+                  viewForRow row: Int,
+                  forComponent component: Int,
+                  reusing view: UIView?) -> UIView {
+    let lbl = (view as? UILabel) ?? UILabel()
+    lbl.textAlignment = .center
+    lbl.font = UIFont(name: CreateGoalViewController.fontName, size: 14)
+    lbl.text = colorOptions[row]
+    return lbl
+  }
+  func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    let name = colorOptions[row]
+    goalColorTextField.text = name
+    if let uiColor = colorMap[name] {
+      colorDot.backgroundColor          = uiColor
+      view.backgroundColor              = uiColor
+      grayContainerView.backgroundColor = uiColor
+      topBarView.backgroundColor        = uiColor
+    }
   }
 }
 

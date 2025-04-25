@@ -34,14 +34,16 @@ final class PinCodeViewController: UIViewController {
         static let confirmButtonTitleSize: CGFloat = 20
     }
     
-     var interactor: PinCodeInteractorProtocol
+    private var interactor: PinCodeInteractorProtocol?
+    private var email: String
     private var codeTextFields: [UITextField] = []
     
     private let firstTitleLabel: UILabel = UILabel()
     private let secondTitleLabel: UILabel = UILabel()
     private let confirmButton: UIButton = UIButton(type: .system)
     
-    init(interactor: PinCodeInteractorProtocol) {
+    init(email: String, interactor: PinCodeInteractorProtocol?) {
+        self.email = email
         self.interactor = interactor
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,6 +53,10 @@ final class PinCodeViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            tapGesture.cancelsTouchesInView = false
+            view.addGestureRecognizer(tapGesture)
+        
         super.viewDidLoad()
         
         view.backgroundColor = .white
@@ -69,6 +75,11 @@ final class PinCodeViewController: UIViewController {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true)
+    }
+    
+    func returnConfirmButton() {
+        confirmButton.isEnabled = true
+        confirmButton.alpha = 1
     }
     
     private func configureTitleLabels() {
@@ -140,7 +151,13 @@ final class PinCodeViewController: UIViewController {
             displayError("Please enter a valid 4-digit code.")
             return
         }
-        interactor.verifyCode(code)
+        confirmButton.isEnabled = false
+        confirmButton.alpha = 0.5
+        interactor?.verifyCode(code, email: email)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

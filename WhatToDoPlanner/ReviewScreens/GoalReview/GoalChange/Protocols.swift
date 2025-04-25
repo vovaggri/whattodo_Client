@@ -1,12 +1,14 @@
 
-protocol CreateNewGoalBusinessLogic {
-  func createGoal(request: CreateNewGoalModels.Create.Request)
+protocol ChangeGoalBusinessLogic {
+  func changeGoal(id: Int, title: String, description: String, color: Int)
 }
 
-protocol CreateNewGoalPresentationLogic {
-  func presentCreate(response: CreateNewGoalModels.Create.Response)
+protocol ChangePresentationLogic {
+    func presentCreate(response: ChangeGoalModels.Create.Response)
+    func navigateMainScreen()
+    func showErrorAlert(_ message: String?)
 }
 
-protocol CreateNewGoalDisplayLogic: AnyObject {
-  func displayCreate(viewModel: CreateNewGoalModels.Create.ViewModel)
+protocol ChangeGoalWorkerProtocol {
+    func updateGoal(id: Int, with requestData: CreateGoal.CreateGoalRequest, completion: @escaping (Result<Void, any Error>) -> Void)
 }
