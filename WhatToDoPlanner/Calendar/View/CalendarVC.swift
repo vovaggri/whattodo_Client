@@ -218,12 +218,23 @@ final class CalendarViewController: UIViewController {
         
         let chevronAttachment = NSTextAttachment()
         chevronAttachment.image = UIImage(systemName: "chevron.compact.forward")
-
+        
         if let image = chevronAttachment.image {
-            let yOffset = (monthLabel.font.capHeight - image.size.height) / 2
-            chevronAttachment.bounds = CGRect(x: 0, y: yOffset, width: image.size.width, height: image.size.height)
-        }
+            // 1) Choose your desired height:
+            let targetHeight: CGFloat = 16.0
+            // 2) Scale width to keep the same aspect ratio
+            let targetWidth = 18.0
+            // 3) Vertically center in the label using capHeight
+            let yOffset = (monthLabel.font.capHeight - targetHeight) / 2
             
+            chevronAttachment.bounds = CGRect(
+                x: 0,
+                y: yOffset,
+                width: targetWidth,
+                height: targetHeight
+            )
+        }
+        
         let attachmentString = NSAttributedString(attachment: chevronAttachment)
         attributedTitle.append(attachmentString)
         monthLabel.attributedText = attributedTitle

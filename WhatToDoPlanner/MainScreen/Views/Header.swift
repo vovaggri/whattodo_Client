@@ -117,8 +117,8 @@ final class HeaderView: UIView {
             attachment.image = image
 
             let ratio = image.size.width / image.size.height
-            let height = font.capHeight
-            let width = height * ratio
+            let height = 15.0
+            let width = 16.0
             let yOffset = (font.descender + font.ascender - height) / 2
             attachment.bounds = CGRect(x: 0, y: yOffset, width: width, height: height)
         }

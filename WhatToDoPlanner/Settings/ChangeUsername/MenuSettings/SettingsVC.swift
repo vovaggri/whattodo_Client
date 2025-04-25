@@ -111,6 +111,9 @@ final class SettingsVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.titleView = titleLabel
+        backButton.addTarget(self,
+                             action: #selector(backButtonPressed),
+                             for: .touchUpInside)
 
         setupHierarchy()
         setupConstraints()
@@ -258,11 +261,30 @@ final class SettingsVC: UIViewController {
     }
 
     // MARK: - Actions
+    
+    @objc private func backButtonPressed() {
+        // build the main screen
+        let mainVC = MainAssembly.assembly()
+        // if you want to _push_ it onto an existing nav-stack:
+       // navigationController?.pushViewController(mainVC, animated: true)
+        if let nav = navigationController {
+                // Replace the stack so Main becomes root
+                nav.setViewControllers([mainVC], animated: true)
+            } else {
+                // Present it modally if there's no nav stack
+                present(mainVC, animated: true, completion: nil)
+            }
+    }
+    
+    
     @objc private func rowTapped(_ g: UITapGestureRecognizer) {
         guard let v = g.view else { return }
         switch v {
         case changeUsernameRow:
-            // … handle change username
+            // build the ChangeUsername screen
+            let changeVC = ChangeUsernameModuleAssembler.build()
+            // push it on your nav stack
+            navigationController?.pushViewController(changeVC, animated: true)
             break
         case changePasswordRow:
             // … handle change password
