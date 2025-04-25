@@ -205,14 +205,14 @@ extension BottomSheetViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
                 return UICollectionViewCell()
             }
-            cell.configure()
+            cell.configureMain()
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
                 return UICollectionViewCell()
             }
             let task = self.todayTasks[indexPath.row]
-            cell.configure(with: task)
+            cell.configureMain(with: task)
             cell.delegate = self
             return cell
         }

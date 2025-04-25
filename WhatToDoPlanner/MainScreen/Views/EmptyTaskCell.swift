@@ -4,7 +4,9 @@ final class EmptyTaskCell: UICollectionViewCell {
     enum Constants {
         static let identifier = "EmptyTaskCell"
         static let fontName: String = "AoboshiOne-Regular"
-        static let titleText: String = "No tasks for today :("
+        static let titleTextToday: String = "No tasks for today :("
+        static let titleTextRG: String = "There are currently no tasks for this goal :("
+        static let titleTextCalendar: String = "No tasks or didn't selected day"
     }
     
     private let titleLabel: UILabel = {
@@ -28,8 +30,16 @@ final class EmptyTaskCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure() {
-        titleLabel.text = Constants.titleText
+    func configureMain() {
+        titleLabel.text = Constants.titleTextToday
+    }
+    
+    func configureReviewGoal() {
+        titleLabel.text = Constants.titleTextRG
+    }
+    
+    func configureCalendar() {
+        titleLabel.text = Constants.titleTextCalendar
     }
     
     private func configureTitleLabel() {

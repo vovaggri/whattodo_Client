@@ -4,6 +4,8 @@ protocol GoalReviewPresentationLogic {
     func navigateToProblem()
     func navigateToAI(with goalId: Int)
     func navigateToMainScreen()
+    func showTasks(with tasks: [Task])
+    func navigateToTR(_ selectedTask: Task)
 }
 
 final class GoalReviewPresenter: GoalReviewPresentationLogic {
@@ -34,5 +36,14 @@ final class GoalReviewPresenter: GoalReviewPresentationLogic {
     func navigateToMainScreen() {
         let mainVC = MainAssembly.assembly()
         viewController?.navigationController?.setViewControllers([mainVC], animated: true)
+    }
+    
+    func showTasks(with tasks: [Task]) {
+        viewController?.showTasks(with: tasks)
+    }
+    
+    func navigateToTR(_ selectedTask: Task) {
+        let reviewVC = ReviewScreenAssembly.assembly(selectedTask)
+        viewController?.navigationController?.pushViewController(reviewVC, animated: true)
     }
 }
