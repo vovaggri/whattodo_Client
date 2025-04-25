@@ -6,7 +6,7 @@
 //
 final class CreateGTaskAssembly {
     static func assembly(with goalId: Int) -> CreateGTaskViewController {
-        let viewController = CreateGTaskViewController()
+        let viewController = CreateGTaskViewController(selectedGoalId: goalId)
         let presenter = CreateGTaskPresenter()
         let worker = CreateGTaskWorker()
         let interactor = CreateGTaskInteractor(presenter: presenter, worker: worker)

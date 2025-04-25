@@ -226,6 +226,10 @@ final class ChangeGoalViewController: UIViewController {
     }
     
   override func viewDidLoad() {
+      let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+          tapGesture.cancelsTouchesInView = false
+          view.addGestureRecognizer(tapGesture)
+      
     super.viewDidLoad()
       view.backgroundColor = CreateGoalViewController.lightGrayColor
       grayContainerView.backgroundColor = CreateGoalViewController.lightGrayColor
@@ -495,6 +499,10 @@ final class ChangeGoalViewController: UIViewController {
     
     @objc private func closeButtonTapped() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 
