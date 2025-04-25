@@ -80,6 +80,7 @@ final class MainScreenViewController: UIViewController {
         categoriesCollectionView.dataSource = self
         categoriesCollectionView.delegate = self
         categoriesCollectionView.showsHorizontalScrollIndicator = false
+        categoriesCollectionView.alwaysBounceVertical = false
         categoriesCollectionView.register(CatCell.self, forCellWithReuseIdentifier: "CatCell")
         categoriesCollectionView.register(CategoryCell.self, forCellWithReuseIdentifier: "CategoryCell")
         interactor?.fetchMainScreenData(request: request)

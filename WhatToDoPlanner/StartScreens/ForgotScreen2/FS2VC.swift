@@ -52,6 +52,14 @@ final class ChangePasswordViewController: UIViewController {
         return btn
     }()
     
+    private var passwordVisibilityButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = UIColor(hex: "000000", alpha: 0.5) // Полупрозрачный черный
+        button.addTarget(nil, action: #selector(togglePasswordVisibility), for: .touchUpInside)
+        return button
+    }()
+    
     init(interactor: ChangePasswordBusinessLogic?, email: String) {
         self.interactor = interactor
         self.email = email
@@ -158,8 +166,18 @@ final class ChangePasswordViewController: UIViewController {
                 equalToConstant: 50
             ),
         ])
+        
+        configurePasswordField()
     }
 
+    private func configurePasswordField() {
+        let eyeContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 44, height: 24)) // ширина больше, чем кнопка
+        passwordVisibilityButton.frame = CGRect(x: 8, y: 0, width: 24, height: 24) // кнопка чуть сдвинута влево
+        eyeContainerView.addSubview(passwordVisibilityButton)
+
+        passwordField.rightView = eyeContainerView
+        passwordField.rightViewMode = .always
+    }
 
     private func setupActions() {
 //        backButton.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
@@ -181,7 +199,12 @@ final class ChangePasswordViewController: UIViewController {
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
-
+    
+    @objc private func togglePasswordVisibility() {
+        passwordField.isSecureTextEntry.toggle()
+        let imageName = passwordField.isSecureTextEntry ? "eye.slash" : "eye"
+        passwordVisibilityButton.setImage(UIImage(systemName: imageName), for: .normal)
+    }
 }
 
 private class ChangePasswordTextField: UITextField {

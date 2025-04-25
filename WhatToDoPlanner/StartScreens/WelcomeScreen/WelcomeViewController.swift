@@ -76,6 +76,14 @@ final class WelcomeViewController: UIViewController  {
     private var signUpButton: UIButton = UIButton(type: .system)
     private var loginButton: UIButton = UIButton(type: .system)
     private var forgetPasswordButton: UIButton = UIButton(type: .system)
+    
+    private var passwordVisibilityButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = UIColor(hex: "000000", alpha: 0.5) // Полупрозрачный черный
+        button.addTarget(nil, action: #selector(togglePasswordVisibility), for: .touchUpInside)
+        return button
+    }()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -310,6 +318,13 @@ final class WelcomeViewController: UIViewController  {
 
         passwordTextField.addTarget(self, action: #selector(passwordFieldDidBeginEditing), for: .editingDidBegin)
         passwordTextField.addTarget(self, action: #selector(passwordFieldDidEndEditing), for: .editingDidEnd)
+
+        let eyeContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 44, height: 24)) // ширина больше, чем кнопка
+        passwordVisibilityButton.frame = CGRect(x: 8, y: 0, width: 24, height: 24) // кнопка чуть сдвинута влево
+        eyeContainerView.addSubview(passwordVisibilityButton)
+
+        passwordTextField.rightView = eyeContainerView
+        passwordTextField.rightViewMode = .always
     }
 
     // Update the shape of the password highlight
@@ -490,6 +505,12 @@ final class WelcomeViewController: UIViewController  {
         loginButton.alpha = 0.5
         
         interactor?.handleLoginButtonTapped(emailText: emailTextField.text, passwordText: passwordTextField.text)
+    }
+    
+    @objc private func togglePasswordVisibility() {
+        passwordTextField.isSecureTextEntry.toggle()
+        let imageName = passwordTextField.isSecureTextEntry ? "eye.slash" : "eye"
+        passwordVisibilityButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
 }
 

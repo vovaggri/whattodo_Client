@@ -30,7 +30,27 @@ final class GoalReviewViewController: UIViewController {
     private let descriptionTitleLabel = UILabel()
     private let descriptionContainer = UIView()
     
+    private let descriptionScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceVertical = true
+        scrollView.alwaysBounceHorizontal = false
+        scrollView.bounces = true
+        scrollView.isScrollEnabled = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+
     
+    private var descriptionLabel: UILabel = {
+        var l = UILabel()
+        l.font = UIFont(name: Constants.fontName, size: 16)
+        l.numberOfLines = 0
+        l.textAlignment = .left
+        l.textColor = .darkGray
+        return l
+    }()
 
     // New: Collection view for tasks
     private lazy var collectionView: UICollectionView = {
@@ -234,6 +254,21 @@ final class GoalReviewViewController: UIViewController {
          descriptionContainer.backgroundColor = .white
          descriptionContainer.layer.cornerRadius = 14
          descriptionContainer.layer.masksToBounds = true
+        
+        descriptionContainer.addSubview(descriptionScrollView)
+        descriptionScrollView.addSubview(descriptionLabel)
+        
+        descriptionScrollView.pinTop(to: descriptionContainer.topAnchor)
+        descriptionScrollView.pinLeft(to: descriptionContainer.leadingAnchor)
+        descriptionScrollView.pinRight(to: descriptionContainer.trailingAnchor)
+        descriptionScrollView.pinBottom(to: descriptionContainer.bottomAnchor)
+        
+        descriptionLabel.text = goal.description
+        descriptionLabel.pinTop(to: descriptionScrollView.topAnchor, 10)
+        descriptionLabel.pinLeft(to: descriptionScrollView.leadingAnchor, 16)
+        descriptionLabel.pinRight(to: descriptionScrollView.trailingAnchor, 16)
+        descriptionLabel.pinBottom(to: descriptionScrollView.bottomAnchor, 10)
+        descriptionLabel.widthAnchor.constraint(equalTo: descriptionScrollView.widthAnchor, constant: -20).isActive = true
         
         // AI button styling
         aiButton.setTitle("AI", for: .normal)

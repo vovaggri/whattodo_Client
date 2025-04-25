@@ -108,6 +108,7 @@ final class SettingsVC: UIViewController {
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
+        backButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.titleView = titleLabel
@@ -118,6 +119,22 @@ final class SettingsVC: UIViewController {
         interactor?.fetchUserInfo()
     }
 
+    func showError(message: String) {
+        let alert = UIAlertController(
+            title: "Error",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(.init(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true)
+    }
+
+    // MARK: - Display Logic
+    func displayUser(_ user: MainModels.Fetch.UserResponse) {
+        fullNameLabel.text = user.firstName + " " + user.secondName
+        emailLabel.text    = user.email
+    }
+    
     // MARK: - Setup
     private func setupHierarchy() {
         view.addSubview(titleLabel)
@@ -256,24 +273,7 @@ final class SettingsVC: UIViewController {
         )
         return row
     }
-
-    // MARK: - Actions
-    @objc private func rowTapped(_ g: UITapGestureRecognizer) {
-        guard let v = g.view else { return }
-        switch v {
-        case changeUsernameRow:
-            // … handle change username
-            break
-        case changePasswordRow:
-            // … handle change password
-            break
-        case logoutRow:
-            confirmLogOut()
-        default:
-            break
-        }
-    }
-
+    
     private func confirmLogOut() {
         let alert = UIAlertController(
             title: "Logout",
@@ -290,19 +290,25 @@ final class SettingsVC: UIViewController {
         )
         present(alert, animated: true)
     }
-    func showError(message: String) {
-        let alert = UIAlertController(
-            title: "Error",
-            message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(.init(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true)
-    }
 
-    // MARK: - Display Logic
-    func displayUser(_ user: MainModels.Fetch.UserResponse) {
-        fullNameLabel.text = user.firstName + " " + user.secondName
-        emailLabel.text    = user.email
+    // MARK: - Actions
+    @objc private func rowTapped(_ g: UITapGestureRecognizer) {
+        guard let v = g.view else { return }
+        switch v {
+        case changeUsernameRow:
+            // … handle change username
+            break
+        case changePasswordRow:
+            let forgotPasswordVC = ForgotScreenAssembly.assemble()
+            navigationController?.pushViewController(forgotPasswordVC, animated: true)
+        case logoutRow:
+            confirmLogOut()
+        default:
+            break
+        }
+    }
+    
+    @objc private func backTapped() {
+        navigationController?.popViewController(animated: true)
     }
 }
