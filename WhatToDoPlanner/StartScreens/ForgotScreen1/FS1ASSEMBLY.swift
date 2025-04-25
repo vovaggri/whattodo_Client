@@ -5,9 +5,11 @@ final class ForgotScreenAssembly {
         let viewController = ForgotScreenViewController()
         let interactor = ForgotScreenInteractor()
         let presenter = ForgotScreenPresenter()
+        let worker = ForgotScreenWorker()
         
         viewController.interactor = interactor
         interactor.presenter = presenter
+        interactor.worker = worker
         presenter.viewController = viewController
         
         return viewController

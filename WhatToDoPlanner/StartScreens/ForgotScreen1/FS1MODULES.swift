@@ -1,6 +1,12 @@
 enum ForgotScreen {
     enum Fetch {
-        struct Request { }
+        struct Request: Decodable {
+            let email: String
+            
+            enum CodingKeys: String, CodingKey {
+                case email
+            }
+        }
         struct Response {
             let emailPlaceholder: String
         }
