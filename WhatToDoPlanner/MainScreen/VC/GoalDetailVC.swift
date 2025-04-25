@@ -252,16 +252,22 @@ final class GoalDetailViewController: UIViewController {
         taskGCollectionView.register(TaskGCell.self, forCellWithReuseIdentifier: TaskGCell.Constants.identifier)
 
         
-        view.addSubview(taskGCollectionView)
+        // вместо view.addSubview(...)
+        taskContainerView.addSubview(taskGCollectionView)
+        taskGCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            taskGCollectionView.topAnchor.constraint(equalTo: taskContainerView.topAnchor, constant: 8),
+            taskGCollectionView.leadingAnchor.constraint(equalTo: taskContainerView.leadingAnchor, constant: 8),
+            taskGCollectionView.trailingAnchor.constraint(equalTo: taskContainerView.trailingAnchor, constant: -8),
+            taskGCollectionView.bottomAnchor.constraint(equalTo: taskContainerView.bottomAnchor, constant: -8),
+        ])
+            
         taskGCollectionView.dataSource = self
         taskGCollectionView.delegate = self
-        
-        taskGCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        
-        taskGCollectionView.pinTop(to: addTaskButton.bottomAnchor, 30)
-        taskGCollectionView.pinLeft(to: taskContainerView.leadingAnchor)
-        taskGCollectionView.pinRight(to: taskContainerView.trailingAnchor)
-        taskGCollectionView.pinBottom(to: taskContainerView.bottomAnchor, 10)
+        taskGCollectionView.register(TaskGCell.self, forCellWithReuseIdentifier: TaskGCell.Constants.identifier)
+            
+        // для теста, чтобы скроллился даже при малом кол-ве ячеек:
+        taskGCollectionView.alwaysBounceVertical = true
     }
     
     // MARK: - Actions
