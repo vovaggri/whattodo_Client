@@ -38,7 +38,7 @@ struct Task: Codable, Equatable {
         } else if colour == ColorIDs.ultraPink {
             return UIColor(hex: "FCE7FF") ?? .systemPink
         } else if colour == ColorIDs.defaultWhite {
-            return UIColor(hex: "F7F9F9") ?? .white
+            return UIColor(hex: "EBECEC") ?? .white
         } else {
             return .clear
         }

@@ -27,6 +27,15 @@ final class GoalReviewViewController: UIViewController {
     private let deleteIcon = UIImageView(image: UIImage(systemName: "trash"))
     private let deleteLabel = UILabel()
     
+    private let descriptionTitleLabel = UILabel()
+    private let descriptionContainer = UIView()
+    
+    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
+    
+    
+    // Font constant
+    static let fontName = "AoboshiOne-Regular"
+
     // New: Collection view for tasks
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -163,7 +172,7 @@ final class GoalReviewViewController: UIViewController {
         case ColorIDs.defaultWhite:
             labelColor          = UIColor(hex: "514F4F") ?? .black
             timeAlpha           = 0.5
-            buttonColor         = UIColor.white
+            buttonColor         = UIColor(hex: "888C8C") ?? .white
             goalContainerColor  = UIColor(hex: "F7F9F9") ?? .white
             colorContainerColor = UIColor(hex: "F7F9F9", alpha: 0.1) ?? .white
             colorDotColor       = UIColor.white
@@ -222,6 +231,14 @@ final class GoalReviewViewController: UIViewController {
         colorContainer.layer.cornerRadius = 14
         colorContainer.layer.masksToBounds = true
         
+        descriptionTitleLabel.font = UIFont(name: Self.fontName, size: 14)
+         descriptionTitleLabel.text = "Description"
+         descriptionTitleLabel.textAlignment = .left
+         
+         descriptionContainer.backgroundColor = .white
+         descriptionContainer.layer.cornerRadius = 14
+         descriptionContainer.layer.masksToBounds = true
+        
         // AI button styling
         aiButton.setTitle("AI", for: .normal)
         aiButton.titleLabel?.font = UIFont(name: Self.fontName, size: 18)
@@ -248,7 +265,7 @@ final class GoalReviewViewController: UIViewController {
        
         view.addSubview(editButton)
         editButton.translatesAutoresizingMaskIntoConstraints = false
-        editButton.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 340)
+        editButton.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 440)
         editButton.pinRight(to: view.trailingAnchor, 20)
         editButton.setWidth(88)
         editButton.setHeight(88)
@@ -259,8 +276,8 @@ final class GoalReviewViewController: UIViewController {
         containerView.backgroundColor = .white
         containerView.layer.cornerRadius = 32
         containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        containerView.setHeight(620)
-        containerView.pinTop(to: colorContainer.bottomAnchor, 188)
+       // containerView.setHeight(420)
+        containerView.pinTop(to: colorContainer.bottomAnchor, 250)
         
         containerView.addSubview(tasksTitleLabel)
                 tasksTitleLabel.font = UIFont(name: Self.fontName, size: 24)
@@ -300,6 +317,21 @@ final class GoalReviewViewController: UIViewController {
         colorDotView.pinRight(to: colorContainer, 16)
         colorDotView.layer.cornerRadius = 10
         
+        //description
+        view.addSubview(descriptionTitleLabel)
+        descriptionTitleLabel.pinTop(to: colorContainer.bottomAnchor, 9)
+        descriptionTitleLabel.pinLeft(to: view, 16)
+        descriptionTitleLabel.setHeight(22)
+        descriptionTitleLabel.setWidth(352)
+        
+        view.addSubview(descriptionContainer)
+       descriptionContainer.pinTop(to: descriptionTitleLabel.bottomAnchor, 8)
+        descriptionContainer.pinLeft(to: view, 16)
+        descriptionContainer.setWidth(352)
+        descriptionContainer.setHeight(68)
+        
+        
+        
         // DELETE CONTAINER
         view.addSubview(deleteContainer)
         deleteContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -312,7 +344,7 @@ final class GoalReviewViewController: UIViewController {
         let deleteTap = UITapGestureRecognizer(target: self, action: #selector(deleteContainerTapped))
         deleteContainer.addGestureRecognizer(deleteTap)
 
-        deleteContainer.pinTop(to: colorContainer.bottomAnchor, 22)
+        deleteContainer.pinTop(to: descriptionContainer.bottomAnchor, 22)
         deleteContainer.pinLeft(to: view, 16)
         deleteContainer.setWidth(352)
         deleteContainer.setHeight(52)
@@ -345,7 +377,7 @@ final class GoalReviewViewController: UIViewController {
         
         
         // Layout bottom tasks container
-        containerView.pinTop(to: colorContainer.bottomAnchor, 124)
+      //  containerView.pinTop(to: colorContainer.bottomAnchor, 124)
         containerView.pinLeft(to: view)
         containerView.pinRight(to: view)
         containerView.pinBottom(to: view)
@@ -353,8 +385,7 @@ final class GoalReviewViewController: UIViewController {
         // Layout message inside container
         tasksTitleLabel.pinTop(to: containerView, 24)
              tasksTitleLabel.pinLeft(to: containerView, 16)
-        
-        // Layout AI button bottom right
+       
               aiButton.setWidth(72)
               aiButton.setHeight(72)
               aiButton.pinRight(to: view, 24)

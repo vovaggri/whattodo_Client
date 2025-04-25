@@ -43,13 +43,22 @@ final class ChangeGoalViewController: UIViewController {
         return view
     }()
     
-    private let closeButton: UIButton = {
+    private let backButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("X", for: .normal)
-        button.titleLabel?.font = UIFont(name: CreateGoalViewController.fontName, size: 18)
-        button.setTitleColor(.black, for: .normal)
+        let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .black
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 35
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.05
+        button.layer.shadowOffset = CGSize(width: 0, height: 1)
+        button.layer.shadowRadius = 2
+        button.clipsToBounds = false
         return button
     }()
+
     
     private let screenTitleLabel: UILabel = {
         let label = UILabel()
@@ -225,7 +234,7 @@ final class ChangeGoalViewController: UIViewController {
       
       // Add subviews
       view.addSubview(topBarView)
-      topBarView.addSubview(closeButton)
+      topBarView.addSubview(backButton)
       topBarView.addSubview(screenTitleLabel)
       
       view.addSubview(grayContainerView)
@@ -315,7 +324,7 @@ final class ChangeGoalViewController: UIViewController {
       let margin: CGFloat = 16
       
       [
-          topBarView, closeButton, screenTitleLabel,
+          topBarView, backButton, screenTitleLabel,
           grayContainerView, taskNameStack,
           whiteContainerView, descriptionStack, colorStack, changeGoalButton,
           colorPickerContainer,
@@ -326,14 +335,15 @@ final class ChangeGoalViewController: UIViewController {
           topBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
           topBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
           topBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          topBarView.heightAnchor.constraint(equalToConstant: 60),
+          topBarView.heightAnchor.constraint(equalToConstant: 100),
           
-          closeButton.leadingAnchor.constraint(equalTo: topBarView.leadingAnchor, constant: margin),
-          closeButton.centerYAnchor.constraint(equalTo: topBarView.centerYAnchor),
-          closeButton.widthAnchor.constraint(equalToConstant: 40),
-          closeButton.heightAnchor.constraint(equalToConstant: 40),
+         
+              backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+              backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+              backButton.widthAnchor.constraint(equalToConstant: 73),
+              backButton.heightAnchor.constraint(equalToConstant: 73),
           
-          screenTitleLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
+          screenTitleLabel.centerYAnchor.constraint(equalTo:backButton.centerYAnchor),
           screenTitleLabel.centerXAnchor.constraint(equalTo: topBarView.centerXAnchor),
           
           // Gray Container
@@ -347,7 +357,7 @@ final class ChangeGoalViewController: UIViewController {
           taskNameStack.centerXAnchor.constraint(equalTo: grayContainerView.centerXAnchor),
           goalNameTextField.heightAnchor.constraint(equalToConstant: 52),
           goalNameTextField.widthAnchor.constraint(equalToConstant: 352),
-          titleLabel.heightAnchor.constraint(equalToConstant: 50),
+          titleLabel.heightAnchor.constraint(equalToConstant: 30),
           
           // White Container
           whiteContainerView.topAnchor.constraint(equalTo: grayContainerView.bottomAnchor, constant: 16),
@@ -406,7 +416,7 @@ final class ChangeGoalViewController: UIViewController {
       }
   
   // MARK: DisplayLogic
-    @objc private func closeButtonTapped() {
+    @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
   
