@@ -97,6 +97,9 @@ final class MainScreenViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let request = MainModels.Fetch.Request()
+        interactor?.fetchMainScreenData(request: request)
+        
         interactor?.loadGoals()
         
         // Если bottomVC не представлен (был dismissed), создаем и презентуем его заново

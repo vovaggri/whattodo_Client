@@ -3,10 +3,12 @@ import Foundation
 protocol ChangeUsernamePresentationLogic {
   func presentCurrentName(response: ChangeUsername.Fetch.Response)
   func presentUpdateResult(response: ChangeUsername.Update.Response)
+    func showErrorAlert(_ message: String?)
+    func navigateBack()
 }
 
 final class ChangeUsernamePresenter: ChangeUsernamePresentationLogic {
-  weak var viewController: ChangeUsernameDisplayLogic?
+    weak var viewController: ChangeUsernameViewController?
 
   func presentCurrentName(response: ChangeUsername.Fetch.Response) {
     let vm = ChangeUsername.Fetch.ViewModel(
@@ -21,6 +23,16 @@ final class ChangeUsernamePresenter: ChangeUsernamePresentationLogic {
       isSuccess:    response.success,
       errorMessage: response.errorMessage
     )
+      viewController?.returnSaveButton()
     viewController?.displayUpdateResult(viewModel: vm)
   }
+    
+    func showErrorAlert(_ message: String?) {
+        viewController?.returnSaveButton()
+        viewController?.showError(message: message ?? "Error")
+    }
+    
+    func navigateBack() {
+        viewController?.navigationController?.popViewController(animated: true)
+    }
 }

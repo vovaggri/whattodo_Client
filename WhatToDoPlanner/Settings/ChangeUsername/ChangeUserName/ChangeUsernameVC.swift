@@ -1,10 +1,6 @@
 import UIKit
 
-protocol ChangeUsernameDisplayLogic: AnyObject {
-  func displayCurrentName(viewModel: ChangeUsername.Fetch.ViewModel)
-  func displayUpdateResult(viewModel: ChangeUsername.Update.ViewModel)
-}
-final class ChangeUsernameViewController: UIViewController, ChangeUsernameDisplayLogic {
+final class ChangeUsernameViewController: UIViewController {
   // MARK: - UI
     
     private let backButton: UIButton = {
@@ -98,15 +94,30 @@ final class ChangeUsernameViewController: UIViewController, ChangeUsernameDispla
         tf.leftViewMode = .always
         return tf
     }()
+    
+    private let saveButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Save", for: .normal)
+        btn.titleLabel?.font = UIFont(name: "AoboshiOne-Regular", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .semibold)
+        btn.backgroundColor = UIColor(red: 208/255, green: 232/255, blue: 200/255, alpha: 1.0)
+        btn.setTitleColor(.black, for: .normal)
+        btn.layer.cornerRadius = 8
+        return btn
+    }()
 
   // MARK: - SVIP
   var interactor: ChangeUsernameBusinessLogic?
 
   // MARK: - Lifecycle
   override func viewDidLoad() {
+      let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+          tapGesture.cancelsTouchesInView = false
+          view.addGestureRecognizer(tapGesture)
+      
     super.viewDidLoad()
     view.backgroundColor = .white
       
+      saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
       backButton.addTarget(self,
                               action: #selector(backButtonPressed),
                               for: .touchUpInside)
@@ -122,10 +133,83 @@ final class ChangeUsernameViewController: UIViewController, ChangeUsernameDispla
     setupLayout()
     interactor?.fetchCurrentName(request: .init())
   }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(notification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide(notification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self,
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(self,
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+
+    
+    // MARK: - DisplayLogic
+      func displayCurrentName(viewModel: ChangeUsername.Fetch.ViewModel) {
+          // pick your font and size
+          let font = UIFont(name: "AoboshiOne-Regular", size: 18)
+                      ?? UIFont.systemFont(ofSize: 18)
+          
+          // build attributed strings so the font sticks
+          firstNameField.attributedText = NSAttributedString(
+              string: viewModel.firstName,
+              attributes: [.font: font]
+          )
+          
+          lastNameField.attributedText = NSAttributedString(
+              string: viewModel.lastName,
+              attributes: [.font: font]
+          )
+      }
+      
+
+    func displayUpdateResult(viewModel: ChangeUsername.Update.ViewModel) {
+      if viewModel.isSuccess {
+        navigationController?.popViewController(animated: true)
+      } else {
+        let alert = UIAlertController(
+          title: "Error",
+          message: viewModel.errorMessage,
+          preferredStyle: .alert
+        )
+        alert.addAction(.init(title: "OK", style: .default))
+        present(alert, animated: true)
+      }
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    func returnSaveButton() {
+        saveButton.isEnabled = true
+        saveButton.alpha = 1
+    }
 
   // MARK: - Layout
   private func setupLayout() {
-      [ backButton, titleLabel,nameLabel, firstNameField,surnameLabel, lastNameField]
+      [ backButton, titleLabel,nameLabel, firstNameField,surnameLabel, lastNameField, saveButton]
       .forEach { view.addSubview($0); $0.translatesAutoresizingMaskIntoConstraints = false }
       backButton.translatesAutoresizingMaskIntoConstraints = false
       backButton
@@ -167,16 +251,24 @@ final class ChangeUsernameViewController: UIViewController, ChangeUsernameDispla
         .pinRight(to: view, 32)                     // trailing = view.trailing – 32
       lastNameField
         .setHeight(50)
+      
+      saveButton.pinBottom(to: view.safeAreaLayoutGuide.bottomAnchor, 40)
+      saveButton.pinLeft(to: view.leadingAnchor, 48)
+      saveButton.pinRight(to: view.trailingAnchor, 48)
+      saveButton.setHeight(50)
   }
 
   // MARK: - Actions
   @objc private func saveTapped() {
+      saveButton.isEnabled = false
+      saveButton.alpha = 0.5
     let req = ChangeUsername.Update.Request(
       firstName: firstNameField.text ?? "",
       lastName:  lastNameField.text  ?? ""
     )
     interactor?.updateName(request: req)
   }
+    
     @objc private func backButtonPressed() {
         if let nav = navigationController {
             // if this VC was pushed
@@ -186,37 +278,34 @@ final class ChangeUsernameViewController: UIViewController, ChangeUsernameDispla
             dismiss(animated: true, completion: nil)
         }
     }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        
+        guard let userInfo = notification.userInfo,
+                let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        let keyboardHeight = keyboardFrame.height
 
-  // MARK: - DisplayLogic
-    func displayCurrentName(viewModel: ChangeUsername.Fetch.ViewModel) {
-        // pick your font and size
-        let font = UIFont(name: "AoboshiOne-Regular", size: 18)
-                    ?? UIFont.systemFont(ofSize: 18)
+        // Raise view's elements if the keyboard overlaps the create account button.
+        if let surnameFrame = lastNameField.superview?.convert(lastNameField.frame, to: nil) {
+            let bottomY = surnameFrame.maxY
+            let screenHeight = UIScreen.main.bounds.height
         
-        // build attributed strings so the font sticks
-        firstNameField.attributedText = NSAttributedString(
-            string: viewModel.firstName,
-            attributes: [.font: font]
-        )
-        
-        lastNameField.attributedText = NSAttributedString(
-            string: viewModel.lastName,
-            attributes: [.font: font]
-        )
+            if bottomY > screenHeight - keyboardHeight {
+                let overlap = bottomY - (screenHeight - keyboardHeight)
+                self.view.frame.origin.y -= overlap + 16
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
     }
     
-
-  func displayUpdateResult(viewModel: ChangeUsername.Update.ViewModel) {
-    if viewModel.isSuccess {
-      navigationController?.popViewController(animated: true)
-    } else {
-      let alert = UIAlertController(
-        title: "Error",
-        message: viewModel.errorMessage,
-        preferredStyle: .alert
-      )
-      alert.addAction(.init(title: "OK", style: .default))
-      present(alert, animated: true)
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
-  }
 }
