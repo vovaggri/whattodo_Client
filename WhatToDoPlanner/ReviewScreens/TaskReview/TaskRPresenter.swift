@@ -3,6 +3,7 @@ protocol ReviewTaskPresentationLogic {
     func presentTask(response: ReviewTaskModels.Response, startTime: Date?, endTime: Date?)
     func presentGoalTitle(with text: String)
     func showErrorAlert(_ message: String?)
+    func navigateToMainScreen()
 }
 
 final class ReviewTaskPresenter: ReviewTaskPresentationLogic {
@@ -28,5 +29,10 @@ final class ReviewTaskPresenter: ReviewTaskPresentationLogic {
     
     func showErrorAlert(_ message: String?) {
         viewController?.showError(message: message ?? "Error")
+    }
+    
+    func navigateToMainScreen() {
+        let mainVC = MainAssembly.assembly()
+        viewController?.navigationController?.setViewControllers([mainVC], animated: true)
     }
 }

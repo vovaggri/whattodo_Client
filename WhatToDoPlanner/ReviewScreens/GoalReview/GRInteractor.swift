@@ -1,14 +1,19 @@
+import Foundation
+
 protocol GoalReviewBusinessLogic {
     func loadGoal()
     func checkGoal(with goal: Goal)
+    func deleteGoal(with goal: Goal)
 }
 
 final class GoalReviewInteractor : GoalReviewBusinessLogic {
-    private let presenter: GoalReviewPresentationLogic?
+    private var presenter: GoalReviewPresentationLogic?
+    private var worker: GoalReviewWorkerProtocol?
     private let goal: Goal
     
-    init(presenter: GoalReviewPresentationLogic, goal: Goal) {
+    init(presenter: GoalReviewPresentationLogic, worker: GoalReviewWorkerProtocol, goal: Goal) {
         self.presenter = presenter
+        self.worker = worker
         self.goal = goal
     }
     
@@ -22,6 +27,21 @@ final class GoalReviewInteractor : GoalReviewBusinessLogic {
             presenter?.navigateToProblem()
         } else {
             presenter?.navigateToAI(with: goal.id)
+        }
+    }
+    
+    func deleteGoal(with goal: Goal) {
+        worker?.deleteGoal(with: goal) { [weak self] result in
+            switch result {
+            case.success:
+                DispatchQueue.main.async {
+                    self?.presenter?.navigateToMainScreen()
+                }
+            case.failure(let error):
+                DispatchQueue.main.async {
+                    self?.presenter?.showErrorAlert(error.localizedDescription)
+                }
+            }
         }
     }
 }

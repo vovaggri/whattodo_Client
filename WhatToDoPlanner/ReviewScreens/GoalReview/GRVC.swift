@@ -293,6 +293,11 @@ final class GoalReviewViewController: UIViewController {
         deleteContainer.backgroundColor = .white
         deleteContainer.layer.cornerRadius = 14
         deleteContainer.layer.masksToBounds = true
+        
+        // включаем тап для контейнера
+        deleteContainer.isUserInteractionEnabled = true
+        let deleteTap = UITapGestureRecognizer(target: self, action: #selector(deleteContainerTapped))
+        deleteContainer.addGestureRecognizer(deleteTap)
 
         deleteContainer.pinTop(to: colorContainer.bottomAnchor, 22)
         deleteContainer.pinLeft(to: view, 16)
@@ -370,7 +375,27 @@ final class GoalReviewViewController: UIViewController {
         interactor?.checkGoal(with: goal)
     }
      @objc private func editButtonTapped() {
-       let changeTaskVC = CreateNewGoalAssembly.makeModule()
-       navigationController?.pushViewController(changeTaskVC, animated: true)
+         let changeTaskVC = ChangeGoalAssembly.makeModule(goal)
+         navigationController?.pushViewController(changeTaskVC, animated: true)
+    }
+    
+    @objc private func deleteContainerTapped() {
+        let alert = UIAlertController(
+          title: "Delete goal",
+          message: "Are you sure that you want delete this goal?",
+          preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(
+          title: "Delete",
+          style: .destructive,
+          handler: { [weak self] _ in
+              guard let goal = self?.goal else {
+                  return
+              }
+              self?.interactor?.deleteGoal(with: goal)
+          }
+        ))
+        present(alert, animated: true)
     }
 }

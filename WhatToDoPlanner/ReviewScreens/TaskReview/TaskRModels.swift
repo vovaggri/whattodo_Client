@@ -13,6 +13,14 @@ enum ReviewTaskModels {
     struct Response {
         let task: Task
     }
+    
+    struct DeleteResponse: Decodable {
+        let status: String
+        
+        enum CodingKeys: String, CodingKey {
+            case status
+        }
+    }
 
     struct ViewModel {
         let title: String

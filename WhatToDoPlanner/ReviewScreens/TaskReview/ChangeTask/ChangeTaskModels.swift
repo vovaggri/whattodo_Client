@@ -21,6 +21,14 @@ enum ChangeTaskModels {
         let message: String
     }
     
+    struct updateResponse: Decodable {
+        let status: String
+        
+        enum CodingKeys: String, CodingKey {
+            case status
+        }
+    }
+    
     enum Error: Swift.Error {
         case networkError
         case validationError

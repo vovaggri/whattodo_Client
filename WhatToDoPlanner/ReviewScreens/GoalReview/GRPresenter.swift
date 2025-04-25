@@ -1,7 +1,9 @@
 protocol GoalReviewPresentationLogic {
     func presentGoal(request: GoalReviewModels.Request)
+    func showErrorAlert(_ message: String?)
     func navigateToProblem()
     func navigateToAI(with goalId: Int)
+    func navigateToMainScreen()
 }
 
 final class GoalReviewPresenter: GoalReviewPresentationLogic {
@@ -16,6 +18,10 @@ final class GoalReviewPresenter: GoalReviewPresentationLogic {
         viewController?.displayGoal(viewModel: viewModel)
     }
     
+    func showErrorAlert(_ message: String?) {
+        viewController?.showError(message: message ?? "Error")
+    }
+    
     func navigateToProblem() {
         viewController?.showProblemAI()
     }
@@ -23,5 +29,10 @@ final class GoalReviewPresenter: GoalReviewPresentationLogic {
     func navigateToAI(with goalId: Int) {
         let aiVC = AIAssembly.assembly(with: goalId)
         viewController?.navigationController?.pushViewController(aiVC, animated: true)
+    }
+    
+    func navigateToMainScreen() {
+        let mainVC = MainAssembly.assembly()
+        viewController?.navigationController?.setViewControllers([mainVC], animated: true)
     }
 }
