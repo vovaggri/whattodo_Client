@@ -106,6 +106,33 @@ final class GoalReviewViewController: UIViewController {
         interactor?.loadTasks(with: goal.id)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard aiButton.subviews.contains(where: { $0 is ShimmerView }) == false else { return }
+            
+        let shimmer = ShimmerView(frame: aiButton.bounds)
+        shimmer.isUserInteractionEnabled = false
+        shimmer.layer.cornerRadius = aiButton.layer.cornerRadius
+        shimmer.clipsToBounds = true
+        shimmer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        if let titleLabel = aiButton.titleLabel {
+            aiButton.insertSubview(shimmer, belowSubview: titleLabel)
+        } else {
+            aiButton.addSubview(shimmer)
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        aiButton.layoutIfNeeded() // гарантия, что фрейм актуален
+        aiButton.subviews
+            .compactMap { $0 as? ShimmerView }
+            .forEach { $0.startAnimating() }
+    }
+
+    
     // MARK: - Display
     func displayGoal(viewModel: GoalReviewModels.ViewModel) {
         view.backgroundColor = viewModel.color
