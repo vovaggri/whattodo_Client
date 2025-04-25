@@ -1,3 +1,5 @@
+import Foundation
+
 enum ChangeUsername {
   enum Fetch {
     struct Request { }
@@ -25,4 +27,22 @@ enum ChangeUsername {
       let errorMessage: String?
     }
   }
+    
+    struct UpdateModelName: Codable {
+        let firstName: String
+        let secondName: String
+        
+        enum CodingKeys: String, CodingKey {
+            case firstName = "first_name"
+            case secondName = "second_name"
+        }
+    }
+    
+    struct updateResponse: Decodable {
+        let status: String
+        
+        enum CodingKeys: String, CodingKey {
+            case status
+        }
+    }
 }

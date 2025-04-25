@@ -89,6 +89,9 @@ final class SettingsVC: UIViewController {
         return v
     }()
     
+    private var firstName = ""
+    private var secondName = ""
+    
     // MARK: —– separators
     private let separator1: UIView = {
       let v = UIView()
@@ -118,6 +121,11 @@ final class SettingsVC: UIViewController {
         setupHierarchy()
         setupConstraints()
 
+        interactor?.fetchUserInfo()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         interactor?.fetchUserInfo()
     }
 
@@ -264,16 +272,8 @@ final class SettingsVC: UIViewController {
     
     @objc private func backButtonPressed() {
         // build the main screen
-        let mainVC = MainAssembly.assembly()
-        // if you want to _push_ it onto an existing nav-stack:
-       // navigationController?.pushViewController(mainVC, animated: true)
-        if let nav = navigationController {
-                // Replace the stack so Main becomes root
-                nav.setViewControllers([mainVC], animated: true)
-            } else {
-                // Present it modally if there's no nav stack
-                present(mainVC, animated: true, completion: nil)
-            }
+        
+        navigationController?.popViewController(animated: true)
     }
     
     
@@ -282,12 +282,13 @@ final class SettingsVC: UIViewController {
         switch v {
         case changeUsernameRow:
             // build the ChangeUsername screen
-            let changeVC = ChangeUsernameModuleAssembler.build()
+            let changeVC = ChangeUsernameModuleAssembler.build(firstName: firstName, secondName: secondName)
             // push it on your nav stack
             navigationController?.pushViewController(changeVC, animated: true)
             break
         case changePasswordRow:
-            // … handle change password
+            let forgotPasswordVC = ForgotScreenAssembly.assemble()
+            navigationController?.pushViewController(forgotPasswordVC, animated: true)
             break
         case logoutRow:
             confirmLogOut()
@@ -324,6 +325,8 @@ final class SettingsVC: UIViewController {
 
     // MARK: - Display Logic
     func displayUser(_ user: MainModels.Fetch.UserResponse) {
+        firstName = user.firstName
+        secondName = user.secondName
         fullNameLabel.text = user.firstName + " " + user.secondName
         emailLabel.text    = user.email
     }

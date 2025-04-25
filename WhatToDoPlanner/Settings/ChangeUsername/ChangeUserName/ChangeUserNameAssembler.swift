@@ -1,15 +1,15 @@
 import UIKit
 
 enum ChangeUsernameModuleAssembler {
-  static func build() -> UIViewController {
-    let vc         = ChangeUsernameViewController()
-    let interactor = ChangeUsernameInteractor()
-    let presenter  = ChangeUsernamePresenter()
+    static func build(firstName: String, secondName: String) -> UIViewController {
+        let vc = ChangeUsernameViewController()
+        let presenter  = ChangeUsernamePresenter()
+        let worker = ChangeUsernameWorker()
+        let interactor = ChangeUsernameInteractor(presenter: presenter, worker: worker, currentFirstName: firstName, currentLastName: secondName)
 
-    vc.interactor          = interactor
-    interactor.presenter   = presenter
-    presenter.viewController = vc
+        vc.interactor = interactor
+        presenter.viewController = vc
 
-    return vc
-  }
+        return vc
+    }
 }
