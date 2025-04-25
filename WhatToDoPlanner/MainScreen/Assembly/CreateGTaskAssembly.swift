@@ -12,7 +12,7 @@ final class CreateGTaskAssembly {
         let interactor = CreateGTaskInteractor(presenter: presenter, worker: worker)
         
         viewController.interactor = interactor
-        viewController.goalId = goalId
+       // viewController.goalId = goalId
         presenter.viewController = viewController
         
         return viewController
