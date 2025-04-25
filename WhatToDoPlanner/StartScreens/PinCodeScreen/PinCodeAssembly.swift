@@ -1,13 +1,14 @@
 import UIKit
 
 final class PinCodeAssembly {
-    static func assemble() -> PinCodeViewController {
+    static func assemble(email: String) -> PinCodeViewController {
         let interactor = PinCodeInteractor()
         let presenter = PinCodePresenter()
-        let view = PinCodeViewController(interactor: interactor)
+        let worker = PinCodeWorker()
+        let view = PinCodeViewController(email: email, interactor: interactor)
 
-        view.interactor = interactor
         interactor.presenter = presenter
+        interactor.worker = worker
         presenter.viewController = view
 
         return view

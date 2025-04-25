@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-struct Goal: Codable {
+struct Goal: Codable, Equatable {
     let id: Int
     var title: String
     var description: String?
@@ -36,5 +36,11 @@ struct Goal: Codable {
         } else {
             return .clear
         }
+    }
+    
+    static func ==(lhs: Goal, rhs: Goal) -> Bool {
+        return lhs.title == rhs.title
+        && lhs.description == rhs.description
+        && lhs.colour == rhs.colour
     }
 }

@@ -116,6 +116,7 @@ final class GoalDetailViewController: UIViewController {
         setupUI()
         setupConstraints()
         configureTaskCollection()
+        view.bringSubviewToFront(aiButton)
     }
     
     override func viewWillAppear(_ animated: Bool) {

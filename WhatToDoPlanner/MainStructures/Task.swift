@@ -1,11 +1,11 @@
 import UIKit
 
-struct Task: Codable {
+struct Task: Codable, Equatable {
     let id: Int
     var title: String
     var description: String?
     var colour: Int
-    let endDate: Date
+    var endDate: Date
     var done: Bool
     
     // Optional
@@ -42,5 +42,17 @@ struct Task: Codable {
         } else {
             return .clear
         }
+    }
+    
+    static func ==(lhs: Task, rhs: Task) -> Bool {
+        return lhs.id == rhs.id
+            && lhs.title == rhs.title
+            && lhs.description == rhs.description
+            && lhs.colour == rhs.colour
+            && lhs.endDate == rhs.endDate
+            && lhs.done == rhs.done
+            && lhs.startTime == rhs.startTime
+            && lhs.endTime == rhs.endTime
+            && lhs.goalId == rhs.goalId
     }
 }

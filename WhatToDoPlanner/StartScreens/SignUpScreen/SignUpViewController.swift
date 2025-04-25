@@ -161,7 +161,7 @@ final class SignUpViewController: UIViewController {
         // Make sure the backButton is added before this (or use safeArea)
         NSLayoutConstraint.activate([
             // Try anchoring it to the bottom of the backButton instead of safe area
-            titleLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 24),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 21)
         ])
     }

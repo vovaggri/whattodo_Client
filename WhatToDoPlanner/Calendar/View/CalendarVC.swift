@@ -54,7 +54,6 @@ final class CalendarViewController: UIViewController {
         cv.backgroundColor = .clear
         cv.dataSource = self
         cv.delegate   = self
-        cv.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
         return cv
     }()
     
@@ -158,6 +157,8 @@ final class CalendarViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        tasksCollectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.Constants.identifier)
+        tasksCollectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: EmptyTaskCell.Constants.identifier)
         configureCloseButton()
         navigationItem.titleView = taskManagerTitle
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
@@ -168,6 +169,7 @@ final class CalendarViewController: UIViewController {
         monthLabel.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(monthYearTapped))
         monthLabel.addGestureRecognizer(tapGesture)
+        
         
         
         interactor?.fetchCalendar()

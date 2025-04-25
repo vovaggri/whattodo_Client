@@ -66,24 +66,41 @@ final class ForgotScreenViewController: UIViewController {
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            tapGesture.cancelsTouchesInView = false
+            view.addGestureRecognizer(tapGesture)
+        
         super.viewDidLoad()
         view.backgroundColor = .white
         setupUI()
         setupConstraints()
         setupActions()
         navigationController?.setNavigationBarHidden(true, animated: false)
-        
-        // Trigger fetching data (this will update the email placeholder via the presenter)
-        interactor?.fetchForgotData(request: ForgotScreen.Fetch.Request())
     }
     
     // MARK: - Setup UI
+    func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    // Method that will be called by the presenter to update the email placeholder
+    func updateEmailPlaceholder(with placeholder: String) {
+        emailTextField.placeholder = placeholder
+    }
+    
+    func returnContinueButton() {
+        continueButton.isEnabled = true
+        continueButton.alpha = 1
+    }
     
     private func setupUI() {
         view.addSubview(backButton)
         view.addSubview(titleLabel)
        
         view.addSubview(emailTextField)
+        emailTextField.autocapitalizationType = .none
         view.addSubview(continueButton)
     }
     
@@ -126,6 +143,7 @@ final class ForgotScreenViewController: UIViewController {
         //backButton.addTarget(self, action: #selector(handleBackTapped), for: .touchUpInside)
         
         continueButton.addTarget(self, action: #selector(presentforgotpassscreen), for: .touchUpInside)
+        backButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Actions
@@ -139,14 +157,18 @@ final class ForgotScreenViewController: UIViewController {
     }
     
     @objc private func handleContinueTapped() {
-        let changeVC = PinCodeAssembly.assemble()
-        navigationController?.pushViewController(changeVC, animated: true)
+//        let changeVC = PinCodeAssembly.assemble()
+//        navigationController?.pushViewController(changeVC, animated: true)
+        continueButton.isEnabled = false
+        continueButton.alpha = 0.5
+        interactor?.fetchForgotData(email: emailTextField.text)
     }
     
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
     
-    
-    // Method that will be called by the presenter to update the email placeholder
-    func updateEmailPlaceholder(with placeholder: String) {
-        emailTextField.placeholder = placeholder
+    @objc private func closeButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 }

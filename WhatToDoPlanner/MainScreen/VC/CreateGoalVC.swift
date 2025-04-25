@@ -156,7 +156,7 @@ final class CreateGoalViewController: UIViewController, UIGestureRecognizerDeleg
     
     private let taskColorLabel: UILabel = {
         let lbl = UILabel()
-        lbl.text = "Task Color"
+        lbl.text = "Goal Color"
         lbl.font = UIFont(name: CreateGoalViewController.fontName, size: 14) ?? UIFont.systemFont(ofSize: 14)
         lbl.textColor = .black
         return lbl

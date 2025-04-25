@@ -95,7 +95,7 @@ final class TaskCell: UICollectionViewCell {
     
     // MARK: - Configure Methods
     
-    func configure(with task: Task) {
+    func configureMain(with task: Task) {
         self.task = task
         
         // Always white for the cell background
@@ -123,6 +123,26 @@ final class TaskCell: UICollectionViewCell {
         // ...
         
         // Update the complete button state (checked or not)
+        updateCompleteButtonAppearance()
+    }
+    
+    func configureReview(with task: Task) {
+        self.task = task
+        
+        // Always white for the cell background
+        contentView.backgroundColor = .white
+        
+        // The vertical bar color is based on the user's chosen color
+        verticalBar.backgroundColor = task.getColour()
+        
+        // Main task title
+        titleLabel.text = task.title
+        
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        let formattedDate = formatter.string(from: task.endDate)
+        timeLabel.text = formattedDate
+        
         updateCompleteButtonAppearance()
     }
     

@@ -1,6 +1,14 @@
 import UIKit
 
-enum CreateNewGoalModels {
+enum ChangeGoalModels {
+    
+    struct ChangeResponse: Decodable {
+        let status: String
+        
+        enum CodingKeys: String, CodingKey {
+            case status
+        }
+    }
   
   // MARK: Load Blank Screen
   enum Load {

@@ -3,7 +3,11 @@ import UIKit
 extension CalendarViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == tasksCollectionView {
-            return tasks.count
+            if !tasks.isEmpty {
+                return tasks.count
+            } else {
+                return 1
+            }
         } else {
             return weeks.count * 7
         }
@@ -15,13 +19,21 @@ extension CalendarViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == tasksCollectionView {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
-                return UICollectionViewCell()
+            if !tasks.isEmpty {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.Constants.identifier, for: indexPath) as? TaskCell else {
+                    return UICollectionViewCell()
+                }
+                let task = tasks[indexPath.item]
+                cell.configureMain(with: task)
+                cell.delegate = self
+                return cell
+            } else {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyTaskCell.Constants.identifier, for: indexPath) as? EmptyTaskCell else {
+                    return UICollectionViewCell()
+                }
+                cell.configureCalendar()
+                return cell
             }
-            let task = tasks[indexPath.item]
-            cell.configure(with: task)
-            cell.delegate = self
-            return cell
         }
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayCell.Constants.reuseId, for: indexPath) as? DayCell else {
@@ -73,10 +85,12 @@ extension CalendarViewController: UICollectionViewDelegateFlowLayout {
             interactor?.filterTasks(for: selectedDate, allItems: allTasks, selectedItems: &tasks)
             tasksCollectionView.reloadData()
         } else if collectionView === tasksCollectionView {
-            let task = tasks[indexPath.item]
-            print("Selected \(task.title)")
-            let taskReviewVC = ReviewScreenAssembly.assembly(task)
-            navigationController?.pushViewController(taskReviewVC, animated: true)
+            if !tasks.isEmpty {
+                let task = tasks[indexPath.item]
+                print("Selected \(task.title)")
+                let taskReviewVC = ReviewScreenAssembly.assembly(task)
+                navigationController?.pushViewController(taskReviewVC, animated: true)
+            }
         }
     }
 }

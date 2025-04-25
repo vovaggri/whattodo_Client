@@ -1,15 +1,15 @@
 import UIKit
 
-enum CreateNewGoalAssembly {
-  static func makeModule() -> CreateNewGoalViewController {
-    let viewController = CreateNewGoalViewController()
-    let interactor    = CreateNewGoalInteractor()
-    let presenter     = CreateNewGoalPresenter()
+enum ChangeGoalAssembly {
+    static func makeModule(_ goal: Goal) -> ChangeGoalViewController {
+        let viewController = ChangeGoalViewController(goal: goal)
+        let presenter = ChangeGoalPresenter()
+        let worker = ChangeGoalWorker()
+        let interactor = ChangeGoalInteractor(presenter: presenter, worker: worker)
     
-    viewController.interactor               = interactor
-    interactor.presenter                    = presenter
-    presenter.viewController                = viewController
+        viewController.interactor = interactor
+        presenter.viewController = viewController
     
-    return viewController
-  }
+        return viewController
+    }
 }

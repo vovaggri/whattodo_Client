@@ -1,37 +1,29 @@
 import UIKit
 
-protocol changeTaskViewControllerDelegate: AnyObject {
-    func changeTaskViewController(_ viewController: changeTaskViewController, didchangeGoal goal: Goal)
-}
-extension changeTaskViewController: ChangeTaskDisplayLogic {
-    func displayTaskUpload(viewModel: ChangeTaskModels.ViewModel) {
-        let alert = UIAlertController(title: nil, message: viewModel.message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
-}
-
-protocol ChangeTaskDisplayLogic: AnyObject {
-    func displayTaskUpload(viewModel: ChangeTaskModels.ViewModel)
+protocol ChangeTaskViewControllerDelegate: AnyObject {
+    func changeTaskViewController(_ viewController: ChangeTaskViewController, didchangeGoal goal: Goal)
 }
 
 
-final class changeTaskViewController: UIViewController, UIGestureRecognizerDelegate {
+final class ChangeTaskViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - Custom Font
     static let fontName: String = "AoboshiOne-Regular"
     static let fieldsError: String = "Not all necessary fields was filled!"
     
     // MARK: - Properties
-    weak var delegate: changeTaskViewControllerDelegate?
+    weak var delegate: ChangeTaskViewControllerDelegate?
     var interactor: ChangeTaskBusinessLogic?
+    var originalTask: Task?
     var task: Task?
+    private var goals: [Goal] = []
+    private var selectedGoalId: Int = 0
     
     // For color picker
     private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
     
     // For link picker
-    private let linkOptions = ["Goal 1", "Goal 2", "Goal 3"]
+    private var linkOptions: [String] = ["-"]
     
     // Color map for background updates
     private let colorMap: [String: UIColor] = [
@@ -86,6 +78,16 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         return container
     }()
     
+    // Reverse map from Int to the string in your colorOptions
+    private lazy var colorNameById: [Int:String] = [
+        ColorIDs.aquaBlue:    "Aqua Blue",
+        ColorIDs.mossGreen:   "Moss Green",
+        ColorIDs.marigold:    "Marigold",
+        ColorIDs.lilac:       "Lilac",
+        ColorIDs.ultraPink:   "Ultra Pink",
+        ColorIDs.defaultWhite:"Default White"
+    ]
+    
     // MARK: - Top bar
     private let topBarView: UIView = {
         let view = UIView()
@@ -107,7 +109,7 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
     private let screenTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Edit Task"
-        label.font = UIFont(name: changeTaskViewController.fontName, size: 24)
+        label.font = UIFont(name: ChangeTaskViewController.fontName, size: 24)
             ?? UIFont.boldSystemFont(ofSize: 18)
         label.textColor = .black
         label.textAlignment = .center
@@ -249,7 +251,7 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         tf.font = UIFont(name: fontName, size: 20)
         tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = changeTaskViewController.lightGrayColor
+        tf.backgroundColor = ChangeTaskViewController.lightGrayColor
         tf.layer.borderWidth = 0
         tf.layer.borderColor = UIColor.clear.cgColor
         // Some left padding
@@ -301,7 +303,7 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         tf.font = UIFont(name: fontName, size: 20)
         tf.borderStyle = .none
         tf.layer.cornerRadius = 14
-        tf.backgroundColor = changeTaskViewController.lightGrayColor
+        tf.backgroundColor = ChangeTaskViewController.lightGrayColor
         tf.layer.borderWidth = 0
         tf.layer.borderColor = UIColor.clear.cgColor
         // Some left padding
@@ -348,36 +350,31 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
 
     
     // Link to Goal
-    private let linkLabel: UILabel = {
-        let lbl = UILabel()
-        lbl.text = "Link to Goal"
-        lbl.font = UIFont(name: fontName, size: 14)
-        lbl.textColor = .black
-        return lbl
-    }()
-    private let linkTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Link to Goal"
-        tf.font = UIFont(name: fontName, size: 20)
-        tf.borderStyle = .none
-        tf.layer.cornerRadius = 14
-        tf.backgroundColor = lightGrayColor
-        // no border
-        tf.layer.borderWidth = 0
-        tf.layer.borderColor = UIColor.clear.cgColor
-        // left padding
-        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
-        tf.leftView = leftPadding
-        tf.leftViewMode = .always
-        tf.inputView = UIView()
-        return tf
-    }()
-    private lazy var linkStack: UIStackView = {
-        let st = UIStackView(arrangedSubviews: [linkLabel, linkTextField])
-        st.axis = .vertical
-        st.spacing = 4
-        return st
-    }()
+//    private let linkLabel: UILabel = {
+//        let lbl = UILabel()
+//        lbl.text = "Link to Goal"
+//        lbl.font = UIFont(name: fontName, size: 14)
+//        lbl.textColor = .black
+//        return lbl
+//    }()
+//    private let linkTextField: UITextField = {
+//        let tf = UITextField()
+//        tf.placeholder = "Link to Goal"
+//        tf.font = UIFont(name: fontName, size: 20)
+//        tf.borderStyle = .none
+//        tf.layer.cornerRadius = 14
+//        tf.backgroundColor = lightGrayColor
+//        // no border
+//        tf.layer.borderWidth = 0
+//        tf.layer.borderColor = UIColor.clear.cgColor
+//        // left padding
+//        let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 1))
+//        tf.leftView = leftPadding
+//        tf.leftViewMode = .always
+//        tf.inputView = UIView()
+//        return tf
+//    }()
+
     
     // Task Color
     private let taskColorLabel: UILabel = {
@@ -414,7 +411,7 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
     // change Button
     private let changeButton: UIButton = {
         let b = UIButton(type: .system)
-        b.setTitle("change Task", for: .normal)
+        b.setTitle("Change Task", for: .normal)
         b.titleLabel?.font = UIFont(name: fontName, size: 20)
         b.backgroundColor = .black
         b.setTitleColor(.white, for: .normal)
@@ -485,27 +482,38 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         return p
     }()
     
-    private let linkPickerContainer: UIView = {
-        let v = UIView()
-        v.backgroundColor = lightGrayColor
-        v.layer.cornerRadius = 14
-        v.layer.borderWidth = 0.4
-        v.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.33).cgColor
-        v.isHidden = true
-        return v
-    }()
-    private let linkPicker: UIPickerView = {
-        let p = UIPickerView()
-        return p
-    }()
+//    private let linkPickerContainer: UIView = {
+//        let v = UIView()
+//        v.backgroundColor = lightGrayColor
+//        v.layer.cornerRadius = 14
+//        v.layer.borderWidth = 0.4
+//        v.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.33).cgColor
+//        v.isHidden = true
+//        return v
+//    }()
+//    private let linkPicker: UIPickerView = {
+//        let p = UIPickerView()
+//        return p
+//    }()
     
     // MARK: - Lifecycle
+    init(task: Task) {
+        self.originalTask = task
+        self.task = task
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        interactor?.loadGoals()
         
-        view.backgroundColor = changeTaskViewController.lightGrayColor
-        grayContainerView.backgroundColor = changeTaskViewController.lightGrayColor
+        view.backgroundColor = ChangeTaskViewController.lightGrayColor
+        grayContainerView.backgroundColor = ChangeTaskViewController.lightGrayColor
         
         navigationItem.hidesBackButton = true
         
@@ -530,9 +538,6 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         taskColorTextField.rightView = colorRightView
         taskColorTextField.rightViewMode = .always
         
-        linkTextField.rightView = linkIconView
-        linkTextField.rightViewMode = .always
-        
         // Add subviews
         view.addSubview(topBarView)
         topBarView.addSubview(closeButton)
@@ -544,7 +549,6 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         
         view.addSubview(whiteContainerView)
         whiteContainerView.addSubview(descriptionStack)
-        whiteContainerView.addSubview(linkStack)
         whiteContainerView.addSubview(timeStack)
         whiteContainerView.addSubview(colorStack)
         whiteContainerView.addSubview(changeButton)
@@ -561,9 +565,6 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         
         view.addSubview(colorPickerContainer)
         colorPickerContainer.addSubview(colorPicker)
-        
-        view.addSubview(linkPickerContainer)
-        linkPickerContainer.addSubview(linkPicker)
         
         setupConstraints()
         
@@ -584,9 +585,6 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         let colorTapGesture = UITapGestureRecognizer(target: self, action: #selector(colorTapped))
         taskColorTextField.addGestureRecognizer(colorTapGesture)
         
-        let linkTapGesture = UITapGestureRecognizer(target: self, action: #selector(linkTapped))
-        linkTextField.addGestureRecognizer(linkTapGesture)
-        
         // Picker changes
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         startTimePicker.addTarget(self, action: #selector(startTimeChanged(_:)), for: .valueChanged)
@@ -596,14 +594,13 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         colorPicker.delegate = self
         colorPicker.dataSource = self
         
-        linkPicker.delegate = self
-        linkPicker.dataSource = self
-        
         // Если требуется второй жест (например, для закрытия pickers)
         let outsideTap = UITapGestureRecognizer(target: self, action: #selector(handleOutsideTap(_:)))
         outsideTap.cancelsTouchesInView = false
         outsideTap.delegate = self  // Устанавливаем делегата и для второго жеста
         view.addGestureRecognizer(outsideTap)
+        
+        populateFields()
     }
     
     
@@ -613,9 +610,36 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         present(alert, animated: true)
     }
     
+    func displayTaskUpload(viewModel: ChangeTaskModels.ViewModel) {
+        let alert = UIAlertController(title: nil, message: viewModel.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
     // Метод делегата для разрешения одновременного распознавания
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+    
+    func showGoals(with goals: [Goal]) {
+        self.goals = goals
+        
+//        self.linkOptions = ["-"] + goals.map { $0.title }
+//        linkPicker.reloadAllComponents()
+//        
+//        // If this task already has a goalId, pre-select it:
+//        if let gid = task?.goalId,
+//            let goalIndex = goals.firstIndex(where: { $0.id == gid }) {
+//            let pickerRow = goalIndex + 1        // +1 because linkOptions[0] == "-"
+//            linkTextField.text = goals[goalIndex].title
+//            linkPicker.selectRow(pickerRow, inComponent: 0, animated: false)
+//            selectedGoalId = gid
+//        } else {
+//            // no goal linked yet
+//            linkTextField.text = "-"
+//            linkPicker.selectRow(0, inComponent: 0, animated: false)
+//            selectedGoalId = 0
+//        }
     }
     
     // MARK: - Helper: change tinted icon in a smaller container
@@ -638,12 +662,11 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         [
             topBarView, closeButton, screenTitleLabel,
             grayContainerView, taskNameStack, dateStack,
-            whiteContainerView, descriptionStack, linkStack, timeStack, colorStack, changeButton,
+            whiteContainerView, descriptionStack, timeStack, colorStack, changeButton,
             datePickerContainer, datePicker,
             startTimePickerContainer, startTimePicker,
             endTimePickerContainer, endTimePicker,
-            colorPickerContainer, colorPicker,
-            linkPickerContainer, linkPicker
+            colorPickerContainer, colorPicker
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         NSLayoutConstraint.activate([
@@ -692,14 +715,9 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
             descriptionTextView.heightAnchor.constraint(equalToConstant: 70),
             descriptionTextView.widthAnchor.constraint(equalToConstant: 352),
             
-            // Link
-            linkStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: margin),
-            linkStack.centerXAnchor.constraint(equalTo: whiteContainerView.centerXAnchor),
-            linkTextField.heightAnchor.constraint(equalToConstant: 52),
-            linkTextField.widthAnchor.constraint(equalToConstant: 352),
             
             // Time
-            timeStack.topAnchor.constraint(equalTo: linkStack.bottomAnchor, constant: margin),
+            timeStack.topAnchor.constraint(equalTo: descriptionStack.bottomAnchor, constant: margin),
             timeStack.leadingAnchor.constraint(equalTo: whiteContainerView.leadingAnchor, constant: margin),
             timeStack.trailingAnchor.constraint(equalTo: whiteContainerView.trailingAnchor, constant: -margin),
             endTimeLabel.widthAnchor.constraint(equalToConstant: 160),
@@ -766,17 +784,68 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
             colorPicker.trailingAnchor.constraint(equalTo: colorPickerContainer.trailingAnchor),
             colorPicker.bottomAnchor.constraint(equalTo: colorPickerContainer.bottomAnchor),
             
-            // Link picker
-            linkPickerContainer.topAnchor.constraint(equalTo: linkTextField.bottomAnchor, constant: 4),
-            linkPickerContainer.leadingAnchor.constraint(equalTo: linkTextField.leadingAnchor),
-            linkPickerContainer.widthAnchor.constraint(equalTo: linkTextField.widthAnchor),
-            linkPickerContainer.heightAnchor.constraint(equalToConstant: 75),
+//            // Link picker
+//            linkPickerContainer.topAnchor.constraint(equalTo: linkTextField.bottomAnchor, constant: 4),
+//            linkPickerContainer.leadingAnchor.constraint(equalTo: linkTextField.leadingAnchor),
+//            linkPickerContainer.widthAnchor.constraint(equalTo: linkTextField.widthAnchor),
+//            linkPickerContainer.heightAnchor.constraint(equalToConstant: 75),
             
-            linkPicker.topAnchor.constraint(equalTo: linkPickerContainer.topAnchor),
-            linkPicker.leadingAnchor.constraint(equalTo: linkPickerContainer.leadingAnchor),
-            linkPicker.trailingAnchor.constraint(equalTo: linkPickerContainer.trailingAnchor),
-            linkPicker.bottomAnchor.constraint(equalTo: linkPickerContainer.bottomAnchor),
+//            linkPicker.topAnchor.constraint(equalTo: linkPickerContainer.topAnchor),
+//            linkPicker.leadingAnchor.constraint(equalTo: linkPickerContainer.leadingAnchor),
+//            linkPicker.trailingAnchor.constraint(equalTo: linkPickerContainer.trailingAnchor),
+//            linkPicker.bottomAnchor.constraint(equalTo: linkPickerContainer.bottomAnchor),
         ])
+    }
+    
+    private func populateFields() {
+        guard let task = task else { return }
+
+        // 1. Title
+        taskNameTextField.text = task.title
+
+        // 2. Date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE, MMM d, yy"
+        taskDateTextField.text = dateFormatter.string(from: task.endDate)
+        datePicker.date = task.endDate
+        
+        if task.startTime != task.endTime {
+            // 3. Start Time (if any)
+            if let start = task.startTime {
+                let tf = DateFormatter()
+                tf.dateFormat = "hh:mm a"
+                startTimeTextField.text = tf.string(from: start)
+                startTimePicker.date = start
+            }
+
+            // 4. End Time (if any)
+            if let end = task.endTime {
+                let tf = DateFormatter()
+                tf.dateFormat = "hh:mm a"
+                endTimeTextField.text = tf.string(from: end)
+                endTimePicker.date = end
+            }
+        }
+
+        // 5. Description
+        descriptionTextView.text = task.description
+
+        // 6. Color
+        if let name = colorNameById[task.colour] {
+            taskColorTextField.text = name
+            colorDot.backgroundColor = task.getColour()
+            // also tint your containers if you want:
+            let bg = task.getColour()
+            view.backgroundColor = bg
+            grayContainerView.backgroundColor = bg
+            topBarView.backgroundColor = bg
+        }
+
+//        // 7. (Optional) Link to Goal
+//        if let gid = task.goalId {
+//            linkTextField.text = "Goal \(gid)"
+//            // you could also select the right row in your linkPicker here
+//        }
     }
     
     // MARK: - Actions
@@ -791,14 +860,14 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
     @objc private func changeButtonTapped() {
         guard let taskName = taskNameTextField.text, !taskName.isEmpty else {
             print("Task name is required.")
-            showError(message: changeTaskViewController.fieldsError)
-            
+            showError(message: CreateTaskViewController.fieldsError)
             return
         }
+        task?.title = taskName
         
         guard let dateText = taskDateTextField.text, !dateText.isEmpty else {
             print("Date is required.")
-            showError(message: changeTaskViewController.fieldsError)
+            showError(message: CreateTaskViewController.fieldsError)
             return
         }
         
@@ -808,9 +877,10 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         
         guard let date = dateFormatter.date(from: dateText) else {
-            showError(message: changeTaskViewController.fieldsError)
+            showError(message: CreateTaskViewController.fieldsError)
             return
         }
+        task?.endDate = date
         
         var startTime: Date?
         if let startTimeText = startTimeTextField.text, !startTimeText.isEmpty {
@@ -835,10 +905,24 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
             }
             endTime = parsedEndTime
         }
+        if startTime != endTime {
+            task?.startTime = startTime
+            task?.endTime = endTime
+        }
+        
+        if (startTime == nil && endTime != nil) || (startTime != nil && endTime == nil) {
+            showError(message: "Both start time and end time must be provided, or none at all.")
+            return
+        }
+        
+        if let start = startTime, let end = endTime, start > end {
+            showError(message: "Start time cannot be later than end time.")
+            return
+        }
         
         guard let colorText = taskColorTextField.text, !colorText.isEmpty else {
             print("Color is required")
-            showError(message: changeTaskViewController.fieldsError)
+            showError(message: CreateTaskViewController.fieldsError)
             return
         }
         
@@ -860,18 +944,18 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
             print("Unknown color")
             return
         }
+        task?.colour = color
         
         let description = descriptionTextView.text
-        // TODO: - Correct linkGoals
-        let goalId: Int = 0
-//        let newGoal = Goal(
-//            id: Int.random(in: 1000...9999),
-//            title: taskName,
-//            description: descriptionTextView.text,
-//            tasks: []
-//        )
-//        delegate?.changeTaskViewController(self, didchangeGoal: newGoal)
-//        interactor?.uploadTask(title: taskName, date: date, color: color, description: description, startTime: startTime, endTime: endTime, goalId: goalId)
+        task?.description = description
+        let goalId: Int = selectedGoalId
+        task?.goalId = selectedGoalId
+        
+        if task == originalTask {
+            showError(message: "Task wasn't be edited.")
+        }
+
+        interactor?.updateTask(id: task?.id ?? 0,title: taskName, date: date, color: color, description: description, startTime: startTime, endTime: endTime, goalId: goalId)
     }
     
     @objc private func dateTapped() {
@@ -879,31 +963,26 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
         startTimePickerContainer.isHidden = true
         endTimePickerContainer.isHidden = true
         colorPickerContainer.isHidden = true
-        linkPickerContainer.isHidden = true
     }
     @objc private func startTimeTapped() {
         startTimePickerContainer.isHidden.toggle()
         endTimePickerContainer.isHidden = true
         colorPickerContainer.isHidden = true
         datePickerContainer.isHidden = true
-        linkPickerContainer.isHidden = true
     }
     @objc private func endTimeTapped() {
         endTimePickerContainer.isHidden.toggle()
         startTimePickerContainer.isHidden = true
         colorPickerContainer.isHidden = true
         datePickerContainer.isHidden = true
-        linkPickerContainer.isHidden = true
     }
     @objc private func colorTapped() {
         colorPickerContainer.isHidden.toggle()
         startTimePickerContainer.isHidden = true
         endTimePickerContainer.isHidden = true
         datePickerContainer.isHidden = true
-        linkPickerContainer.isHidden = true
     }
     @objc private func linkTapped() {
-        linkPickerContainer.isHidden.toggle()
         datePickerContainer.isHidden = true
         startTimePickerContainer.isHidden = true
         endTimePickerContainer.isHidden = true
@@ -932,18 +1011,15 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
            !startTimePickerContainer.frame.contains(location),
            !endTimePickerContainer.frame.contains(location),
            !colorPickerContainer.frame.contains(location),
-           !linkPickerContainer.frame.contains(location),
            !taskDateTextField.frame.contains(location),
            !startTimeTextField.frame.contains(location),
            !endTimeTextField.frame.contains(location),
-           !taskColorTextField.frame.contains(location),
-           !linkTextField.frame.contains(location) {
+           !taskColorTextField.frame.contains(location) {
             
             datePickerContainer.isHidden = true
             startTimePickerContainer.isHidden = true
             endTimePickerContainer.isHidden = true
             colorPickerContainer.isHidden = true
-            linkPickerContainer.isHidden = true
         }
     }
     
@@ -953,14 +1029,12 @@ final class changeTaskViewController: UIViewController, UIGestureRecognizerDeleg
 }
 
 // MARK: - UIPickerViewDataSource & Delegate
-extension changeTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+extension ChangeTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if pickerView == colorPicker {
             return colorOptions.count
-        } else if pickerView == linkPicker {
-            return linkOptions.count
         }
         return 0
     }
@@ -971,11 +1045,9 @@ extension changeTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate
                     reusing view: UIView?) -> UIView {
         let label = (view as? UILabel) ?? UILabel()
         label.textAlignment = .center
-        label.font = UIFont(name: changeTaskViewController.fontName, size: 14)
+        label.font = UIFont(name: ChangeTaskViewController.fontName, size: 14)
         if pickerView == colorPicker {
             label.text = colorOptions[row]
-        } else if pickerView == linkPicker {
-            label.text = linkOptions[row]
         }
         return label
     }
@@ -992,8 +1064,6 @@ extension changeTaskViewController: UIPickerViewDataSource, UIPickerViewDelegate
                 self.topBarView.backgroundColor = chosenUIColor
                 colorDot.backgroundColor = chosenUIColor.withAlphaComponent(1.0)
             }
-        } else if pickerView == linkPicker {
-            linkTextField.text = linkOptions[row]
         }
     }
 }

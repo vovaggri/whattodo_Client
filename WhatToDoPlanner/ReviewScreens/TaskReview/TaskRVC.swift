@@ -112,6 +112,8 @@ final class ReviewTaskViewController: UIViewController {
         goalLabel.text = text
     }
     
+    
+    
     func showError(message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -387,6 +389,11 @@ final class ReviewTaskViewController: UIViewController {
         deleteContainer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
         deleteContainer.layer.cornerRadius = 14
         deleteContainer.layer.masksToBounds = true
+        
+        // включаем тап для контейнера
+        deleteContainer.isUserInteractionEnabled = true
+        let deleteTap = UITapGestureRecognizer(target: self, action: #selector(deleteContainerTapped))
+        deleteContainer.addGestureRecognizer(deleteTap)
 
         deleteContainer.pinTop(to: colorContainer.bottomAnchor, 24)
         deleteContainer.pinLeft(to: view, 20)
@@ -423,7 +430,7 @@ final class ReviewTaskViewController: UIViewController {
     }
     
     @objc private func editButtonTapped() {
-        let changeTaskVC = ChangeTaskAssembly.assembly()
+        let changeTaskVC = ChangeTaskAssembly.assembly(task)
         navigationController?.pushViewController(changeTaskVC, animated: true)
     }
     
@@ -431,4 +438,23 @@ final class ReviewTaskViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
+    @objc private func deleteContainerTapped() {
+        let alert = UIAlertController(
+          title: "Delete task",
+          message: "Are you sure that you want delete this task?",
+          preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(
+          title: "Delete",
+          style: .destructive,
+          handler: { [weak self] _ in
+              guard let task = self?.task else {
+                  return
+              }
+              self?.interactor?.deleteTask(with: task)
+          }
+        ))
+        present(alert, animated: true)
+    }
 }
