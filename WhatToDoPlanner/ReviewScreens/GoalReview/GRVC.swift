@@ -30,11 +30,7 @@ final class GoalReviewViewController: UIViewController {
     private let descriptionTitleLabel = UILabel()
     private let descriptionContainer = UIView()
     
-    let deleteColor = UIColor(hex: "A92424", alpha: 0.6)
     
-    
-    // Font constant
-    static let fontName = "AoboshiOne-Regular"
 
     // New: Collection view for tasks
     private lazy var collectionView: UICollectionView = {

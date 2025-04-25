@@ -192,6 +192,25 @@ final class ChangeGoalViewController: UIViewController {
         return v
     }()
     
+    private let closeButton: UIButton = {
+            let button = UIButton(type: .system)
+
+            // Use SF Symbol arrow
+            let config = UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+            let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+            button.setImage(image, for: .normal)
+
+            button.tintColor = .black
+            button.backgroundColor = .white
+            button.layer.cornerRadius = 35
+            button.layer.shadowColor = UIColor.black.cgColor
+            button.layer.shadowOpacity = 0.05
+            button.layer.shadowOffset = CGSize(width: 0, height: 1)
+            button.layer.shadowRadius = 2
+            button.clipsToBounds = false
+            return button
+        }()
+    
     private let colorOptions = ["Aqua Blue", "Moss Green", "Marigold", "Lilac", "Ultra Pink", "Default White"]
     private let colorMap: [String: UIColor] = [
         "Marigold":      UIColor(red: 242/255, green: 233/255, blue: 212/255, alpha: 1.0),
@@ -234,6 +253,7 @@ final class ChangeGoalViewController: UIViewController {
       
       // Add subviews
       view.addSubview(topBarView)
+      view.addSubview(closeButton)
       topBarView.addSubview(backButton)
       topBarView.addSubview(screenTitleLabel)
       
@@ -265,6 +285,7 @@ final class ChangeGoalViewController: UIViewController {
       
       // Button actions
       closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+      backButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
       changeGoalButton.addTarget(self, action: #selector(changeGoalButtonTapped), for: .touchUpInside)
       populateFields()
 //      createGoalButton.addTarget(self, action: #selector(createGoalButtonTapped), for: .touchUpInside)
@@ -475,6 +496,10 @@ final class ChangeGoalViewController: UIViewController {
         }
         
         interactor?.changeGoal(id: goal.id,title: goalName, description: description ?? "", color: color)
+    }
+    
+    @objc private func closeButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 }
 
