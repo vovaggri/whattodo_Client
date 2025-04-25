@@ -17,22 +17,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let keychainService = KeychainService()
         let tokenKey = "userToken"
         
-        let welcomeVC = WelcomeModuleAssembly.assembly() // Build WelcomeViewController
-        let navigationController = UINavigationController(rootViewController: welcomeVC) // Embed in navigation controller
-        window.rootViewController = navigationController
+//        let welcomeVC = WelcomeModuleAssembly.assembly() // Build WelcomeViewController
+//        let navigationController = UINavigationController(rootViewController: welcomeVC) // Embed in navigation controller
+//        window.rootViewController = navigationController
         
-//        var rootVC: UIViewController
-//        if let data = keychainService.getData(forKey: tokenKey),
-//           let token = String(data: data, encoding: .utf8),
-//           let expDate = decodeJWTExpiration(token),
-//           expDate > Date() {
-//            rootVC = MainAssembly.assembly()
-//        } else {
-//            rootVC = WelcomeModuleAssembly.assembly()
-//        }
-//        
-//        let nav = UINavigationController(rootViewController: rootVC)
-//        window.rootViewController = nav
+        var rootVC: UIViewController
+        if let data = keychainService.getData(forKey: tokenKey),
+           let token = String(data: data, encoding: .utf8),
+           let expDate = decodeJWTExpiration(token),
+           expDate > Date() {
+            rootVC = MainAssembly.assembly()
+        } else {
+            rootVC = WelcomeModuleAssembly.assembly()
+        }
+        
+        let nav = UINavigationController(rootViewController: rootVC)
+        window.rootViewController = nav
         self.window = window
         window.makeKeyAndVisible()
     }

@@ -1,3 +1,3 @@
 enum Server {
-    static let url: String = "http://localhost:8000"
+    static let url: String = "http://89.169.36.46:8000"
 }
